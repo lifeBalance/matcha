@@ -33,7 +33,13 @@ We'll be using a [MySQL](https://www.mysql.com/) database, so keeping the mappin
 
 In RESTful APIs, a **resource** is a noun that is usually stored in the backend in a table with the same name, for example `recipes`. Each resource (recipe in this case) is identified by a unique name or number, so if we wanted to let's say **update** one of our recipes, we'd make a request against `/recipes/69` using the `PUT` method (`PATCH` can also be used for this). And if we wanted to **delete** such recipe, we'd use the `DELETE` HTTP method against the same URL.
 
-> As you may have infered from the description above, to **read** a single recipe, we'd make a `GET` request agains the `/recipes/69` URL.
+|   Endpoint    | HTTP method | CRUD action |
+| ------------- | ----------- | ----------- |
+| `/recipes/69` | `GET`       | **Read**    |
+| `/recipes/69` | `PUT`       | **Update**  |
+| `/recipes/69` | `DELETE`    | **Delete**  |
+
+> As you may have infered from the table above, the **endpoint** is the same; it's the HTTP method used what determines what CRUD action is taken in the database. 
 
 That's what a RESTful API is in a nutshel. Using the aforementioned combination of HTTP methods and URLs, we can accomplish a lot. To interact with a given backend **resource** we need just two URLs:
 
@@ -46,13 +52,13 @@ The **HTTP method** being used would determine the **action** to take against th
 
 Below there's a complete table to summarize actions against the `recipes` resource in the backend:
 
-|        Action          | HTTP Method |      Url      |
-|----------------------- | ----------- | ------------- |
-|**Create**              | `POST`      | `/recipes`    |
-|**Read** (one)          | `GET`       | `/recipes/id` |
-|**Read** (collection)   | `GET`       | `/recipes`    |
-|**Update**              | `POST`      | `/recipes/id` |
-|**Delete**              | `DELETE`    | `/recipes/id` |
+|        Action         | HTTP Method |      Url      |
+| --------------------- | ----------- | ------------- |
+| **Create**            | `POST`      | `/recipes`    |
+| **Read** (one)        | `GET`       | `/recipes/id` |
+| **Read** (collection) | `GET`       | `/recipes`    |
+| **Update**            | `POST`      | `/recipes/id` |
+| **Delete**            | `DELETE`    | `/recipes/id` |
 
 Note that for both the **create** and **update** actions we can use also `POST`, since `PUT` or `PATCH` are not as well supported in some languages (PHP for example).
 
