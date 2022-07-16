@@ -20,6 +20,16 @@ class Test
     public function show($args)
     {
         $id = $args['id'];
+        // $headers = getallheaders();
+        // if (isset($headers["Content-Type"]) &&
+        //     $headers["Content-Type"] === 'application/x-www-form-urlencoded') {
+        //     echo $headers["Content-Type"];
+        //     echo json_encode("id: $id");
+        //     $id = $args['id'];
+        // } else {
+        //     http_response_code(404);
+        //     die();
+        // }
         echo json_encode("id: $id");
     }
 

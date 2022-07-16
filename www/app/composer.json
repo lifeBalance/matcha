@@ -1,5 +1,9 @@
 {
     "autoload": {
-        "classmap": ["core", "api/controllers"]
+        "classmap": [
+            "core",
+            "api/controllers",
+            "controllers"
+        ]
     }
 }
