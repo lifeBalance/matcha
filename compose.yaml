@@ -1,0 +1,35 @@
+services:
+  php-apache:
+    depends_on:
+      - mysql
+    build:
+      context: ./docker/php_apache
+    environment:
+      APACHE_DOCUMENT_ROOT: /var/www/html/public
+    volumes:
+      - ./www:/var/www/html
+      - ./docker/php_apache/000-default.conf:/etc/apache2/sites-available/000-default.conf
+    ports:
+      - 80:80
+      - 443:443
+  composer:
+    image: composer:2.3.9
+    command: ['composer', 'dump-autoload']
+    volumes:
+      - ./www/app:/app
+  phpmyadmin:
+    depends_on:
+      - mysql
+      - php-apache
+    image: phpmyadmin:5.1.3-apache
+    container_name: phpmyadmin
+    ports:
+      - 8081:80
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+  mysql:
+    image: mysql:8.0.29-debian
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
