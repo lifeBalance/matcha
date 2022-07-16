@@ -46,13 +46,13 @@ The **HTTP method** being used would determine the **action** to take against th
 
 Below there's a complete table to summarize actions against the `recipes` resource in the backend:
 
-        Action          | HTTP Method |      Url
------------------------ | ----------- | -------------
-**Create**              | `POST`      | `/recipes`
-**Read** (one)          | `GET`       | `/recipes/id`
-**Read** (collection)   | `GET`       | `/recipes`
-**Update**              | `POST`      | `/recipes/id`
-**Delete**              | `DELETE`    | `/recipes/id`
+|        Action          | HTTP Method |      Url      |
+|----------------------- | ----------- | ------------- |
+|**Create**              | `POST`      | `/recipes`    |
+|**Read** (one)          | `GET`       | `/recipes/id` |
+|**Read** (collection)   | `GET`       | `/recipes`    |
+|**Update**              | `POST`      | `/recipes/id` |
+|**Delete**              | `DELETE`    | `/recipes/id` |
 
 Note that for both the **create** and **update** actions we can use also `POST`, since `PUT` or `PATCH` are not as well supported in some languages (PHP for example).
 
