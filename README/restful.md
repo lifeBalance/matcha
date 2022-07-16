@@ -1,15 +1,16 @@
 # A RESTful API
-There are different approaches when building a web API:
+<div>
+<p style="float: left; padding-right: 2em; height: 10em"><img src="./images/soap.jpeg" /></p>
 
-* [REST](https://en.wikipedia.org/wiki/Representational_state_transfer), which is the main choice for SPAs, and the one that we'll follow, as good [restafarians](https://en.wiktionary.org/wiki/RESTafarian).
+There are a couple of different approaches when building a web API:
 
-<p align="center"><img src="./images/restafarian.jpeg" height="250" /></p>
-
+* [REST](https://en.wikipedia.org/wiki/Representational_state_transfer), which is the main choice for SPAs, and the one that we'll follow, as the good [RESTafarians](https://en.wiktionary.org/wiki/RESTafarian) we are.
 * [SOAP](https://en.wikipedia.org/wiki/SOAP), which uses [XML](https://en.wikipedia.org/wiki/XML) for the payloads and [XML validation](https://en.wikipedia.org/wiki/XML_validation) to ensure structural message integrity.
-
-<p align="center"><img src="./images/soap.jpeg" height="250" /></p>
+</div>
 
 A **RESTful API** is a web API compliant with the REST architectural style (REST is an acronym of **REpresentational State Transfer**). Requests against REST APIs are made via [HTTP](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol), using some of the the [HTTP request methods](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods). There are a bunch of such methods, but RESTful APIs only need to use 4 of them:
+
+<p style="float: left; padding-right: 2em ; height: 10em"><img src="./images/restafarian.jpeg" /></p>
 
 * `PUT` to **create** a resource.
 * `GET` to **read** a resource.
@@ -24,7 +25,7 @@ These small set of basic operations (known as [CRUD](https://en.wikipedia.org/wi
 * **Update** to [UPDATE](https://en.wikipedia.org/wiki/Update_(SQL)).
 * **Delete** to [DELETE](https://en.wikipedia.org/wiki/Delete_(SQL)).
 
-<p align="center"><img src="./images/crud.jpeg" height="250" /></p>
+<p style="float: left; padding-right: 2em"><img src="./images/crud.jpeg" height="250" /></p>
 
 We'll be using a [MySQL](https://www.mysql.com/) database, so keeping the mapping above in mind will be essential. A RESTful request is made by combining one of the HTTP methods with a given URL. For example, let's say we want to **read** all of the recipes in a cooking website, we'll made a `GET` request against the `/recipes` URL, and in the backend a `SELECT` statement would pull up all the recipes from the database and send them to the client. But what if we want to **create** a new recipe of our own? Then we'll made a `POST` request against the same URL (`/recipes`), which in the backend will trigger an `INSERT` operation in the database to create a new recipe.
 
@@ -61,6 +62,6 @@ Note that for both the **create** and **update** actions we can use also `POST`,
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
 
 <!-- navigation -->
-[home]: #
-[back]: #
-[next]: ./README/router.md
+[home]: ../README.md
+[back]: ./docker.md
+[next]: ./router.md
