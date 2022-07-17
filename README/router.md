@@ -29,4 +29,4 @@ $app->add('/api/tests', ['GET', 'POST', 'DELETE'], 'Test');
 <!-- navigation -->
 [home]: ../README.md
 [back]: ./restful.md
-[next]: #
+[next]: ./setup.md
