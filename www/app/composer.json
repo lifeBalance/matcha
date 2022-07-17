@@ -3,6 +3,7 @@
         "classmap": [
             "core",
             "api/controllers",
+            "api/models",
             "controllers"
         ]
     }

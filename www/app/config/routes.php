@@ -3,4 +3,4 @@
 $app->add('/', ['GET'], 'Home');
 
 // Routes for the API
-$app->add('/api/tests', ['GET', 'POST', 'DELETE'], 'Test');
+$app->add('/api/login', ['POST', 'DELETE'], 'Logins');

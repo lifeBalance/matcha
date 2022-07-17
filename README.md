@@ -13,6 +13,15 @@ So the **big picture** for this project can be described in two parts:
 * A **backend** [web API](https://en.wikipedia.org/wiki/Web_API), made from scratch using PHP.
 * A JS framework in the **frontend** to take care of the rest. This time I went with [React](https://reactjs.org/).
 
+## Contents
+Below I grouped in sections the documentation for this project:
+
+* [Docker set up](./README/docker.md)
+* [About RESTful APIs](./README/restful.md)
+* [Routing requests](./README/router.md)
+* [App setup](./README/setup.md)
+* [Authentication: JSON web tokens](./README/jwt.md)
+
 ---
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
 
