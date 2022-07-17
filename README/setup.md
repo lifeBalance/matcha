@@ -46,7 +46,7 @@ The main goal is to create a database connection only if one doesn't exist alrea
 $conn = Database::connect();
 ```
 
-I considered that the place for the `Database.php` file is under `app/core`, next to our `Router.php`.
+I considered that the right place for the `Database.php` file is under `app/core`, next to our `Router.php`.
 
 ---
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]

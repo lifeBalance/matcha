@@ -13,7 +13,8 @@ JWT can be described as a [stateless](https://en.wikipedia.org/wiki/Stateless_pr
 > Another common authentication method used by APIs is known as **API key authentication**. Here, the user's send her **API key** on every request; once the request is received, the database is queried to check if the key is valid. Compared to this, JWT authentication eliminates the need to querying the database to validate the user's credentials on every single request (faster app). Only at login the database is queried to validate the credentials.
 
 ## What's in a token?
-A JWT is simply an encoded string that contains some data to identify the user. 
+A JWT is simply an encoded string that contains some data to identify the user.
+
 ---
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
 

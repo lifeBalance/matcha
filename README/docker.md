@@ -53,7 +53,7 @@ docker compose restart
 ## Installing Composer
 For this project using [Composer](https://getcomposer.org/) was allowed, so one of the things I did wast to add it in a separate container in my `compose.yml` file.
 
-> Yes, a bit confusing: [Composer](https://getcomposer.org/) is a dependency manager for PHP, and `compose.yl` is the name of the file that [Docker compose]() uses to do its thing.
+> Yes, a bit confusing: [Composer](https://getcomposer.org/) is a dependency manager for PHP, and `compose.yl` is the name of the file that [Docker compose](https://docs.docker.com/compose/) (🤦🏻‍♂️) uses to do its thing.
 
 I installed mostly for its handy [autoloader](https://getcomposer.org/doc/articles/autoloader-optimization.md).
 
