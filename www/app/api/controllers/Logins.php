@@ -37,10 +37,18 @@ class Logins
             echo json_encode(["message" => "invalid authentication"]);
             exit;
         }
+        // Retrieve information for the payload
+        $payload = [
+            'user_id'   => $user->id,
+            'username'  => $user->username
+        ];
+
+        // Generate the token
+        $token = JWT::encode($payload);
 
         // Send response back
-        // echo json_encode($user); // 200 OK (default)
-        echo json_encode(['message' => 'successful authentication']); // 200 OK (default)
+        echo json_encode(['token'   => $token]); // 200 OK (default)
+        // echo json_encode(['message' => 'successful authentication']); // 200 OK (default)
     }
 
     // Read (GET): collection.

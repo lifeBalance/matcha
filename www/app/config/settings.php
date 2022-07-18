@@ -16,8 +16,8 @@ define('APPROOT', dirname(__DIR__));
 define('PUBLIC_DIR', $_SERVER['DOCUMENT_ROOT']);
 define('UPLOADS_DIR', PUBLIC_DIR . '/uploads');
 
-// For hashing passwords (Max. 32 hex characters == 16 bytes == 128 bit).
-define('SECRET_HASHING_KEY', 'BBB235ACCAC1FE7EE7328F3587FE9');
+// For hashing JWT signatures (256 bit).
+define('SECRET_JWT_KEY', '217A25432A462D4A614E645267556B58703273357538782F413F4428472B4B62');
 
 /**
  * Database settings

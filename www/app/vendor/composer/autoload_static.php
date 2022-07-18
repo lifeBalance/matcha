@@ -10,6 +10,7 @@ class ComposerStaticInit1e37e30ac2a4a240a581dcbe746a9e6c
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Database' => __DIR__ . '/../..' . '/core/Database.php',
         'Home' => __DIR__ . '/../..' . '/controllers/Home.php',
+        'JWT' => __DIR__ . '/../..' . '/core/JWT.php',
         'Logins' => __DIR__ . '/../..' . '/api/controllers/Logins.php',
         'Router' => __DIR__ . '/../..' . '/core/Router.php',
         'User' => __DIR__ . '/../..' . '/api/models/User.php',

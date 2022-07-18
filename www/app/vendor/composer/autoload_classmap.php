@@ -9,6 +9,7 @@ return array(
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Database' => $baseDir . '/core/Database.php',
     'Home' => $baseDir . '/controllers/Home.php',
+    'JWT' => $baseDir . '/core/JWT.php',
     'Logins' => $baseDir . '/api/controllers/Logins.php',
     'Router' => $baseDir . '/core/Router.php',
     'User' => $baseDir . '/api/models/User.php',
