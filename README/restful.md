@@ -1,24 +1,25 @@
 # A RESTful API
 <div>
-<p style="float: left; padding-right: 2em; height: 10em"><img src="./images/soap.jpeg" /></p>
+<img style="float: right; padding: 1em; max-width: 33%" src="./images/soap.jpeg" />
 
 There are a couple of different approaches when building a web API:
 
+* [SOAP](https://en.wikipedia.org/wiki/SOAP) (🧼), which uses [XML](https://en.wikipedia.org/wiki/XML) for the payloads and [XML validation](https://en.wikipedia.org/wiki/XML_validation) to ensure structural message integrity (I wouldn't touch it with a stick).
 * [REST](https://en.wikipedia.org/wiki/Representational_state_transfer), which is the main choice for SPAs, and the one that we'll follow, as the good [RESTafarians](https://en.wiktionary.org/wiki/RESTafarian) we are.
-* [SOAP](https://en.wikipedia.org/wiki/SOAP), which uses [XML](https://en.wikipedia.org/wiki/XML) for the payloads and [XML validation](https://en.wikipedia.org/wiki/XML_validation) to ensure structural message integrity.
-</div>
 
-A **RESTful API** is a web API compliant with the REST architectural style (REST is an acronym of **REpresentational State Transfer**). Requests against REST APIs are made via [HTTP](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol), using some of the the [HTTP request methods](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods). There are a bunch of such methods, but RESTful APIs only need to use 4 of them:
+<img style="float: left; padding: 1em; max-width: 25%" src="./images/restafarian.jpeg" />
 
-<p style="float: left; padding-right: 2em ; height: 10em"><img src="./images/restafarian.jpeg" /></p>
+A **RESTful API** is a web API compliant with the REST architectural style (REST is an acronym of **REpresentational State Transfer**). Requests against a RESTful API are handled according to the **endpoint** receiving the request and the [HTTP](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol) method used. There are a bunch of [HTTP request methods](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol#Request_methods), but RESTful APIs only need to use 4 of them:
 
 * `PUT` to **create** a resource.
 * `GET` to **read** a resource.
 * `PUT` to **update** a resource.
 * `DELETE` to **delete** a resource.
 
+</div>
+
 ## CRUD
-These small set of basic operations (known as [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete) are enough to interact with the data stored in the server. Even though this data can be stored in simple text files, [document databases](https://en.wikipedia.org/wiki/Object_database), etc, when using a [relational database](https://en.wikipedia.org/wiki/Relational_database), each of the letters in the CRUD acronym maps to an [SQL](https://en.wikipedia.org/wiki/SQL) operation:
+These small set of basic operations (known as [CRUD](https://en.wikipedia.org/wiki/Create,_read,_update_and_delete)) should be enough to handle all the interactions with the data stored in the server. Even though this data can be stored in simple text files, [document databases](https://en.wikipedia.org/wiki/Object_database), etc, when using a [relational database](https://en.wikipedia.org/wiki/Relational_database), each of the letters in the CRUD acronym maps to an [SQL](https://en.wikipedia.org/wiki/SQL) operation:
 
 * **Create** maps to the [INSERT](https://en.wikipedia.org/wiki/Insert_(SQL)) statement.
 * **Read** maps to [SELECT](https://en.wikipedia.org/wiki/Select_(SQL)).
