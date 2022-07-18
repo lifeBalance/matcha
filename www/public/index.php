@@ -1,4 +1,6 @@
 <?php
+// declare(strict_types = 1);  // Enable strict types (Not just hinting)
+
 // App bootstrapping (The APPROOT global is not defined yet!)
 require_once dirname(__DIR__) . '/app/config/bootstrap.php';
 

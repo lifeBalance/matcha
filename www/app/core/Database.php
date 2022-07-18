@@ -21,7 +21,7 @@ class Database
                                         DB_OPTS);
             } catch(PDOException $e){
                 if ($e->getCode() == 1049)  // Code 1049: DB does not exist.
-                    $dbh = setup_db();      // Run script to set up database
+                    self::$conn = db_setup();      // Run script to set up database
             }
         }
         return self::$conn;

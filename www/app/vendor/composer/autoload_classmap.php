@@ -11,6 +11,5 @@ return array(
     'Home' => $baseDir . '/controllers/Home.php',
     'Logins' => $baseDir . '/api/controllers/Logins.php',
     'Router' => $baseDir . '/core/Router.php',
-    'Test' => $baseDir . '/api/controllers/Test.php',
     'User' => $baseDir . '/api/models/User.php',
 );

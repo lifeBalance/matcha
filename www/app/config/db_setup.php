@@ -1,6 +1,6 @@
 <?php
 
-function setup_db()
+function db_setup()
 {
     try {
         $dbh = new PDO( DB_DSN,
