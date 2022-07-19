@@ -69,15 +69,17 @@ $header = base64urlEncode(json_encode([
 ]));
 
 $payload = base64urlEncode(json_encode([
-    'user_id' => '69',
-    'username' => 'Bob'
+    'sub'   => '69',
+    'email' => 'bob@gmail.com'
 ]));
 
 $header = base64urlEncode($header);
 $payload = base64urlEncode($payload);
 ```
 
-In the code above we are encoding the header and payload as JSON strings before encoding them in [base64url](https://en.wikipedia.org/wiki/Base64#URL_applications). For the payload claims we kept it simple, but it's worth mentioning here that using sensitive data here is not a good practice (if someone gets ahold of our private key, they'd have a way of decoding our tokens and gain access to that sensitive intel).
+In the code above we are encoding the header and payload as JSON strings before encoding them in [base64url](https://en.wikipedia.org/wiki/Base64#URL_applications). For the payload [claims](https://auth0.com/docs/secure/tokens/json-web-tokens/json-web-token-claims) we kept it simple, but it's worth mentioning here that using sensitive data here is not a good practice (if someone gets ahold of our private key, they'd have a way of decoding our tokens and gain access to that sensitive intel).
+
+> Both `sub` (used for the **user id**) and `email` are **reserved claims** described in the [JWT standard](https://www.iana.org/assignments/jwt/jwt.xhtml#claims).
 
 ### The Signature
 For the signature we're gonna be using the algorithm that we set in the header, **HS256** which is [HMAC](https://en.wikipedia.org/wiki/HMAC) with [SHA-256](https://en.wikipedia.org/wiki/SHA-2). This is a a symmetric **keyed** hashing algorithm, so we're gonna need to create a key. That could easily get done using any of the onlines **encryption key generator** such as https://www.allkeysgenerator.com/. We'll be needing a **256-bit** key, since that's the same size of the output string generated with **HS256**. The key should look something like this:
@@ -118,8 +120,33 @@ Once we have successfully validated the user's credentials and generated a token
 
 <img align="left" width="25%" src="./images/just-do-it.jpeg" />
 
-## User sets the token in her Requests
-Once we've generated and sent the JWT to the user, she'll have to send it back on each **request** in order to gain access to the resources in the API. The way she'll do that is by setting the HTTP [Authorization](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization) request header when she makes her [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) requests (or any other AJAX tingy). This header looks like this:
+## User receives the token
+Once we've generated and sent the JWT to the user in our response, where should she put it once she receives it? There are several options for this:
+
+1. [Session storage](https://developer.mozilla.org/en-US/docs/Web/API/Window/sessionStorage).
+
+    * The token will accessible only **one tab**.
+    * Once the tab is closed, the session data got destroyed. So it's not a valid option if we intend to add a feature like [remember me](https://www.phptutorial.net/php-tutorial/php-remember-me/).
+    * We have to **manually send the token** on each request.
+    * Susceptible to [XSS attacks](https://en.wikipedia.org/wiki/Cross-site_scripting).
+
+2. [Local storage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage).
+
+    * The token will accessible in **multiple tabs**.
+    * It provides persistence across **page refreshes**. 
+    * We have to **manually send the token** on each request.
+    * Susceptible to [XSS attacks](https://en.wikipedia.org/wiki/Cross-site_scripting).
+    * [Auth0](https://auth0.com/docs/secure/security-guidance/data-security/token-storage#browser-local-storage-scenarios) says it's aight when used along with token expiration.
+
+3. [HTTP cookies](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies) (used with the `HttpOnly`  and `secure`).
+
+    * If we set the `SameSite=strict` we are protected against [CSRF](https://en.wikipedia.org/wiki/Cross-site_request_forgery).
+    * If we set the `HttpOnly` we are protected against [XSS attacks](https://en.wikipedia.org/wiki/Cross-site_scripting).
+    * The browser **automatically sends** the cookie on each request.
+
+4. [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API) is the to go option recommended by [Auth0](https://auth0.com/docs/secure/security-guidance/data-security/token-storage#browser-in-memory-scenarios).
+
+All these three options have pros and cons. We'll go into details about our choice in the front-end section. Regardless of the choice, the token is added to the **request** by setting the HTTP [Authorization](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization) request header when she makes her [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) requests (or any other AJAX tingy). This header looks like this:
 ```
 Authorization: <auth-scheme> <authorization-parameters>
 ```
@@ -130,28 +157,40 @@ Where:
 2. `<authorization-parameters>` stands for the token itself.
 
 ## Validating the token in the Requests
-The server must check that all requests to access resources in our server contain the token.
+When the user sends back the token on each **request**, be it **automatically** (with HttpOnly cookies) or **manually** (in the case of local storage), our **backend** must check that the token is included in the **request** (otherwise access to API resources won't be granted).
 
 <img align="left" width="25%" src="./images/show-me-token.jpeg" />
 
 We do that by accessing the value of `$_SERVER['HTTP_AUTHORIZATION']` and running on it a **validating function** that we'll explain a bit later.
 
-> If you find a problem when trying to access the value of the `Authorization` header in the [$_SERVER](https://www.php.net/reserved.variables.server) super global, read the next section.
+> If you find a problem when trying to access the value of the `Authorization` header in the [$_SERVER](https://www.php.net/reserved.variables.server) PHP super global, read the next section.
 
 ### Woops! Where's the Authorization Header
-If we try to access the token in the `Authorization` header mentioned above, you may find that is not present in the [$_SERVER](https://www.php.net/reserved.variables.server) super global (under the `HTTP_AUTHORIZATION` key). This is an **issue** with the [Apache Web Server](https://httpd.apache.org/), which removes the header before PHP can read it. We can solve it in two different ways:
+It may well be, that the `Authorization` header we just mentioned is not present in the [$_SERVER](https://www.php.net/reserved.variables.server) super global (under the `HTTP_AUTHORIZATION` key). This is an **issue** with the [Apache Web Server](https://httpd.apache.org/) (💩), which removes the header before PHP can read it. To solve that, we can take two different approaches:
 
-* Using the [apache_request_headers](https://www.php.net/manual/en/function.apache-request-headers.php) to gain access to **all** of the HTTP request headers.
+* Using the [apache_request_headers](https://www.php.net/manual/en/function.apache-request-headers.php) PHP function, that returns an array with **all** of the HTTP request headers.
 * Configure **Apache** so that the `Authorization` header is available in PHP. We could set this configuration in the virtual hosts file for our site, or in our `.htaccess` file.
 
 Since we're already using an `.htacess` file for [URL rewriting](https://en.wikipedia.org/wiki/Rewrite_engine), we'll add there the following line at the bottom of the file:
 ```
-SenEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
 ```
 
-Once we've added the line above, we'll be able of accessing the token sent by the user in each request; it'll be available under `$_SERVER['HTTP_AUTHORIZATION']`.
+Once we've added the line above, we'll be able of accessing the token under the `$_SERVER['HTTP_AUTHORIZATION']` header of each request.
 
-> Note that this value will be set **anyways**, so if a user's request doesn't set the header, `$_SERVER['HTTP_AUTHORIZATION']` will contain an **empty string**.
+> Note that, with this setting in place, the header value will be set **anyways**, so if a user's request doesn't set the header, `$_SERVER['HTTP_AUTHORIZATION']` will contain an **empty string**.
+
+## Decoding tokens
+Ok, so let's say we're receiving the tokens in the user's requests. We need a way to **decode** them in order to:
+
+* Verify that they are **valid tokens** issued by us.
+* Determine the user that concrete token identifies, so that we can give her access to the pertinent resources.
+
+For this task we'll write a method that basically will run in reverse the steps we took to create the token (check the code for details). The decoding function will:
+
+1. Split the token into its three components: header, payload and signature.
+2. Recalculate a new signature with the first two components.
+3. Compare the new signature with the third component (the signature included in the token). If they're the same, we'll return the **decoded payload**, otherwise `false`.
 
 ## Expiring tokens
 

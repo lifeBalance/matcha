@@ -39,8 +39,8 @@ class Logins
         }
         // Retrieve information for the payload
         $payload = [
-            'user_id'   => $user->id,
-            'username'  => $user->username
+            'sub'   => $user->id,
+            'email' => $user->email
         ];
 
         // Generate the token
@@ -49,11 +49,27 @@ class Logins
         // Send response back
         echo json_encode(['token'   => $token]); // 200 OK (default)
         // echo json_encode(['message' => 'successful authentication']); // 200 OK (default)
+        // echo json_encode($user); // 200 OK (default)
     }
 
     // Read (GET): collection.
     public function index($args)
     {
+        // For testing the JWT::decode function
+        if (preg_match("/^Bearer\s+(?<token>.+)$/",
+                        $_SERVER['HTTP_AUTHORIZATION'],
+                        $matches) == false)
+        {
+            http_response_code(400);    // Bad Request
+            echo json_encode(['message' => 'incomplete authorization header']);
+            die;
+        }
+        $payload = JWT::decode($matches['token']);
+        echo json_encode([
+            'user_id' => $payload['sub'],
+            'email' => $payload['email']
+        ]);
+        // echo json_encode($_SERVER['HTTP_AUTHORIZATION']);
     }
 
     // Read (GET): one.
