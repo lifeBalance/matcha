@@ -118,7 +118,7 @@ Once we have our **token**, it's a good idea to check out that our result matche
 ## Sending a token in the Response
 Once we have successfully validated the user's credentials and generated a token, we just have to send it back to the user. There's not much we can explain here; just send it :-)
 
-<img align="left" width="25%" src="./images/just-do-it.jpeg" />
+<img width="50%" src="./images/just-do-it.jpeg" />
 
 ## User receives the token
 Once we've generated and sent the JWT to the user in our response, where should she put it once she receives it? There are several options for this:
@@ -159,7 +159,7 @@ Where:
 ## Validating the token in the Requests
 When the user sends back the token on each **request**, be it **automatically** (with HttpOnly cookies) or **manually** (in the case of local storage), our **backend** must check that the token is included in the **request** (otherwise access to API resources won't be granted).
 
-<img align="left" width="25%" src="./images/show-me-token.jpeg" />
+<img width="50%" src="./images/show-me-token.jpeg" />
 
 We do that by accessing the value of `$_SERVER['HTTP_AUTHORIZATION']` and running on it a **validating function** that we'll explain a bit later.
 
@@ -191,6 +191,8 @@ For this task we'll write a method that basically will run in reverse the steps 
 1. Split the token into its three components: header, payload and signature.
 2. Recalculate a new signature with the first two components.
 3. Compare the new signature with the third component (the signature included in the token). If they're the same, we'll return the **decoded payload**, otherwise `false`.
+
+> To test the decoding function, send a `POST` request to the `/api/login` with your credentials. Copy the token and send it in the header of a `GET` request to the same endpoint ([Postman](https://www.postman.com/) really comes in handy here).
 
 ## Expiring tokens
 
