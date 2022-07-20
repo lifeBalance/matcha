@@ -77,7 +77,7 @@ $header = base64urlEncode($header);
 $payload = base64urlEncode($payload);
 ```
 
-In the code above we are encoding the header and payload as JSON strings before encoding them in [base64url](https://en.wikipedia.org/wiki/Base64#URL_applications). For the payload [claims](https://auth0.com/docs/secure/tokens/json-web-tokens/json-web-token-claims) we kept it simple, but it's worth mentioning here that using sensitive data here is not a good practice (if someone gets ahold of our private key, they'd have a way of decoding our tokens and gain access to that sensitive intel).
+In the code above we are encoding the header and payload as JSON strings before encoding them in [base64url](https://en.wikipedia.org/wiki/Base64#URL_applications). For the payload [claims](https://auth0.com/docs/secure/tokens/json-web-tokens/json-web-token-claims) we kept it simple, but it's worth mentioning here that using sensitive data here is not a good practice since the **payload** is just base64url **encoded** but **not encrypted** (if someone gets ahold of the token, it's easy to decode the token and gain access to that sensitive intel).
 
 > Both `sub` (used for the **user id**) and `email` are **reserved claims** described in the [JWT standard](https://www.iana.org/assignments/jwt/jwt.xhtml#claims).
 
@@ -115,6 +115,8 @@ Once we have our **token**, it's a good idea to check out that our result matche
 
 > An error I was getting at the bottom of the page was **Invalid Signature**. It was due to leaving a **trailing comma** in the PHP **associative array** that I was using for the **payload** and **header** (maybe it was generating different JSON).
 
+The whole point of the signature is to ensure that the token has been issued by us. If someone steals some token, and modify the payload (easy to do) with the info of another user (in order to gain access to her resources) our decoding function will detect that the signature doesn't match.
+
 ## Sending a token in the Response
 Once we have successfully validated the user's credentials and generated a token, we just have to send it back to the user. There's not much we can explain here; just send it :-)
 
@@ -146,7 +148,11 @@ Once we've generated and sent the JWT to the user in our response, where should 
 
 4. [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API) is the to go option recommended by [Auth0](https://auth0.com/docs/secure/security-guidance/data-security/token-storage#browser-in-memory-scenarios).
 
-All these three options have pros and cons. We'll go into details about our choice in the front-end section. Regardless of the choice, the token is added to the **request** by setting the HTTP [Authorization](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization) request header when she makes her [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) requests (or any other AJAX tingy). This header looks like this:
+All these options have pros and cons. We'll go into details about our choice in the front-end section. Regardless of the choice, the token must be added to the **request** by setting the HTTP [Authorization](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization) request be it **automatically** (with HttpOnly cookies) or **manually** (in the case of local storage) header.
+
+> If the token has to be added manually, a good place to do so is when setting the header of the [fetch](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API) requests (or any other AJAX tingy).
+
+This header looks like this:
 ```
 Authorization: <auth-scheme> <authorization-parameters>
 ```
@@ -157,11 +163,11 @@ Where:
 2. `<authorization-parameters>` stands for the token itself.
 
 ## Validating the token in the Requests
-When the user sends back the token on each **request**, be it **automatically** (with HttpOnly cookies) or **manually** (in the case of local storage), our **backend** must check that the token is included in the **request** (otherwise access to API resources won't be granted).
+Once a user sends a **request** to access the API, our **backend** must check that the token is included in the request headers (otherwise access to API resources won't be granted).
 
 <img width="50%" src="./images/show-me-token.jpeg" />
 
-We do that by accessing the value of `$_SERVER['HTTP_AUTHORIZATION']` and running on it a **validating function** that we'll explain a bit later.
+In PHP, we can access the `Authorization` header under `$_SERVER['HTTP_AUTHORIZATION']`. Then we have to **decode** it using a that we'll explain a bit later.
 
 > If you find a problem when trying to access the value of the `Authorization` header in the [$_SERVER](https://www.php.net/reserved.variables.server) PHP super global, read the next section.
 
@@ -181,9 +187,9 @@ Once we've added the line above, we'll be able of accessing the token under the 
 > Note that, with this setting in place, the header value will be set **anyways**, so if a user's request doesn't set the header, `$_SERVER['HTTP_AUTHORIZATION']` will contain an **empty string**.
 
 ## Decoding tokens
-Ok, so let's say we're receiving the tokens in the user's requests. We need a way to **decode** them in order to:
+Ok, so let's say that somehow, we're reading the tokens in the user's requests. We need a way to **decode** them in order to:
 
-* Verify that they are **valid tokens** issued by us.
+* Verify that they are **valid tokens**, meaning a proper formatted base64url string, encoded using our **secret key**.
 * Determine the user that concrete token identifies, so that we can give her access to the pertinent resources.
 
 For this task we'll write a method that basically will run in reverse the steps we took to create the token (check the code for details). The decoding function will:
@@ -192,11 +198,25 @@ For this task we'll write a method that basically will run in reverse the steps 
 2. Recalculate a new signature with the first two components.
 3. Compare the new signature with the third component (the signature included in the token). If they're the same, we'll return the **decoded payload**, otherwise `false`.
 
-> To test the decoding function, send a `POST` request to the `/api/login` with your credentials. Copy the token and send it in the header of a `GET` request to the same endpoint ([Postman](https://www.postman.com/) really comes in handy here).
+> To test the decoding function, send a `POST` request to the `/api/login` with your credentials. Copy the token you receive in the **response** and send it back in the header of a `GET` request to the same endpoint ([Postman](https://www.postman.com/) really comes in handy here). That endpoint will return the decoded payload contained in the token.
 
 ## Expiring tokens
+Imagine one of the following situations:
 
-## Refresh tokens and Access tokens
+* One of our API users downgrade her **gold subscription** to a standard one; if she keeps using the old token, she still would have access to the resources available to golden members.
+* A user cancels her subscription entirely but keeps using her old token.
+* If a user updates her information in the database, and our token includes claims with some of that updated intel, we would end up with tokens that contain outdated data.
+
+A solution to this issue would be to update the **secret key** that we use for generating our tokens. The problem with that is that **all users** would have to log in again to get valid tokens (generated with the new key). A better solution is to set an **expiry date** for our tokens; for this to work, now everytime a user logs in, we'll be generating two tokens:
+
+* An **access token** with a short expiry date.
+* A **refresh token** with a much longer life span.
+
+> Issuing just a short-lived **access token** wouldn't be user-friendly either, since we'd be making everybody to log in after their tokens expire.
+
+Once an **access token** expires, the user can use the **refresh token** to get a new **access token**. So our front end application will have to keep track of when the access token expires, then make a request to a **refresh token endpoint** in order to get a new **access token**. In the backend of this endpoint, we'll check that the refresh token is valid, we have to check the **database** to check if the user is still authorized, her subscription, etc, and will issue a new **access token** with fresh information in the payload.
+
+## Adding an Expiry Claim to the Access Token
 
 ---
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
