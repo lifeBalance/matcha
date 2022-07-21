@@ -1,18 +1,27 @@
-# Authentication: JSON Web Tokens
-A common authentication mechanism used in the realm of [SPAs]() are [JSON Web Tokens](https://en.wikipedia.org/wiki/JSON_Web_Token) (or JWT for short). This type of authentication goes as follows:
+# JSON Web Tokens
+A common authentication/authorization mechanism used in the realm of [SPAs](https://en.wikipedia.org/wiki/Single-page_application) are [JSON Web Tokens](https://en.wikipedia.org/wiki/JSON_Web_Token) (or JWT for short). The basic flow of the thing goes likes this:
 
-* A user sends a **request**, containing her credentials, to a **log in** endpoint.
+* A user sends a **request**, containing her credentials, to a **log in** endpoint (authentication).
 * If the credentials are valid, the servers sends back a **response** containing a **JWT**.
 * The JWT must be saved **locally**, in the user's browser (more about this later).
-* From there on, user's request will include the JWT received when she logged in.
+* From there on, the user's **requests** will include the JWT received when she logged in. Decoding this token (in the backend) on each request, it's what will **authorize** the user access to resources (no need to maintain [sessions](https://en.wikipedia.org/wiki/Session_(computer_science))).
 
-> JWT authentication is an **alternative** to the traditional approach of creating a **session** in the server and returning a **cookie**.
+> JWT authentication is an **alternative** to the traditional approach of creating a **session** in the server and setting a **cookie** with the session id.
 
 JWT can be described as a [stateless](https://en.wikipedia.org/wiki/Stateless_protocol) authentication mechanism, as the user state is never saved in server memory. The server's protected routes will check for a valid JWT in the Authorization header, and if it's present, the user will be allowed to access protected resources.
 
 > Another common authentication method used by APIs is known as **API key authentication**. Here, the user's send her **API key** on every request; once the request is received, the database is queried to check if the key is valid.
 
 Compared to **API key authentication**, JWT authentication eliminates the need for querying the database on every single request (faster app). Only at login the database is queried to validate the credentials.
+
+## Authentication vs Authorization
+Authentication and authorization are popular terms in modern computer systems that often confuse people. Both of these terms are related to security; often, people think about them (and even use them) interchangeably. However, they have different meanings and applications.
+
+* [Authorization](https://en.wikipedia.org/wiki/Authorization) consists in specifying access rights/privileges to resources available to certain users or devices. A real life example would be having a ticket to attend an event, such as a movie. Having the ticket authorize us to enter the movie theater to watch the movie.
+
+* [Authentication](https://en.wikipedia.org/wiki/Authentication) is the process of confirming the identity of a user or a device. A real life example of authentication would be showing our passport or other id to the woman in the bank.
+
+> Another example would be taking a flight somewhere. Once at the airport, we have to show our **passport** (authentication) in order to get a **boarding pass** (authorization) that gives us access to the plane.
 
 ## What's in a token?
 Once an authentication **request** has been validated, we can generate a **token** and return it as a **response**. A JWT (from now on, we'll refer to it simply as token) is simply a long string of text that contains some data to identify the user. For example:
@@ -212,11 +221,104 @@ A solution to this issue would be to update the **secret key** that we use for g
 * An **access token** with a short expiry date.
 * A **refresh token** with a much longer life span.
 
-> Issuing just a short-lived **access token** wouldn't be user-friendly either, since we'd be making everybody to log in after their tokens expire.
+> Issuing just a short-lived **access token** wouldn't be user-friendly either, since we'd be making everybody to log in again every time their tokens expire.
 
-Once an **access token** expires, the user can use the **refresh token** to get a new **access token**. So our front end application will have to keep track of when the access token expires, then make a request to a **refresh token endpoint** in order to get a new **access token**. In the backend of this endpoint, we'll check that the refresh token is valid, we have to check the **database** to check if the user is still authorized, her subscription, etc, and will issue a new **access token** with fresh information in the payload.
+Once an **access token** expires, the user can use the **refresh token** to get a new **access token**. So our front end application will have to keep track of when the access token expires, then make a request to a **refresh token endpoint** in order to get a new **access token**. In the backend of this endpoint, once we've checked that the refresh token is valid, we have to check the **database** to check if the user is still authorized, her subscription, etc, and will issue a new **access token** with fresh information in the payload.
 
 ## Adding an Expiry Claim to the Access Token
+To add an expiry date to our token we just have to add the [exp claim](https://datatracker.ietf.org/doc/html/rfc7519#section-4.1.4) to the token's **payload** before encoding it. The value of this claim is a [Unix timestamp](https://en.wikipedia.org/wiki/Unix_time), so we could use the handy [time](https://www.php.net/manual/en/function.time.php) PHP function:
+```php
+$payload = [
+    'sub'   => '69',
+    'email' => 'bob@gmail.com',
+    'exp' => time() + 60 * 5,
+];
+```
+
+With that new piece of information in place, once we **decode** the token we'd check that the value of `$payload['exp']` is less than `time()` (meaning that the token has not expired yet).
+
+## Issue a Refresh Token when Logging in
+As we mentioned before, whenever a user logs in with valid credentials, she should receive two tokens:
+
+* An **access token** with a short expiry date (typically **several minutes**). 
+* A **refresh token** with a longer expiry date (typically **several days**).
+
+When a user sends a request to access an API resource, both of her tokens must be submitted. If the backend detects that the **access token** is expired, then the **refresh token** (submitted also in the request) must be checked: If it's still active, it should be used to generate a new **access token**.
+
+> Usually **access tokens** may contain way more information than **refresh tokens**. Just remember not to add sensitive information in the first ones.
+
+Typically, the payload of a **refresh token** is:
+```php
+$payload = [
+    'sub'   => '69',
+    'exp' => time() + 60 * 60 * 5
+];
+```
+## The Refresh Token flow
+The following diagram is included as part of the [OAuth 2.0 spec](https://datatracker.ietf.org/doc/html/rfc6749) to describe the [refresh token flow](https://datatracker.ietf.org/doc/html/rfc6749#section-1.5):
+
+```
++--------+                                           +---------------+
+|        |--(A)------- Authorization Grant --------->|               |
+|        |                                           |               |
+|        |<-(B)----------- Access Token -------------|               |
+|        |               & Refresh Token             |               |
+|        |                                           |               |
+|        |                            +----------+   |               |
+|        |--(C)---- Access Token ---->|          |   |               |
+|        |                            |          |   |               |
+|        |<-(D)- Protected Resource --| Resource |   | Authorization |
+| Client |                            |  Server  |   |     Server    |
+|        |--(E)---- Access Token ---->|          |   |               |
+|        |                            |          |   |               |
+|        |<-(F)- Invalid Token Error -|          |   |               |
+|        |                            +----------+   |               |
+|        |                                           |               |
+|        |--(G)----------- Refresh Token ----------->|               |
+|        |                                           |               |
+|        |<-(H)----------- Access Token -------------|               |
++--------+           & Optional Refresh Token        +---------------+
+  
+  
+  (A)  The client requests an access token by authenticating with the
+       authorization server and presenting an authorization grant.
+  
+  (B)  The authorization server authenticates the client and validates
+       the authorization grant, and if valid, issues an access token
+       and a refresh token.
+  
+  (C)  The client makes a protected resource request to the resource
+       server by presenting the access token.
+  
+  (D)  The resource server validates the access token, and if valid,
+       serves the request.
+  
+  (E)  Steps (C) and (D) repeat until the access token expires.  If the
+       client knows the access token expired, it skips to step (G);
+       otherwise, it makes another protected resource request.
+  
+  (F)  Since the access token is invalid, the resource server returns
+       an invalid token error.
+  
+  (G)  The client requests a new access token by authenticating with
+       the authorization server and presenting the refresh token.  The
+       client authentication requirements are based on the client type
+       and on the authorization server policies.
+  
+  (H)  The authorization server authenticates the client and validates
+       the refresh token, and if valid, issues a new access token (and,
+       optionally, a new refresh token).
+
+```
+
+In our case, the **authorization server** and the **resource server** will be in the same machine.
+
+## Silent Refresh
+According to the diagram above, when we try to access a resource in the server with an **expired access token**, we should be getting an `Invalid token error` (F). Then the client have to make another request to receive a new **access token**, and optionally an updated **refresh token** (G and H). All good, but how do we wire that up in our SPA in practice?
+
+A way to do it is having our front-end code using the aforementioned error to trigger a **request** to a `/refresh-token` **endpoint**. Then, in the backend, and assuming that the received **refresh token** is valid, we should send a **response** with the new **access token**. That request would take place **silently**, without any user intervention.
+
+
 
 ---
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]

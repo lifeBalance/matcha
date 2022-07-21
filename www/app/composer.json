@@ -2,9 +2,10 @@
     "autoload": {
         "classmap": [
             "core",
+            "auth",
+            "controllers",
             "api/controllers",
-            "api/models",
-            "controllers"
+            "api/models"
         ]
     }
 }

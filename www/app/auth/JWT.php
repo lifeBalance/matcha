@@ -5,7 +5,7 @@ class JWT
     {
         $header = [
             'alg' => 'HS256',
-            'typ' => 'JWT'
+            'typ' => 'JWT',
         ];
         // Encode the header (JSON + base64url)
         $header = self::base64UrlEncode(json_encode($header));
@@ -32,7 +32,7 @@ class JWT
         if (preg_match("/^(?<header>.+)\.(?<payload>.+)\.(?<signature>.+)$/", 
                         $token,
                         $components) == false)
-            return false;
+            return false;// throw InvalidArgumentException
         // Calculate a new signature based on the token's first two components.
         $signature =  hash_hmac(
             'sha256',
@@ -43,9 +43,11 @@ class JWT
         $signature = self::base64UrlEncode($signature);
         // Compare the new signature with the original signature.
         if (!hash_equals($signature, $components['signature']))
-            return false;
+            return false;// throw InvalidSignatureException
         // Return the decoded payload as an associative array.
-        return json_decode(self::base64UrlDecode($components['payload']), true);
+        $payload = json_decode(self::base64UrlDecode($components['payload']), true);
+        // check for expiry date in Auth::authorize
+        return $payload;
     }
 
     private static function base64UrlEncode(string $str)

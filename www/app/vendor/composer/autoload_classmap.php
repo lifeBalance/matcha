@@ -6,11 +6,14 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Auth' => $baseDir . '/auth/Auth.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Database' => $baseDir . '/core/Database.php',
     'Home' => $baseDir . '/controllers/Home.php',
-    'JWT' => $baseDir . '/core/JWT.php',
-    'Logins' => $baseDir . '/api/controllers/Logins.php',
+    'JWT' => $baseDir . '/auth/JWT.php',
+    'Login' => $baseDir . '/controllers/Login.php',
+    'Refresh' => $baseDir . '/controllers/Refresh.php',
     'Router' => $baseDir . '/core/Router.php',
     'User' => $baseDir . '/api/models/User.php',
+    'Users' => $baseDir . '/api/controllers/Users.php',
 );

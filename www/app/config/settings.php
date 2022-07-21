@@ -19,6 +19,10 @@ define('UPLOADS_DIR', PUBLIC_DIR . '/uploads');
 // For hashing JWT signatures (256 bit).
 define('SECRET_JWT_KEY', '217A25432A462D4A614E645267556B58703273357538782F413F4428472B4B62');
 
+// Expiry dates of tokens
+define('REFRESH_TOKEN_EXP',  60 * 60 * 5);  // 5 HOURS
+define('ACCESS_TOKEN_EXP',  30);        // 5 MIN
+
 /**
  * Database settings
  */
