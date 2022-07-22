@@ -28,6 +28,8 @@ class Auth
                 http_response_code(401);// Unauthorized
                 echo json_encode(['error' => 'Invalid token error']);
                 die;
+            } else {
+                return $payload;
             }
         }
     }

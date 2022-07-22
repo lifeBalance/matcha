@@ -3,9 +3,10 @@
         "classmap": [
             "core",
             "auth",
+            "models",
             "controllers",
-            "api/controllers",
-            "api/models"
+            "api/models",
+            "api/controllers"
         ]
     }
 }

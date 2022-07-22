@@ -13,6 +13,7 @@ return array(
     'JWT' => $baseDir . '/auth/JWT.php',
     'Login' => $baseDir . '/controllers/Login.php',
     'Refresh' => $baseDir . '/controllers/Refresh.php',
+    'RefreshToken' => $baseDir . '/models/RefreshToken.php',
     'Router' => $baseDir . '/core/Router.php',
     'User' => $baseDir . '/api/models/User.php',
     'Users' => $baseDir . '/api/controllers/Users.php',

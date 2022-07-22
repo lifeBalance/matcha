@@ -99,7 +99,7 @@ class Router {
 
     private function respondMethodNotAllowed($allowed_methods)
     {
-        http_response_code(405);
+        http_response_code(405); // 405 Method Not Allowed
         header("Allow: $allowed_methods");
     }
 }

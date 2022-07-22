@@ -39,3 +39,10 @@ VALUES
         '$2y$10$Fza7OXvlIuDKsxNHtG/zuO7.BKlaZyRy.KVRpK0nA3wxhjav3LVHK',
         1
     );
+
+CREATE TABLE IF NOT EXISTS `refresh_tokens` (
+    token_hash VARCHAR(64) NOT NULL,
+    expires_at INT UNSIGNED NOT NULL,
+    PRIMARY KEY(token_hash),
+    INDEX(expires_at)
+);
