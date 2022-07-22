@@ -13,6 +13,7 @@ class ComposerStaticInit1e37e30ac2a4a240a581dcbe746a9e6c
         'Home' => __DIR__ . '/../..' . '/controllers/Home.php',
         'JWT' => __DIR__ . '/../..' . '/auth/JWT.php',
         'Login' => __DIR__ . '/../..' . '/controllers/Login.php',
+        'Logout' => __DIR__ . '/../..' . '/controllers/Logout.php',
         'Refresh' => __DIR__ . '/../..' . '/controllers/Refresh.php',
         'RefreshToken' => __DIR__ . '/../..' . '/models/RefreshToken.php',
         'Router' => __DIR__ . '/../..' . '/core/Router.php',

@@ -12,6 +12,7 @@ return array(
     'Home' => $baseDir . '/controllers/Home.php',
     'JWT' => $baseDir . '/auth/JWT.php',
     'Login' => $baseDir . '/controllers/Login.php',
+    'Logout' => $baseDir . '/controllers/Logout.php',
     'Refresh' => $baseDir . '/controllers/Refresh.php',
     'RefreshToken' => $baseDir . '/models/RefreshToken.php',
     'Router' => $baseDir . '/core/Router.php',
