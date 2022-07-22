@@ -12,6 +12,18 @@ services:
     ports:
       - 80:80
       - 443:443
+    labels:
+      ofelia.enabled: "true"
+      ofelia.job-exec.app.schedule: "@every 24h"
+      ofelia.job-exec.app.command: "/usr/local/bin/php /var/www/html/app/config/delete_expired_refresh_tokens.php"
+  ofelia:
+    image: mcuadros/ofelia:latest
+    restart: always
+    depends_on:
+      - php-apache
+    command: daemon --docker
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:r
   composer:
     image: composer:2.3.9
     command: ['composer', 'dump-autoload']

@@ -320,7 +320,7 @@ When the `/refresh-token` receives the **request**, the **refresh token** has to
 ### Refresh Token Rotation
 **Refresh tokens** have a long lifetime. If they are valid, clients can use them to obtain new **access tokens** while they're not expired. If for some reason an attacker gets ahold of a user's **refresh token**, he could use it to generate **access tokens** for as long as it doesn't expire.
 
-Refresh token rotation is a technique to minimize the effects of a leak of tokens. Using this technique, when a new **access token** is requested with the refresh token, a new refresh token is also returned and the old one is invalidated. This way the attacker cannot use the stolen token anymore, minimizing the impact of the attack.
+[Refresh token rotation](https://auth0.com/docs/secure/tokens/refresh-tokens/refresh-token-rotation) is a technique to minimize the effects of a leak of tokens. Using this technique, when a new **access token** is issued to replace an expired one, a **new refresh token** is also returned and the old one is invalidated. This way the attacker cannot use the stolen token anymore, minimizing the impact of the attack.
 
 ### Store the Refresh Token in the Database
 To support **refresh token rotation**, we can store the **refresh tokens** in the database so that when the `/refresh-token` endpoint receives a request, before issuing a new **access token**, it consults the database to check that the **refresh token** is valid.
@@ -361,7 +361,8 @@ We can test out this script by attaching a shell to our Docker container and exe
 ```
 php delete_expired_refresh_tokens.php
 ```
-Then I added a new Docker container to my setup, with the only mission of running the script above with `cron`.
+
+Then I added a new Docker container named [ofelia](https://github.com/mcuadros/ofelia) to my setup. It's a **job scheduler** writen in Go that works great with Docker containers.
 
 ---
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
