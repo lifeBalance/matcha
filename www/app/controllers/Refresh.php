@@ -28,6 +28,15 @@ class Refresh
                 $user = $this->userModel->getById($user_id);
                 // If there's a user with that ID
                 if ($user) {
+                    // Check the refresh token is in the white list
+                    $whitelisted = $this->refreshModel->token_exists($token);
+                    if (!$whitelisted) {
+                        http_response_code(400);
+                        echo json_encode([
+                            'message'   => 'invalid token (not in whitelist)'
+                        ]);
+                        exit ;
+                    }
                     // Generate tokens with new expiry dates
                     $access_token = JWT::encode([
                         'sub'   => $user->id,

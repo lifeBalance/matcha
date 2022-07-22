@@ -127,7 +127,7 @@ Once we have our **token**, it's a good idea to check out that our result matche
 The whole point of the signature is to ensure that the token has been issued by us. If someone steals some token, and modify the payload (easy to do) with the info of another user (in order to gain access to her resources) our decoding function will detect that the signature doesn't match.
 
 ## Sending a token in the Response
-Once we have successfully validated the user's credentials and generated a token, we just have to send it back to the user. There's not much we can explain here; just send it :-)
+Once we have successfully validated the user's credentials and generated a token, we need a way of sending it to the client. Later we'll go deeper about what's the best way to do that; for now you can just send it as a JSON string :-)
 
 <img width="50%" src="./images/just-do-it.jpeg" />
 

@@ -29,4 +29,16 @@ class RefreshToken
         $stmt->execute();
         return $stmt->rowCount();
     }
+
+    public function token_exists(string $token): array | false
+    {
+        $hash = hash_hmac('sha256', $token, SECRET_JWT_KEY);
+        $sql = 'SELECT *
+                FROM refresh_tokens
+                WHERE token_hash = :token_hash';
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':token_hash', $hash, PDO::PARAM_STR);
+        $stmt->execute();
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }
