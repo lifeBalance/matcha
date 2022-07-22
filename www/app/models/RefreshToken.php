@@ -30,6 +30,14 @@ class RefreshToken
         return $stmt->rowCount();
     }
 
+    public function deleteExpired (): int
+    {
+        $sql = 'DELETE FROM refresh_tokens
+                WHERE expires_at < UNIX_TIMESTAMP()';
+        $stmt = $this->conn->query($sql); 
+        return $stmt->rowCount();
+    }
+
     public function token_exists(string $token): array | false
     {
         $hash = hash_hmac('sha256', $token, SECRET_JWT_KEY);

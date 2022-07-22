@@ -352,6 +352,17 @@ In a SPA, if a user **logs out**, we'll have our front-end code simply delete bo
 
 If we wanted, we could create a `/logout` endpoint that would also place a **request** to the server, so that the current **refresh token** is removed from the database. This would improve the security of our application since we wouldn't have active **refresh tokens** lingering in the database (imagine an attacker steals a refresh token that belongs to a **logged out** user).
 
+## Script to remove expired Refresh Tokens from Database
+At this point, our app creates a new row in the database for refresh tokens when a user **logs in** and when they hit the `/refresh` endpoint. When they **log out** the current token is explicitely removed. But what if the user doesn't explicitely logs out from the app, her expired **refresh token** will stay in the database.
+
+> Keeping expired tokens in the database is not a security risk, but it's a good database optimization to delete them so the database doesn't fill up with expired tokens.
+
+We can test out this script by attaching a shell to our Docker container and executing:
+```
+php delete_expired_refresh_tokens.php
+```
+Then I added a new Docker container to my setup, with the only mission of running the script above with `cron`.
+
 ---
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
 
