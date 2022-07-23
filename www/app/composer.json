@@ -6,7 +6,8 @@
             "models",
             "controllers",
             "api/models",
-            "api/controllers"
+            "api/controllers",
+            "api/exceptions"
         ]
     }
 }

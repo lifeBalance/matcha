@@ -32,7 +32,8 @@ class JWT
         if (preg_match("/^(?<header>.+)\.(?<payload>.+)\.(?<signature>.+)$/", 
                         $token,
                         $components) == false)
-            return false;// throw InvalidArgumentException
+            // return false;
+            throw new InvalidArgumentException('invalid token format');
         // Calculate a new signature based on the token's first two components.
         $signature =  hash_hmac(
             'sha256',
@@ -43,7 +44,8 @@ class JWT
         $signature = self::base64UrlEncode($signature);
         // Compare the new signature with the original signature.
         if (!hash_equals($signature, $components['signature']))
-            return false;// throw InvalidSignatureException
+            // return false;
+            throw new InvalidSignatureException('invalid signature');
         // Return the decoded payload as an associative array.
         $payload = json_decode(self::base64UrlDecode($components['payload']), true);
         // check for expiry date in Auth::authorize

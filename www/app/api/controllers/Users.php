@@ -5,16 +5,27 @@ class Users
 
     public function __construct()
     {
+        set_exception_handler('ExceptionHandler::handleException');
+        set_error_handler('ErrorHandler::handleError');
         header('Content-Type: application/json; charset=UTF-8');
-        // here I would call code to authorize?
-        Auth::authorize($_SERVER['HTTP_AUTHORIZATION']);
+        try {
+            Auth::authorize($_SERVER['HTTP_AUTHORIZATION']);
+        } catch (ExpiredTokenException) {
+            http_response_code(401); // Unauthorized
+            echo json_encode(['error' => 'Invalid token error']);
+            die;
+        } catch (Exception $e) {
+            http_response_code(400); // Bad Request
+            echo json_encode(['error' => $e->getMessage()]);
+            die;
+        }
         $this->userModel = new User();
     }
 
     // Create (POST -> /api/users): For creating a user
     public function create()
     {
-        echo json_encode("creating new user");
+        echo json_encode("creating new user {$_POST['email']}");
     }
 
     // Read (GET): collection.

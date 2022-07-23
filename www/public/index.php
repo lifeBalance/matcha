@@ -1,5 +1,6 @@
 <?php
 // declare(strict_types = 1);  // Enable strict types (Not just hinting)
+// ini_set('display_errors', 'On');
 
 // App bootstrapping (The APPROOT global is not defined yet!)
 require_once dirname(__DIR__) . '/app/config/bootstrap.php';
