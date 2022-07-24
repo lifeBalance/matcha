@@ -1,12 +1,17 @@
 # Authorizing Access (backend)
-Once a user sends a **request** to access the API, our **backend** must check that the token is included in the request. Depending on how the tokens were stored client, there are several places where we have to look for the token in the request:
+Once a user sends a **request** to access the API, our **backend** must decode the token included in the request. Depending on the approach we took to store tokens on the client, there are several places where we have to look for the token in the request:
 
 * They may be in a [cookie]().
 * They may also be in the request headers.
 
-> If a token is not somehow included in the **request** access to API resources won't be granted.
+> If a token is not somehow included in the **request**, access to API resources won't be granted.
 
 <img width="50%" src="./images/show-me-token.jpeg" />
+
+Remember our design choice regarding client side **token storage**:
+
+* The **refresh token**  was set in the backend in a **cookie**. So it will be sent back to the server in the same way.
+* The **access token** in **local storage**, so the client must send it in the [authorization header](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization).
 
 ## The Authorization Header
 In PHP, we can access the `Authorization` header under `$_SERVER['HTTP_AUTHORIZATION']`. Then we have to **decode** it using a that we'll explain a bit later.
@@ -28,11 +33,16 @@ Once we've added the line above, we'll be able of accessing the token under the 
 
 > Note that, with this setting in place, the header value will be set **anyways**, so if a user's request doesn't set the header, `$_SERVER['HTTP_AUTHORIZATION']` will contain an **empty string**.
 
+## The `$_COOKIE` Super Global
+In PHP, the [$_COOKIE](https://www.php.net/manual/en/reserved.variables.cookies.php) contains an \ associative array of variables passed to the current script via HTTP Cookies.
+
 ## Decoding tokens
 Regardless of the way the client sent the tokens, we need a way to **decode** them in order to **validate** them:
 
 * They must be proper formatted base64url string.
 * They must have been encoded using our **secret key**.
+
+> Needless to say, they must be **not expired**, but this is something we check for **after** decoding.
 
 For this task we'll write a method that basically will run in reverse the steps we took when creating the token (check the code for details). The decoding function will:
 
@@ -41,3 +51,12 @@ For this task we'll write a method that basically will run in reverse the steps 
 3. Compare the new signature with the third component (the signature included in the token). If they're the same, we'll return the **decoded payload**, otherwise `false`.
 
 > To test the decoding function, send a `POST` request to the `/api/login` with your credentials. Copy the token you receive in the **response** and send it back in the header of a `GET` request to the same endpoint ([Postman](https://www.postman.com/) really comes in handy here). That endpoint will return the decoded payload contained in the token.
+
+
+---
+[:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
+
+<!-- navigation -->
+[home]: ../README.md
+[back]: ./storing_tokens_client.md
+[next]: ./logout.md

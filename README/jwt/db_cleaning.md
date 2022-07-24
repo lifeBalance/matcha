@@ -9,3 +9,12 @@ php delete_expired_refresh_tokens.php
 ```
 
 Then I added a new Docker container named [ofelia](https://github.com/mcuadros/ofelia) to my setup. It's a **job scheduler** writen in Go that works great with Docker containers.
+
+
+---
+[:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
+
+<!-- navigation -->
+[home]: ../README.md
+[back]: ./logout.md
+[next]: ../README.md

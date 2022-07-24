@@ -39,15 +39,19 @@ For the reasons I'll explain in a minute, I decided to store:
 
 1. Storing the **refresh token** in a cookie should be ok if we take the [following measures](https://cheatsheetseries.owasp.org/cheatsheets/JSON_Web_Token_for_Java_Cheat_Sheet.html#token-sidejacking):
 
-* Set it up as an [HttpOnly](https://owasp.org/www-community/HttpOnly).
+* Set it up as an [HttpOnly](https://owasp.org/www-community/HttpOnly), so they can't be accessed by JavaScript.
 * We'll use also the [Secure](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie#secure) attribute.
 * And the [SameSite]https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite).
+
+ The downside to using `HttpOnly` cookies is that we won't be able to access its payload client-side, which in this case is fine, since only the backend is gonna be using the information contained in them.
 
 2. Storing the **access token** in **local storage** is marginally worse than storing it in **session storage**, which provides an expiration mechanism that is not present in **local storage** (where tokens may live forever). That being said, since we'll be using **refresh token rotation** what we just said is not that important. Also, we won't be keeping sensitive information in the token. To compensate with a good thing, **local storage** has the advantage of being persistent accross browser tabs and page refreshes.
 
 > **Access tokens** are **bearer tokens**, meaning that the authority of the token is granted to the holder (bearer) of the token. So an attacker could use it to make API calls that are indistinguishable from legitimate API calls.
 
  Some [seemingly knowledgeable people](https://pragmaticwebsecurity.com/articles/oauthoidc/localstorage-xss.html) recommend not to worry so much about **storage**, since once we're XSS vulnerable is game over.
+
+> There are some popular frameworks such as [Yii](https://www.yiiframework.com/wiki/2568/jwt-authentication-tutorial?revision=2#token-expired) that use the same approach I intend to implement (cookies for refresh tokens, and local storage for access tokens).
 
 ## Sending the Tokens in a Request
 Regardless of the storage choice, the token must be added to the **request** by either:
@@ -66,3 +70,12 @@ Where:
 
 1. `<auth-scheme>` stands for the [authentication scheme](https://developer.mozilla.org/en-US/docs/Web/HTTP/Authentication#authentication_schemes); we'll use the value [Bearer](https://datatracker.ietf.org/doc/html/rfc6750).
 2. `<authorization-parameters>` stands for the token itself.
+
+
+---
+[:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
+
+<!-- navigation -->
+[home]: ../README.md
+[back]: ./token_rotation.md
+[next]: ./authorize_access.md

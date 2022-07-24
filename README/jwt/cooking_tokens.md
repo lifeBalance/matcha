@@ -21,9 +21,9 @@ Above we've simplified quite a bit what a token would look like, but if you pay 
     4. The resulting string is [hashed](https://en.wikipedia.org/wiki/Cryptographic_hash_function) using the algorithm specified in the header (`alg`). A good idea here is to use a **private key** (aka **secret key**) for the encrypting (hashing) process. This key can be **optionally** encoded in **base64** (not base64url).
     5. Finally, the hashed string is also encoded as a **base64url** string, and appended to the previous two strings using a period.
 
-The image below contains a representation of a token:
+The image below contains a representation of a realistic token:
 
-<img src="./images/jwt.png" width="60%" />
+<img src="../images/jwt.png" width="60%" />
 
 ## Cooking a token in PHP
 If all we explained above sounds too complicated, in this section we'll get our hands dirty building our own JWT using handy PHP functions. All three JWT components must be encoded in [base64url](https://en.wikipedia.org/wiki/Base64#URL_applications) string, which is basically a **base64** string, but we have to manually convert the following three characters:
@@ -100,3 +100,11 @@ Once we have our **token**, it's a good idea to check out that our result matche
 > An error I was getting at the bottom of the page was **Invalid Signature**. It was due to leaving a **trailing comma** in the PHP **associative array** that I was using for the **payload** and **header** (maybe it was generating different JSON).
 
 The whole point of the signature is to ensure that the token has been issued by us. If someone steals some token, and modify the payload (easy to do) with the info of another user (in order to gain access to her resources) our decoding function will detect that the signature doesn't match.
+
+---
+[:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
+
+<!-- navigation -->
+[home]: ../../README.md
+[back]: ../basic_flow.md
+[next]: ./refresh_tokens.md
