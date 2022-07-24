@@ -15,6 +15,6 @@ Then I added a new Docker container named [ofelia](https://github.com/mcuadros/o
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
 
 <!-- navigation -->
-[home]: ../README.md
+[home]: ../../README.md
 [back]: ./logout.md
-[next]: ../README.md
+[next]: ../../README.md

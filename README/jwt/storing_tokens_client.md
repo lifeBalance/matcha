@@ -76,6 +76,6 @@ Where:
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
 
 <!-- navigation -->
-[home]: ../README.md
+[home]: ../../README.md
 [back]: ./token_rotation.md
 [next]: ./authorize_access.md

@@ -10,6 +10,6 @@ If we wanted, we could create a `/logout` endpoint that would also place a **req
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
 
 <!-- navigation -->
-[home]: ../README.md
+[home]: ../../README.md
 [back]: ./authorize_access.md
 [next]: ./db_cleaning.md

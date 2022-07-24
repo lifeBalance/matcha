@@ -23,5 +23,5 @@ Compared to **API key authentication**, JWT authentication eliminates the need f
 
 <!-- navigation -->
 [home]: ../README.md
-[back]: ./router.md
+[back]: ./setup.md
 [next]: ./jwt/basic_flow.md

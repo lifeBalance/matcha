@@ -57,6 +57,6 @@ For this task we'll write a method that basically will run in reverse the steps 
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
 
 <!-- navigation -->
-[home]: ../README.md
+[home]: ../../README.md
 [back]: ./storing_tokens_client.md
 [next]: ./logout.md

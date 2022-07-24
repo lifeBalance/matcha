@@ -106,3 +106,12 @@ Let's assume that a user has made a request to the api and since her **access to
 > In our case, the **authorization server** and the **resource server** will be in the same machine.
 
 When the `/refresh-token` receives the **request**, the **refresh token** has to be decoded, to extract the **user id**. Then we have to query the database to check that the user with that `id` still have access to the API resources (subscription hasn't ended, or account has not been deleted).
+
+
+---
+[:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
+
+<!-- navigation -->
+[home]: ../../README.md
+[back]: ./cooking_tokens.md
+[next]: ./token_rotation.md

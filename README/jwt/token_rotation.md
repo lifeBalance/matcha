@@ -25,3 +25,11 @@ With this table in place, now every time a new refresh token is issued, we'll sa
 According to the diagram above, when we try to access a resource in the server with an **expired access token**, the client should be getting an `Invalid token error` (F). Then the client have to make another request to receive a new **access token**, and optionally an updated **refresh token** (G and H). All good, but how do we wire that up in our SPA in practice?
 
 A way to do it is having our front-end code using the aforementioned error to trigger a **request** to a `/refresh-token` **endpoint**. Then, in the backend, and assuming that the received **refresh token** is valid, we should send a **response** with the new **access token**. That request would take place **silently**, without any user intervention.
+
+---
+[:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
+
+<!-- navigation -->
+[home]: ../../README.md
+[back]: ./refresh_tokens.md
+[next]: ./storing_tokens_client.md
