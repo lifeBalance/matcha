@@ -6,7 +6,7 @@ Once a user sends a **request** to access the API, our **backend** must decode t
 
 > If a token is not somehow included in the **request**, access to API resources won't be granted.
 
-<img width="50%" src="./images/show-me-token.jpeg" />
+<img width="50%" src="../images/show-me-token.jpeg" />
 
 Remember our design choice regarding client side **token storage**:
 
