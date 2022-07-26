@@ -1,8 +1,8 @@
 # matcha
-This project introduces you to a more advanced tool for creating your web applications: the [micro-framework](https://en.wikipedia.org/wiki/Microframework). You will have to create, in the language of your choice, a [dating site](https://en.wikipedia.org/wiki/Online_dating_service) 🍆 💦 🍑.
+This project introduces you to a more advanced tool for creating your web applications: the [micro-framework](https://en.wikipedia.org/wiki/Microframework). You will have to create, in the language of your choice, a [dating site](https://en.wikipedia.org/wiki/Online_dating_service) (🍆 💦 🍑).
 
 ## My Approach: Single-page application
-Since in the previous project I used the [MVC](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) software architectural pattern, this time I wanted to test a **different model**: [SPA](https://en.wikipedia.org/wiki/Single-page_application) (short for **Single-page application**). The intention behind this choice was to become familiar with the most common paradigms used today in Web development.
+Since in my previous project I used the [MVC](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) software architectural pattern, this time I wanted to test another different but nowadays popular approach: [SPA](https://en.wikipedia.org/wiki/Single-page_application) (short for **Single-page application**). The intention behind this choice was to become familiar with the most common paradigms used today in Web development.
 
 <p align="center"><img src="./README/images/spa_all.jpeg" height="250" /></p>
 

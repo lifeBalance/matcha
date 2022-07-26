@@ -57,6 +57,8 @@ For this project using [Composer](https://getcomposer.org/) was allowed, so one 
 
 I installed mostly for its handy [autoloader](https://getcomposer.org/doc/articles/autoloader-optimization.md).
 
+![Composer](./images/composer.png "Composer")
+
 ---
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
 
