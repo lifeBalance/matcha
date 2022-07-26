@@ -1,7 +1,7 @@
 # Authorizing Access (backend)
 Once a user sends a **request** to access the API, our **backend** must decode the token included in the request. Depending on the approach we took to store tokens on the client, there are several places where we have to look for the token in the request:
 
-* They may be in a [cookie]().
+* They may be in a [cookie](https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies).
 * They may also be in the request headers.
 
 > If a token is not somehow included in the **request**, access to API resources won't be granted.
@@ -19,7 +19,7 @@ In PHP, we can access the `Authorization` header under `$_SERVER['HTTP_AUTHORIZA
 > If you find a problem when trying to access the value of the `Authorization` header in the [$_SERVER](https://www.php.net/reserved.variables.server) PHP super global, read the next section.
 
 ### Woops! Where's the Authorization Header
-It may well be, that the `Authorization` header we just mentioned is not present in the [$_SERVER](https://www.php.net/reserved.variables.server) super global (under the `HTTP_AUTHORIZATION` key). This is an **issue** with the [Apache Web Server](https://httpd.apache.org/) (💩), which removes the header before PHP can read it. To solve that, we can take two different approaches:
+It may well be, that the `Authorization` header we just mentioned is not present in the [$_SERVER](https://www.php.net/reserved.variables.server) super global (under the `HTTP_AUTHORIZATION` key). This is an **issue** with the [Apache Web Server](https://httpd.apache.org/) (🧩 of 💩), which removes the header before PHP can read it. To solve that, we can take two different approaches:
 
 * Using the [apache_request_headers](https://www.php.net/manual/en/function.apache-request-headers.php) PHP function, that returns an array with **all** of the HTTP request headers.
 * Configure **Apache** so that the `Authorization` header is available in PHP. We could set this configuration in the virtual hosts file for our site, or in our `.htaccess` file.
