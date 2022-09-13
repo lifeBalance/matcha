@@ -1,11 +1,11 @@
 <?php
-// Route for home page
-$app->add('/', ['GET'], 'Home');
 
-// Routes for authentication, refresh authorization
-$app->add('/login', ['POST'], 'Login');
-$app->add('/logout', ['POST'], 'Logout'); // POST??
-$app->add('/refresh', ['POST'], 'Refresh'); // POST??
+// API routes for authentication
+$app->add('/api/login', ['POST'], 'Login');
+$app->add('/api/logout', ['POST'], 'Logout'); // POST??
+$app->add('/api/refresh', ['POST'], 'Refresh'); // POST??
 
-// Routes for the API
+// Other API routes
 $app->add('/api/users', ['GET', 'POST', 'DELETE'], 'Users');
+
+$app->add('/api/test', ['GET'], 'Test'); // for testing apache

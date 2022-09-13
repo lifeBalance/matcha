@@ -4,7 +4,6 @@
             "core",
             "auth",
             "models",
-            "controllers",
             "api/models",
             "api/controllers",
             "api/exceptions"
