@@ -23,6 +23,7 @@ Below I grouped in sections the **personal notes** I took while working on this 
 * [Routing requests](./README/router.md)
 * [App setup](./README/setup.md)
 * [Authentication: JSON web tokens](./README/jwt.md)
+* [Front-end](./README/front-end.md)
 
 ---
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
