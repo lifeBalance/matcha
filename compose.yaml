@@ -9,6 +9,7 @@ services:
     volumes:
       - ./www:/var/www/html
       - ./docker/php_apache/000-default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./docker/php_apache/apache2.conf:/etc/apache2/apache2.conf
     ports:
       - 80:80
       - 443:443
@@ -40,6 +41,8 @@ services:
     environment:
       PMA_HOST: mysql
       PMA_PORT: 3306
+    volumes:
+      - ./docker/phpMyadmin/apache2.conf:/etc/apache2/apache2.conf
   mysql:
     image: mysql:8.0.29-debian
     restart: always
