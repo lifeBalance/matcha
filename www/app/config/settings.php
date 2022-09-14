@@ -21,7 +21,7 @@ define('SECRET_JWT_KEY', '217A25432A462D4A614E645267556B58703273357538782F413F44
 
 // Expiry dates of tokens
 define('REFRESH_TOKEN_EXP',  60 * 60 * 5);  // 5 HOURS
-define('ACCESS_TOKEN_EXP',  60 * 15);       // 15 MIN
+define('ACCESS_TOKEN_EXP',  60 * 60);       // = 60 MIN (60 * 15 = 15 MIN)
 
 /**
  * Database settings

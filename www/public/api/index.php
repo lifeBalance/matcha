@@ -10,6 +10,7 @@ require_once APPROOT . '/vendor/autoload.php';
 
 $app = new Router();
 require_once APPROOT . '/config/routes.php';
+
 $app->run();
 
 // print("<pre>".print_r($app->getRoutes(), true)."</pre>");

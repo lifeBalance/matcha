@@ -1,20 +1,30 @@
 import React from 'react'
-import {EnvelopeIcon} from './assets/icons'
+
+// router
+import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom'
+
+// pages
+import Home from './pages/Home'
+import Test from './pages/Test'
+import Profile from './pages/Profile'
+import Users from './pages/Users'
 
 // components
-import Layout from './components/UI/Layout'
 import Navbar from './components/UI/Navbar/Navbar'
+
 
 function App() {
 
   return (
-    <>
+    <BrowserRouter>
       <Navbar />
 
-      <Layout>
-        <h1><EnvelopeIcon styles='w-6' /> hi yall!!</h1>
-      </Layout>
-    </>
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='test' element={<Test />} />
+        <Route path='users' element={<Users />} />
+      </Routes>
+    </BrowserRouter>
   )
 }
 

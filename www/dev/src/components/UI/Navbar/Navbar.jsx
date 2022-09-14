@@ -17,8 +17,8 @@ function Navbar() {
       <Logo styles='text-6xl font-bold font-logo text-white' />
 
       <div className='hidden md:flex md:space-x-8 text-white'>
-        <MenuItem title='first' />
-        <MenuItem title='second' />
+        <MenuItem title='users' route='users' />
+        <MenuItem title='test' route='test' />
       </div>
 
       <Burger />
