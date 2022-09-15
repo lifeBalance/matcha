@@ -11,6 +11,11 @@ import { HandRaisedIcon } from '../assets/icons'
 import useInput from '../hooks/useInput'
 import Input from '../components/UI/Input'
 
+// redux
+import { useSelector, useDispatch } from 'react-redux'
+import { login } from '../store/authSlice'
+
+// helper functions
 function validateName(str) {
   // 3 characters or more
   return str.length >= 3
@@ -43,17 +48,25 @@ function Login() {
 
   let formIsValid = validateName(username) && validatePwd(password)
 
+  // Redux
+  const dispatch = useDispatch()
+  const { isLoggedIn, isLoading, error } = useSelector(slices => slices.auth)
+
   function submitHandler(e) {
     e.preventDefault()
 
     if (!formIsValid) return
 
-    console.log(`Submitted: ${username} ${password}`)
+    // console.log(`Submitted: ${username} ${password}`)
+    dispatch(login(username, password))
 
     // if login was successful (otherwise show problem, and do none of what's below)
     //    resetUsernameInput()
     //    resetPasswordInput()
     //    and redirect
+    if (!error) {
+      // navigate('/', {replace: true})
+    }
   }
 
   let usernameErrorContent 
@@ -96,7 +109,6 @@ function Login() {
           </div>
         </form>
       </div>
-
     </Layout>
   )
 }

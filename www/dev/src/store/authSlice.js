@@ -10,27 +10,44 @@ const initialState = {
 
 const login = createAsyncThunk(
   'auth/login',
-  async (args, thunkAPI) => {
-    const { email, password } = args
+  function(args, thunkAPI) {
+    const { username, password } = args
 
+    axios.post('/api/login', {
+      username: 'Testing',
+      password: 'Asdf1!'
+    })
+    .then(function (response) {
+      console.log(response.data)
+      return response.data
+    })
+    .catch(function (error) {
+      console.log(error)
+      return error
+    });
+  })
+  
+/*
     try {
-      const url = '/api/login'
-
       const { data } = await axios({
-        url: url,
+        url: '/api/login',
+        headers: {
+          'Content-Type': 'application/json'
+        },
         method: 'post',
         data: {
-          email: email,
+          username: username,
           password: password
         }
       })
 
+      console.log(data);
       return data
     } catch (error) {
       console.log(error.response.data.error.message);
       return thunkAPI.rejectWithValue(error.response.data.error.message)
     }
-})
+    */
 
 const authSlice = createSlice({
   name: 'auth',
@@ -43,7 +60,7 @@ const authSlice = createSlice({
     },
     setTokenAndLogin: (state, action) => {
       state.isLoggedIn = true,
-      state.idToken = action.payload
+      state.accessToken = action.payload
     },
   },
 
@@ -57,21 +74,23 @@ const authSlice = createSlice({
       state.isLoading = false
       state.isLoggedIn = true
 
-      if (action.payload && action.payload.idToken) {
-        state.accessToken = action.payload.idToken
+      if (action.payload && action.payload.access_token) {
+        state.accessToken = action.payload.access_token
         state.error = null
         // Store the Access Token in local storage
         localStorage.setItem('accessToken', state.accessToken)
         // Store the Refresh Token in hardened cookie
-        // For developing our SPA set SameSite=None (at deploy SameSite=Strict)
-        document.cookie = `matcha=${action.payload.refreshToken}; SameSite=None; HttpOnly; Secure`
+        // For developing our SPA set temporarily SameSite=None
+        // (at deploy SameSite=Strict)
+        document.cookie = `matcha=${action.payload.refresh_token}; SameSite=None; HttpOnly; Secure`
         // Setting HttpOnly means we can't see it in Application/Cookies (but it's sent automatically by the browser)
       }
     },
     [login.rejected]: (state, action) => {
       state.isLoading = false
-      // console.log(action.payload)
-      state.error = action.payload // this works with Axios!!
+      console.log(action)
+      console.log(action.error)
+      // state.error = action.payload // this works with Axios!!
     },
   }
 })
