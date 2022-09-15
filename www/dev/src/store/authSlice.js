@@ -7,7 +7,7 @@ const initialState = {
   accessToken: '',
   error: false
 }
-
+/*
 const login = createAsyncThunk(
   'auth/login',
   function(args, thunkAPI) {
@@ -24,12 +24,17 @@ const login = createAsyncThunk(
     .catch(function (error) {
       console.log(error)
       return error
-    });
+    })
   })
-  
-/*
+  */
+// /*
+const login = createAsyncThunk(
+  'auth/login',
+  async function(args, thunkAPI) {
+    const { username, password } = args
+
     try {
-      const { data } = await axios({
+      const response = await axios({
         url: '/api/login',
         headers: {
           'Content-Type': 'application/json'
@@ -41,13 +46,13 @@ const login = createAsyncThunk(
         }
       })
 
-      console.log(data);
-      return data
+      console.log(response.data);
+      return response.data
     } catch (error) {
       console.log(error.response.data.error.message);
       return thunkAPI.rejectWithValue(error.response.data.error.message)
     }
-    */
+    // */
 
 const authSlice = createSlice({
   name: 'auth',
