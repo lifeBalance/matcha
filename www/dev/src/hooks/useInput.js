@@ -3,34 +3,36 @@ import React from 'react'
 function useInput(validate) {
   const [value, setValue] = React.useState('')
   const [inputHasError, setInputHasError] = React.useState(false)
-  const [inputWasTouched, setInputWasTouched] = React.useState(false)
+  const [inputWasChanged, setInputWasChanged] = React.useState(false)
 
   // Debounce user input
   React.useEffect(() => {
-    if (!inputWasTouched) return
+      if (!inputWasChanged) return
 
-    const timerId = setTimeout(() => {
-      setInputHasError(!validate(value))
-    }, 500);
+      const timerId = setTimeout(() => {
+        setInputHasError(!validate(value))
+      }, 500);
 
-    return () => {
-      clearTimeout(timerId);
-    }
-    }, [value, inputWasTouched]
+      return () => {
+        clearTimeout(timerId);
+      }
+    }, [value, inputWasChanged]
   )
 
   function inputChangeHandler(e) {
     setValue(e.target.value)
     setInputHasError(false)
+    setInputWasChanged(true)
   }
 
   function inputBlurHandler(e) {
     setInputHasError(!validate(value))
-    setInputWasTouched(true)
+    setInputWasChanged(true)
   }
 
   function resetInput() {
     setValue('')
+    setInputWasChanged(false)
   }
 
   return {

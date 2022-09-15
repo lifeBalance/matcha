@@ -50,8 +50,10 @@ function Login() {
 
     console.log(`Submitted: ${username} ${password}`)
 
-    // resetUsernameInput()
-    // resetPasswordInput()
+    // if login was successful (otherwise show problem, and do none of what's below)
+    //    resetUsernameInput()
+    //    resetPasswordInput()
+    //    and redirect
   }
 
   let usernameErrorContent 
@@ -60,7 +62,7 @@ function Login() {
 
   let passwordErrorContent 
   if (passwordHasError)
-    passwordErrorContent = <><HandRaisedIcon styles='w-5' /> At least 5 characters and include uppercase, lowercase, digit and symbol</>
+    passwordErrorContent = <><HandRaisedIcon styles='w-5' /> At least 5 characters, including uppercase, lowercase, digit and symbol</>
 
   return (
     <Layout>

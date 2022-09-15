@@ -35,7 +35,6 @@ function ForgotPassword() {
     console.log(`Submitted: ${email}`)
 
     resetEmailInput()
-
   }
 
   let emailErrorContent 
@@ -56,7 +55,7 @@ function ForgotPassword() {
             errorContent={emailErrorContent}
           ><EnvelopeIcon styles='w-6 pb-1 ml-2' /> email</Input>
 
-          <div className="flex flex-col md:flex-row md:justify-between space-y-4 md:space-y-0 items-center mt-10">
+          <div className="flex flex-col md:flex-row md:justify-between space-y-4 md:space-y-0 items-center mt-6 md:ml-4">
             <button
               disabled={!formIsValid}
               className='text-white bg-black hover:bg-gray-800 active:bg-white active:text-black font-bold rounded-lg text-2xl w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed hover:disabled:bg-black focus:ring-transparent'
