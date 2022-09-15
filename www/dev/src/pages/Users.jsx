@@ -10,7 +10,6 @@ function Test() {
   const dispatch = useDispatch()
 
   React.useEffect(() => {
-    // dispatch(getContent())
     dispatch(getUsers())
   }, [])
 

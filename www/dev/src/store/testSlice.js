@@ -10,10 +10,6 @@ const getContent = createAsyncThunk(
       const { data } = await axios({
         url: url,
         method: 'get',
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json',
-        },
       })
       console.log(data);
       return data
