@@ -8,6 +8,8 @@ import Home from './pages/Home'
 import Test from './pages/Test'
 import Profile from './pages/Profile'
 import Users from './pages/Users'
+import Login from './pages/Login'
+import ForgotPassword from './pages/ForgotPassword'
 
 // components
 import Navbar from './components/UI/Navbar/Navbar'
@@ -23,6 +25,8 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='test' element={<Test />} />
         <Route path='users' element={<Users />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/forgot' element={<ForgotPassword />} />
       </Routes>
     </BrowserRouter>
   )

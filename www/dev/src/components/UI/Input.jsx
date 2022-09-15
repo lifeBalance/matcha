@@ -5,7 +5,7 @@ function Input(props) {
     <div className='relative pb-20'>
       <label className='flex flex-col'>
         <span className='text-2xl font-bold text-white pb-2 capitalize'>
-          {props.title}
+          {props.children}
         </span>
 
         <input

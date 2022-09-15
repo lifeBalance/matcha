@@ -1,5 +1,5 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 // components
 import Layout from '../components/UI/Layout'
@@ -24,6 +24,7 @@ function validatePwd(str) {
 }
 
 function Login() {
+  const navigate = useNavigate()
   const {
     value: username,
     inputHasError: usernameHasError,
@@ -69,28 +70,27 @@ function Login() {
         <form onSubmit={submitHandler} className=''>
           <Input 
             type='text'
-            title='username'
             value={username}
             onChange={usernameChangeHandler}
             onBlur={usernameBlurHandler}
             errorContent={usernameErrorContent}
-          />
+          >username</Input>
 
           <Input 
             type='text'
-            title='password'
             value={password}
             onChange={passwordChangeHandler}
             onBlur={passwordBlurHandler}
             errorContent={passwordErrorContent}
-          />
+          >password</Input>
 
           <div className="flex flex-col md:flex-row md:justify-between space-y-4 md:space-y-0 items-center mt-10">
             <button
               disabled={!formIsValid}
               className='text-white bg-black hover:bg-gray-800 active:bg-white active:text-black font-bold rounded-lg text-2xl w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed hover:disabled:bg-black focus:ring-transparent'
             >{formIsValid ? 'Submit' : 'Please, fill the form'}</button>
-            <Link to='forgot' className='text-white mx-5 text-lg md:text-right hover:border-b-2'>Forgot Password?</Link>
+
+            <p onClick={() => navigate('/forgot', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:border-b-2'>Forgot Password?</p>
           </div>
         </form>
       </div>
