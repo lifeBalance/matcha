@@ -5,14 +5,8 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   server: {
     proxy: {
-      '/api': 'http://localhost/'
+      '/api': 'http://localhost:80'
     }
-    // proxy: {
-    //   "/api": {
-    //     target: "http://localhost/",
-    //     secure: false,
-    //   },
-    // }
   },
   plugins: [react()]
 })
