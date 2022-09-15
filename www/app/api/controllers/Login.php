@@ -13,8 +13,12 @@ class Login
     // POST -> /login: For logging in
     public function create()
     {
-        if (!array_key_exists('email',    $_POST) ||
-            !array_key_exists('password', $_POST))
+        $data = json_decode(file_get_contents('php://input'));
+        $username = $data->username;
+        $password = $data->password;
+
+        if (strlen($username) === 0 ||
+            strlen($password) === 0)
         {
             http_response_code(400);    // 400 Bad Request
             echo json_encode([
@@ -23,10 +27,11 @@ class Login
             exit;
         } else {
             // Sanitize all things
-            $email      = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
-            $password   = filter_var($_POST['password'], FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $username   = filter_var($data->username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+            $password   = filter_var($data->password, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
             // Check if they're empty
-            if (empty($email) || empty($password)) {
+            if (empty($username) || empty($password)) {
                 http_response_code(400);    // 400 Bad Request
                 echo json_encode([
                     "message" => "missing login credentials"
@@ -36,9 +41,9 @@ class Login
         }
 
         // Retrieve the user (if exists in the db)
-        $user = $this->userModel->getByEmail($email);
+        $user = $this->userModel->getByUsername($username);
 
-        // User with that email does not exist.
+        // Non-existing User
         if (!$user) {
             http_response_code(401);    // 401 Unauthorized
             echo json_encode([
@@ -46,7 +51,8 @@ class Login
             ]);
             exit;
         }
-        // Validate credentials
+
+        // Invalid password
         if (!password_verify($password, $user->pwd_hash)) {
             http_response_code(401);    // 401 Unauthorized
             echo json_encode([
@@ -54,7 +60,8 @@ class Login
             ]);
             exit;
         }
-        // Generate the tokens (better set expiry times in environment var: time() + ACCESS_EXP).
+
+        // Username/Password match!! Generate the tokens:
         $access_token = JWT::encode([
             'sub'   => $user->id,
             'email' => $user->email,
@@ -67,7 +74,7 @@ class Login
         ]);
         // Save new refresh token to db
         $this->refreshModel->create($refresh_token, $refresh_token_expiry);
-        // Send response back (log them for now; set somewhere later)
+        // Send both tokens in the response (set Refresh in http-only cookie later)
         echo json_encode([
             'access_token'  => $access_token,
             'refresh_token' => $refresh_token
