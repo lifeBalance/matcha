@@ -19,7 +19,7 @@ class ComposerStaticInit1e37e30ac2a4a240a581dcbe746a9e6c
         'Login' => __DIR__ . '/../..' . '/api/controllers/Login.php',
         'Logout' => __DIR__ . '/../..' . '/api/controllers/Logout.php',
         'Refresh' => __DIR__ . '/../..' . '/api/controllers/Refresh.php',
-        'RefreshToken' => __DIR__ . '/../..' . '/models/RefreshToken.php',
+        'RefreshToken' => __DIR__ . '/../..' . '/api/models/RefreshToken.php',
         'Router' => __DIR__ . '/../..' . '/core/Router.php',
         'Test' => __DIR__ . '/../..' . '/api/controllers/Test.php',
         'User' => __DIR__ . '/../..' . '/api/models/User.php',

@@ -18,7 +18,7 @@ return array(
     'Login' => $baseDir . '/api/controllers/Login.php',
     'Logout' => $baseDir . '/api/controllers/Logout.php',
     'Refresh' => $baseDir . '/api/controllers/Refresh.php',
-    'RefreshToken' => $baseDir . '/models/RefreshToken.php',
+    'RefreshToken' => $baseDir . '/api/models/RefreshToken.php',
     'Router' => $baseDir . '/core/Router.php',
     'Test' => $baseDir . '/api/controllers/Test.php',
     'User' => $baseDir . '/api/models/User.php',

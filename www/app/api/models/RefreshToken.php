@@ -10,7 +10,8 @@ class RefreshToken
 
     public function create($token, $expiry)
     {
-        $hash = hash_hmac('sha256', $token, SECRET_JWT_KEY);
+        // $hash = hash_hmac('sha256', $token, SECRET_JWT_KEY);
+        $hash = hash('sha256', $token);
         $sql = 'INSERT INTO refresh_tokens (token_hash, expires_at)
                 VALUES (:token_hash, :expires_at)';
         $stmt = $this->conn->prepare($sql);
@@ -21,7 +22,8 @@ class RefreshToken
 
     public function delete(string $token): int
     {
-        $hash = hash_hmac('sha256', $token, SECRET_JWT_KEY);
+        // $hash = hash_hmac('sha256', $token, SECRET_JWT_KEY);
+        $hash = hash('sha256', $token);
         $sql = 'DELETE FROM refresh_tokens token_hash
                 WHERE token_hash = :token_hash';
         $stmt = $this->conn->prepare($sql);
@@ -40,7 +42,10 @@ class RefreshToken
 
     public function token_exists(string $token): array | false
     {
-        $hash = hash_hmac('sha256', $token, SECRET_JWT_KEY);
+        // Hash the token argument to compare it to the HASHED one in the DB
+        // $hash = hash_hmac('sha256', $token, SECRET_JWT_KEY);
+        $hash = hash('sha256', $token);
+        echo json_encode($hash);
         $sql = 'SELECT *
                 FROM refresh_tokens
                 WHERE token_hash = :token_hash';

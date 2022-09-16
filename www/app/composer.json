@@ -3,7 +3,6 @@
         "classmap": [
             "core",
             "auth",
-            "models",
             "api/models",
             "api/controllers",
             "api/exceptions"

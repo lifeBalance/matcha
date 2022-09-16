@@ -22,7 +22,7 @@ class Login
         {
             http_response_code(400);    // 400 Bad Request
             echo json_encode([
-                "message" => "missing login credentials"
+                "message" => "1: missing login credentials"
             ]);
             exit;
         } else {
@@ -47,7 +47,7 @@ class Login
         if (!$user) {
             http_response_code(401);    // 401 Unauthorized
             echo json_encode([
-                "message" => "invalid authentication"
+                "message" => "1: invalid authentication"
             ]);
             exit;
         }
@@ -56,7 +56,7 @@ class Login
         if (!password_verify($password, $user->pwd_hash)) {
             http_response_code(401);    // 401 Unauthorized
             echo json_encode([
-                "message" => "invalid authentication"
+                "message" => "2: invalid authentication"
             ]);
             exit;
         }
@@ -69,9 +69,10 @@ class Login
         ]);
         $refresh_token_expiry = time() + REFRESH_TOKEN_EXP;
         $refresh_token = JWT::encode([
-            'sub'   => $user->id,
+            'sub' => $user->id,
             'exp' => $refresh_token_expiry
         ]);
+
         // Save new refresh token to DB
         $this->refreshModel->create($refresh_token, $refresh_token_expiry);
 

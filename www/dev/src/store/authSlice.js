@@ -28,6 +28,8 @@ const login = createAsyncThunk('auth/login', function (args, thunkAPI) {
 })
  */
 
+/* TODO: add an interceptor, which detects the 401 status,
+ stores the failing request in a queue, and calls the /api/refresh endpoint. */
 const login = createAsyncThunk(
   'auth/login',
   async function(args, thunkAPI) {
@@ -37,9 +39,6 @@ const login = createAsyncThunk(
       const response = await axios.post('/api/login', {
           username: username,
           password: password
-      }, {
-        withCredentials: true,
-        headers: {}
       })
 
       console.log(response.data);
