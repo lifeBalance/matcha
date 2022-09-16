@@ -21,10 +21,10 @@ function Navbar() {
       <Logo styles='text-6xl font-bold font-logo text-white' />
 
       <div className='hidden md:flex md:space-x-8 text-white'>
-        <MenuItem title='users' route='users' />
         <MenuItem title='test' route='test' />
         {isLoggedIn ? 
           (<>
+            <MenuItem title='users' route='users' />
             <MenuItem title='profile' route='profile' />
 
             <div className='group'>

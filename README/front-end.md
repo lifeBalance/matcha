@@ -33,6 +33,12 @@ For the icons I chose [Heroicons](https://heroicons.com/). To use them, I just h
 
 > They provide both the `svg` code and the `jsx` version, which has the attributes normalized for React (`className` instead of `class`, etc)
 
+## UI & Authentication
+In order to make the UI as smooth as possible, I kept the **Access Token** in two places:
+
+1. In **Local Storage**, which is useful when the user is **logged in** and reloads the tab, or closes the browser. In that case, I implemented a `useEffect` hook which reaches to the proper Redux slice, retrieving the token from local storage, and setting the **logged in state** (sure, if the user refreshes like a crazy monkey, sloooow local storage is hit).
+2. I also keep the **Access Token** in state, which even though doesn't survive any page reload, it makes for a smooth experience, since every time she's accessing content which requires authorization, her token is fetched from **memory**, way faster than local storage.
+
 ---
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
 

@@ -29,7 +29,14 @@ function validatePwd(str) {
 }
 
 function Login() {
+  // Redux
+  const dispatch = useDispatch()
+  const { isLoggedIn, isLoading, error } = useSelector(slices => slices.auth)
   const navigate = useNavigate()
+
+  if (isLoggedIn)
+    navigate('/', {replace: true})
+
   const {
     value: username,
     inputHasError: usernameHasError,
@@ -48,24 +55,19 @@ function Login() {
 
   let formIsValid = validateName(username) && validatePwd(password)
 
-  // Redux
-  const dispatch = useDispatch()
-  const { isLoggedIn, isLoading, error } = useSelector(slices => slices.auth)
-
   function submitHandler(e) {
     e.preventDefault()
 
     if (!formIsValid) return
 
     // console.log(`Submitted: ${username} ${password}`)
-    dispatch(login({username, password}))
+    dispatch(login({ username, password }))
 
     // if login was successful (otherwise show problem, and do none of what's below)
-    //    resetUsernameInput()
-    //    resetPasswordInput()
-    //    and redirect
     if (!error) {
-      // navigate('/', {replace: true})
+      resetUsernameInput()
+      resetPasswordInput()
+      navigate('/', {replace: true})
     }
   }
 
@@ -76,6 +78,12 @@ function Login() {
   let passwordErrorContent 
   if (passwordHasError)
     passwordErrorContent = <><HandRaisedIcon styles='w-5' /> At least 5 characters, including uppercase, lowercase, digit and symbol</>
+
+  let submitButtonContent = 'Please, fill the form'
+  if (formIsValid) 
+    submitButtonContent = 'Submit'
+  else if (isLoading)
+    submitButtonContent = 'Logging in...'
 
   return (
     <Layout>

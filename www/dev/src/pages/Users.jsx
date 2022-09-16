@@ -1,16 +1,22 @@
 import React from 'react'
 import Layout from '../components/UI/Layout'
+import { useNavigate } from 'react-router-dom'
 
 // redux
 import { useSelector, useDispatch } from 'react-redux'
-import { getUsers, test } from '../store/usersSlice'
+import { getUsers } from '../store/usersSlice'
 
 function Test() {
+  const { isLoggedIn, accessToken } = useSelector(slices => slices.auth)
   const { users, error, isLoading } = useSelector(slices => slices.users)
+  const navigate = useNavigate()
   const dispatch = useDispatch()
 
   React.useEffect(() => {
-    dispatch(getUsers())
+    if (isLoggedIn)
+      dispatch(getUsers({ accessToken }))
+    else
+      navigate('/', {replace: true})
   }, [])
 
   let contentElem 

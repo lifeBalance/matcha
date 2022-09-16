@@ -3,6 +3,7 @@ import axios from 'axios'
 
 const initialState = {
   isLoggedIn: false,
+  accessToken: '',
   isLoading: false,
   error: false,
 }
@@ -27,8 +28,6 @@ const login = createAsyncThunk('auth/login', function (args, thunkAPI) {
 })
  */
 
-/* TODO: add an interceptor, which detects the 401 status,
- stores the failing request in a queue, and calls the /api/refresh endpoint. */
 const login = createAsyncThunk(
   'auth/login',
   async function(args, thunkAPI) {
@@ -38,6 +37,29 @@ const login = createAsyncThunk(
       const response = await axios.post('/api/login', {
           username: username,
           password: password
+      }, {
+        withCredentials: true
+      })
+
+      return response.data
+    } catch (error) {
+      console.log(error.response.data.message);
+      return thunkAPI.rejectWithValue(error.response.data.message)
+    }
+  })
+
+const refresh = createAsyncThunk(
+  'auth/refresh',
+  async function(args, thunkAPI) {
+    // If there's no Access Token in Local Storage, it means the user didn't 
+    // log in, so there's no token to REFRESH!
+    if (!localStorage.getItem('accessToken')) { 
+      return thunkAPI.rejectWithValue('Expired session')
+    }
+
+    try {
+      const response = await axios.post('/api/refresh', {
+        withCredentials: true
       })
 
       return response.data
@@ -53,10 +75,12 @@ const authSlice = createSlice({
   reducers: {
     logout: (state) => {
       state.isLoggedIn = false
+      state.accessToken = ''
       localStorage.removeItem('accessToken')
     },
     loginAfterReload: (state, action) => {
       state.isLoggedIn = true
+      state.accessToken = localStorage.getItem('accessToken')
     },
   },
 
@@ -70,8 +94,10 @@ const authSlice = createSlice({
       state.isLoggedIn = true
       state.error = null
 
+      console.log(action.payload);
       if (action.payload && action.payload.access_token) {
-        localStorage.setItem('accessToken', state.accessToken)
+        localStorage.setItem('accessToken', action.payload.access_token)
+        state.accessToken = action.payload.access_token
       }
     },
     [login.rejected]: (state, action) => {
@@ -79,9 +105,34 @@ const authSlice = createSlice({
       // console.log(action.payload)
       state.error = action.payload
     },
+
+    [refresh.pending]: (state) => {
+      state.isLoading = true
+    },
+
+    [refresh.fulfilled]: (state, action) => {
+      state.isLoading = false
+      state.isLoggedIn = true
+      state.error = null
+
+      console.log(action.payload);
+      if (action.payload && action.payload.access_token) {
+        // localStorage.removeItem('accessToken')
+        localStorage.setItem('accessToken', action.payload.access_token)
+        state.accessToken = action.payload.access_token
+      }
+    },
+    [refresh.rejected]: (state, action) => {
+      state.isLoading = false
+      state.isLoggedIn = false
+      localStorage.removeItem('accessToken')
+
+      console.log(action.payload)
+      state.error = action.payload
+    },
   },
 })
 
 export const { logout, loginAfterReload } = authSlice.actions
-export { login }
+export { login, refresh }
 export default authSlice.reducer

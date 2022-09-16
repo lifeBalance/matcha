@@ -5,39 +5,30 @@ class Login
 
     public function __construct()
     {
-        // header('Content-Type: application/json; charset=UTF-8');
         $this->userModel = new User();
-        $this->refreshModel = new RefreshToken();
+        $this->refreshTokenModel = new RefreshToken();
     }
 
     // POST -> /login: For logging in
     public function create()
     {
+        // Login credentials (sent as raw JSON data in a POST request)
         $data = json_decode(file_get_contents('php://input'));
-        $username = $data->username;
-        $password = $data->password;
+        // Maybe there's an old Refresh Token in the httponly cookie
+        $old_refresh_token = $_COOKIE['refreshToken'];
 
-        if (strlen($username) === 0 ||
-            strlen($password) === 0)
-        {
+        // Sanitize all things
+        $username   = filter_var($data->username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+        $password   = filter_var($data->password, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
+
+        // Check if they're empty
+        if (empty($username) || empty($password)) {
+            header('Content-Type: application/json; charset=UTF-8');
             http_response_code(400);    // 400 Bad Request
             echo json_encode([
-                "message" => "1: missing login credentials"
+                "message" => "missing login credentials"
             ]);
             exit;
-        } else {
-            // Sanitize all things
-            $username   = filter_var($data->username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-            $password   = filter_var($data->password, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
-
-            // Check if they're empty
-            if (empty($username) || empty($password)) {
-                http_response_code(400);    // 400 Bad Request
-                echo json_encode([
-                    "message" => "2: missing login credentials"
-                ]);
-                exit;
-            }
         }
 
         // Retrieve the user (if exists in the db)
@@ -45,6 +36,7 @@ class Login
 
         // Non-existing User
         if (!$user) {
+            header('Content-Type: application/json; charset=UTF-8');
             http_response_code(401);    // 401 Unauthorized
             echo json_encode([
                 "message" => "user doesn't exist"
@@ -54,6 +46,7 @@ class Login
 
         // Invalid password
         if (!password_verify($password, $user->pwd_hash)) {
+            header('Content-Type: application/json; charset=UTF-8');
             http_response_code(401);    // 401 Unauthorized
             echo json_encode([
                 "message" => "password doesn't match"
@@ -61,7 +54,12 @@ class Login
             exit;
         }
 
-        // Username/Password match!! Generate the tokens:
+        // Username/Password match!!
+        // Delete the old Refresh Token from the DB (only if successful login)
+        if ($old_refresh_token)
+            $this->refreshTokenModel->delete($old_refresh_token);
+
+        // Generate a new pair of tokens:
         $access_token = JWT::encode([
             'sub'   => $user->id,
             'email' => $user->email,
@@ -74,7 +72,7 @@ class Login
         ]);
 
         // Save new refresh token to DB
-        $this->refreshModel->create($refresh_token, $refresh_token_expiry);
+        $this->refreshTokenModel->create($refresh_token, $refresh_token_expiry);
 
         // Set Refresh token in http-only cookie
         // For developing our SPA set temporarily SameSite=None
@@ -88,6 +86,7 @@ class Login
         ]);
 
         // Send Access token in the response
+        header('Content-Type: application/json; charset=UTF-8');
         echo json_encode([
             'access_token'  => $access_token
         ]); // 200 OK (default)

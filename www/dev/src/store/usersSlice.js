@@ -1,6 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import axios from 'axios'
 
+/* TODO: add an interceptor, which detects the 401 status,
+ stores the failing request in a queue, and calls the /api/refresh endpoint. */
 const getUsers = createAsyncThunk(
   'users/getUsers',
   async (args, thunkAPI) => {
@@ -8,13 +10,13 @@ const getUsers = createAsyncThunk(
 
     try {
       const url = '/api/users'
-      const token = localStorage.getItem('accessToken')
+      console.log('fanks', args.accessToken);
 
       const { data } = await axios({
         url: url,
         method: 'get',
         headers: {
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${args.accessToken}`
         },
       })
 
