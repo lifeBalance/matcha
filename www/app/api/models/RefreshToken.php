@@ -45,7 +45,7 @@ class RefreshToken
         // Hash the token argument to compare it to the HASHED one in the DB
         // $hash = hash_hmac('sha256', $token, SECRET_JWT_KEY);
         $hash = hash('sha256', $token);
-        echo json_encode($hash);
+
         $sql = 'SELECT *
                 FROM refresh_tokens
                 WHERE token_hash = :token_hash';

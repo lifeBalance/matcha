@@ -82,7 +82,7 @@ class Login
         // (at deploy SameSite=Strict)
         setcookie('refreshToken', $refresh_token, [
             'path'      => '/api',
-            'secure'    => false,
+            'secure'    => true,
             'expires'   => time() + $refresh_token_expiry,
             'httponly'  => true,
             'samesite'    => 'None'

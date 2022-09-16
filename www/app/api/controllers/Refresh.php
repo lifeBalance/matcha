@@ -13,8 +13,10 @@ class Refresh
     // POST -> /refresh: For creating new pair of tokens (deleting old refresh)
     public function create()
     {
-        $data = json_decode(file_get_contents('php://input'));
-        $old_refresh_token = $data->refreshToken;
+        // $data = json_decode(file_get_contents('php://input'));
+        // $old_refresh_token = $data->refreshToken;
+        // The original Refresh token is received in a httponly cookie
+        $old_refresh_token = $_COOKIE['refreshToken'];
 
         if (strlen($old_refresh_token) === 0) {
             http_response_code(400);    // 400 Bad Request
@@ -62,11 +64,19 @@ class Refresh
                     // Save new refresh token to db
                     $this->refreshTokenModel->create($new_refresh_token, $new_refresh_token_expiry);
 
-                    // Send response back (log them for now; set somewhere later)
-                    echo json_encode([
-                        'access_token'  => $new_access_token,
-                        'refresh_token' => $new_refresh_token
+                    // Set Refresh token in http-only cookie
+                    setcookie('refreshToken', $new_refresh_token, [
+                        'path'      => '/api',
+                        'secure'    => true,
+                        'expires'   => time() + $new_refresh_token_expiry,
+                        'httponly'  => true,
+                        'samesite'    => 'None'
                     ]);
+
+                    // Send Access token in the response
+                    echo json_encode([
+                        'access_token'  => $new_access_token
+                    ]); // 200 OK (default)
                 }
             }
         }
