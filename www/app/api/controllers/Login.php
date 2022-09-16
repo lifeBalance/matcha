@@ -47,7 +47,7 @@ class Login
         if (!$user) {
             http_response_code(401);    // 401 Unauthorized
             echo json_encode([
-                "message" => "1: invalid authentication"
+                "message" => "user doesn't exist"
             ]);
             exit;
         }
@@ -56,7 +56,7 @@ class Login
         if (!password_verify($password, $user->pwd_hash)) {
             http_response_code(401);    // 401 Unauthorized
             echo json_encode([
-                "message" => "2: invalid authentication"
+                "message" => "password doesn't match"
             ]);
             exit;
         }
@@ -77,7 +77,6 @@ class Login
         $this->refreshModel->create($refresh_token, $refresh_token_expiry);
 
         // Set Refresh token in http-only cookie
-        // Setting HttpOnly means we can't see it in Application/Cookies
         // For developing our SPA set temporarily SameSite=None
         // (at deploy SameSite=Strict)
         setcookie('refreshToken', $refresh_token, [
@@ -85,7 +84,7 @@ class Login
             'secure'    => true,
             'expires'   => time() + $refresh_token_expiry,
             'httponly'  => true,
-            'samesite'    => 'None'
+            'samesite'  => 'None'
         ]);
 
         // Send Access token in the response
