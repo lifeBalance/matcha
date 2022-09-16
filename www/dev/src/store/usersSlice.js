@@ -1,21 +1,19 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import axios from 'axios'
 
-const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZW1haWwiOiJjYW1hZ3J1NjlAb3V0bG9vay5jb20iLCJleHAiOjE2NjMxODQ2NTN9.GUdF5spXTSb-jWgR4wHzJqd4jW5n-BWkt-uSEcLd2Sg'
-
 const getUsers = createAsyncThunk(
   'users/getUsers',
-  async (args = false, thunkAPI) => {
+  async (args, thunkAPI) => {
     // console.log(thunkAPI)
 
     try {
       const url = '/api/users'
+      const token = localStorage.getItem('accessToken')
 
       const { data } = await axios({
         url: url,
         method: 'get',
         headers: {
-          // 'Access-Control-Allow-Origin': '*',
           'Authorization': `Bearer ${token}`
         },
       })

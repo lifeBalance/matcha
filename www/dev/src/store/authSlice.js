@@ -5,45 +5,41 @@ const initialState = {
   isLoggedIn: false,
   isLoading: false,
   accessToken: '',
-  error: false
+  error: false,
 }
 /*
-const login = createAsyncThunk(
-  'auth/login',
-  function(args, thunkAPI) {
-    const { username, password } = args
+// Chained version
+const login = createAsyncThunk('auth/login', function (args, thunkAPI) {
+  const { username, password } = args
 
-    axios.post('/api/login', {
+  return axios
+    .post('/api/login', {
       username: 'Testing',
-      password: 'Asdf1!'
+      password: 'Asdf1!',
     })
     .then(function (response) {
-      console.log(response.data)
+      console.log(response.data) // <== This prints nicely
       return response.data
     })
     .catch(function (error) {
       console.log(error)
       return error
     })
-  })
-  */
-// /*
+})
+ */
+
 const login = createAsyncThunk(
   'auth/login',
   async function(args, thunkAPI) {
     const { username, password } = args
 
     try {
-      const response = await axios({
-        url: '/api/login',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        method: 'post',
-        data: {
+      const response = await axios.post('/api/login', {
           username: username,
           password: password
-        }
+      }, {
+        withCredentials: true,
+        headers: {}
       })
 
       console.log(response.data);
@@ -52,14 +48,14 @@ const login = createAsyncThunk(
       console.log(error.response.data.error.message);
       return thunkAPI.rejectWithValue(error.response.data.error.message)
     }
-    // */
+  })
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
     logout: (state) => {
-      state.isLoggedIn = false,
+      state.isLoggedIn = false
       state.accessToken = ''
       localStorage.removeItem('accessToken')
     },
@@ -75,20 +71,16 @@ const authSlice = createSlice({
     },
 
     [login.fulfilled]: (state, action) => {
-      console.log(action) // testing
+      console.log(action) // <-- promise fulfilled, payload undefined :-(
       state.isLoading = false
       state.isLoggedIn = true
+      state.error = null
 
       if (action.payload && action.payload.access_token) {
+        // Store the Access Token in memory
         state.accessToken = action.payload.access_token
-        state.error = null
         // Store the Access Token in local storage
         localStorage.setItem('accessToken', state.accessToken)
-        // Store the Refresh Token in hardened cookie
-        // For developing our SPA set temporarily SameSite=None
-        // (at deploy SameSite=Strict)
-        document.cookie = `matcha=${action.payload.refresh_token}; SameSite=None; HttpOnly; Secure`
-        // Setting HttpOnly means we can't see it in Application/Cookies (but it's sent automatically by the browser)
       }
     },
     [login.rejected]: (state, action) => {
@@ -97,7 +89,7 @@ const authSlice = createSlice({
       console.log(action.error)
       // state.error = action.payload // this works with Axios!!
     },
-  }
+  },
 })
 
 export const { logout, setTokenAndLogin } = authSlice.actions

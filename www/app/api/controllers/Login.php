@@ -5,7 +5,7 @@ class Login
 
     public function __construct()
     {
-        header('Content-Type: application/json; charset=UTF-8');
+        // header('Content-Type: application/json; charset=UTF-8');
         $this->userModel = new User();
         $this->refreshModel = new RefreshToken();
     }
@@ -34,7 +34,7 @@ class Login
             if (empty($username) || empty($password)) {
                 http_response_code(400);    // 400 Bad Request
                 echo json_encode([
-                    "message" => "missing login credentials"
+                    "message" => "2: missing login credentials"
                 ]);
                 exit;
             }
@@ -72,12 +72,24 @@ class Login
             'sub'   => $user->id,
             'exp' => $refresh_token_expiry
         ]);
-        // Save new refresh token to db
+        // Save new refresh token to DB
         $this->refreshModel->create($refresh_token, $refresh_token_expiry);
-        // Send both tokens in the response (set Refresh in http-only cookie later)
+
+        // Set Refresh token in http-only cookie
+        // Setting HttpOnly means we can't see it in Application/Cookies
+        // For developing our SPA set temporarily SameSite=None
+        // (at deploy SameSite=Strict)
+        setcookie('refreshToken', $refresh_token, [
+            'path'      => '/api',
+            'secure'    => false,
+            'expires'   => time() + $refresh_token_expiry,
+            'httponly'  => true,
+            'samesite'    => 'None'
+        ]);
+
+        // Send Access token in the response
         echo json_encode([
-            'access_token'  => $access_token,
-            'refresh_token' => $refresh_token
+            'access_token'  => $access_token
         ]); // 200 OK (default)
     }
 }

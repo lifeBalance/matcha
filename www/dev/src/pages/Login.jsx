@@ -58,7 +58,7 @@ function Login() {
     if (!formIsValid) return
 
     // console.log(`Submitted: ${username} ${password}`)
-    dispatch(login(username, password))
+    dispatch(login({username, password}))
 
     // if login was successful (otherwise show problem, and do none of what's below)
     //    resetUsernameInput()
