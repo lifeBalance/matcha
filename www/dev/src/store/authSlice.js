@@ -58,9 +58,8 @@ const authSlice = createSlice({
       state.accessToken = ''
       localStorage.removeItem('accessToken')
     },
-    setTokenAndLogin: (state, action) => {
-      state.isLoggedIn = true,
-      state.accessToken = action.payload
+    loginAfterReload: (state, action) => {
+      state.isLoggedIn = true
     },
   },
 
@@ -91,6 +90,6 @@ const authSlice = createSlice({
   },
 })
 
-export const { logout, setTokenAndLogin } = authSlice.actions
+export const { logout, loginAfterReload } = authSlice.actions
 export { login }
 export default authSlice.reducer

@@ -14,8 +14,18 @@ import ForgotPassword from './pages/ForgotPassword'
 // components
 import Navbar from './components/UI/Navbar/Navbar'
 
+// redux
+import { useDispatch } from 'react-redux'
+import { loginAfterReload } from './store/authSlice'
 
 function App() {
+  const dispatch = useDispatch()
+
+  // Set the proper UI isLoggedIn state if there's a token in local storage
+  React.useEffect(() => {
+    if (localStorage.getItem('accessToken'))
+      dispatch(loginAfterReload())
+  }, [])
 
   return (
     <BrowserRouter>
