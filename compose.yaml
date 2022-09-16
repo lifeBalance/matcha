@@ -6,6 +6,7 @@ services:
       context: ./docker/php_apache
     environment:
       APACHE_DOCUMENT_ROOT: /var/www/html/public
+      APACHE_LOG_DIR: /var/log/apache2
     volumes:
       - ./www:/var/www/html
       - ./docker/php_apache/000-default.conf:/etc/apache2/sites-available/000-default.conf
