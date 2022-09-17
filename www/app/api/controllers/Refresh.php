@@ -15,7 +15,7 @@ class Refresh
     {
         // $data = json_decode(file_get_contents('php://input'));
         // $old_refresh_token = $data->refreshToken;
-        // The original Refresh token is received in a httponly cookie
+        // The current Refresh token is sent in the request in a httponly cookie
         $old_refresh_token = $_COOKIE['refreshToken'];
 
         if (strlen($old_refresh_token) === 0) {

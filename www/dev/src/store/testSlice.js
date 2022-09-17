@@ -11,7 +11,7 @@ const getContent = createAsyncThunk(
         url: url,
         method: 'get',
       })
-      console.log(data);
+      // console.log(data);
       return data
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data.error.message)

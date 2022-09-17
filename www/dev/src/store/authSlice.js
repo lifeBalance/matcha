@@ -28,46 +28,42 @@ const login = createAsyncThunk('auth/login', function (args, thunkAPI) {
 })
  */
 
-const login = createAsyncThunk(
-  'auth/login',
-  async function(args, thunkAPI) {
-    const { username, password } = args // make sure you send an Object!!!
+const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
+  const { username, password } = args // make sure you send an Object!!!
 
-    try {
-      const response = await axios.post('/api/login', {
-          username: username,
-          password: password
-      }, {
-        withCredentials: true
-      })
+  try {
+    const response = await axios.post('/api/login', {
+      username: username,
+      password: password
+    }, {
+      withCredentials: true
+    })
 
-      return response.data
-    } catch (error) {
-      console.log(error.response.data.message);
-      return thunkAPI.rejectWithValue(error.response.data.message)
-    }
-  })
+    return response.data
+  } catch (error) {
+    console.log(error.response.data.message);
+    return thunkAPI.rejectWithValue(error.response.data.message)
+  }
+})
 
-const refresh = createAsyncThunk(
-  'auth/refresh',
-  async function(args, thunkAPI) {
-    // If there's no Access Token in Local Storage, it means the user didn't 
-    // log in, so there's no token to REFRESH!
-    if (!localStorage.getItem('accessToken')) { 
-      return thunkAPI.rejectWithValue('Expired session')
-    }
+const refresh = createAsyncThunk('auth/refresh', async (args, thunkAPI) => {
+  // If there's no Access Token in Local Storage, it means
+  // the user didn't log in, so there's no token to REFRESH!
+  if (!localStorage.getItem('accessToken')) { 
+    return thunkAPI.rejectWithValue('Expired session')
+  }
 
-    try {
-      const response = await axios.post('/api/refresh', {
-        withCredentials: true
-      })
+  try {
+    const response = await axios.post('/api/refresh', {
+      withCredentials: true
+    })
 
-      return response.data
-    } catch (error) {
-      console.log(error.response.data.message);
-      return thunkAPI.rejectWithValue(error.response.data.message)
-    }
-  })
+    return response.data
+  } catch (error) {
+    console.log(error.response.data.message);
+    return thunkAPI.rejectWithValue(error.response.data.message)
+  }
+})
 
 const authSlice = createSlice({
   name: 'auth',
@@ -94,7 +90,7 @@ const authSlice = createSlice({
       state.isLoggedIn = true
       state.error = null
 
-      console.log(action.payload);
+      // console.log(action.payload);
       if (action.payload && action.payload.access_token) {
         localStorage.setItem('accessToken', action.payload.access_token)
         state.accessToken = action.payload.access_token
@@ -102,7 +98,6 @@ const authSlice = createSlice({
     },
     [login.rejected]: (state, action) => {
       state.isLoading = false
-      // console.log(action.payload)
       state.error = action.payload
     },
 
@@ -115,7 +110,6 @@ const authSlice = createSlice({
       state.isLoggedIn = true
       state.error = null
 
-      console.log(action.payload);
       if (action.payload && action.payload.access_token) {
         // localStorage.removeItem('accessToken')
         localStorage.setItem('accessToken', action.payload.access_token)

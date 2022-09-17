@@ -1,8 +1,51 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit"
 import axios from 'axios'
+import { refresh } from '../store/authSlice'
 
-/* TODO: add an interceptor, which detects the 401 status,
- stores the failing request in a queue, and calls the /api/refresh endpoint. */
+const fetchUsers = axios.create({
+  baseURL: '/api',
+})
+
+fetchUsers.interceptors.response.use(
+  // If all goes smooth:
+  response => response, // Returning the response is ESSENTIAL!!
+
+  /* If the interceptor fails, we check for a 401 (unauthorized) status,
+    in that case, we invoke the refresh reducer from the auth slice to
+    refresh our JWTs */
+  error => {
+    if (error.response.status === 401) {
+      // console.log('JWTs were Silently Refreshed!');
+      return error.response.config.refreshTokens()
+        .then(resp => {
+          error.response.config.headers = {
+            'Authorization': `Bearer ${resp.payload.access_token}`
+          }
+
+          return axios.request(error.response.config)
+        })
+        .catch(e => console.log(e))
+    }
+    return Promise.reject(error)
+  }
+)
+
+const getUsers = createAsyncThunk('users/getUsers', async (args, thunkAPI) => {
+  try {
+    const response = await fetchUsers({
+      url: '/users',
+      method: 'get',
+      headers: { 'Authorization': `Bearer ${args.accessToken}` },
+      refreshTokens: () => thunkAPI.dispatch(refresh()),
+    })
+
+    return response.data
+  } catch (error) {
+    return thunkAPI.rejectWithValue(error.response.data.error.message)
+  }
+})
+
+/* 
 const getUsers = createAsyncThunk(
   'users/getUsers',
   async (args, thunkAPI) => {
@@ -10,12 +53,17 @@ const getUsers = createAsyncThunk(
 
     try {
       const url = '/api/users'
-      console.log('fanks', args.accessToken);
+      // const url = 'https://127.0.0.1/api/users' // CORS errors!!
+      // console.log('fanks', args.accessToken);
 
       const { data } = await axios({
         url: url,
         method: 'get',
         headers: {
+          // 'Origin': 'http://127.0.0.1:5173',
+          // 'Access-Control-Allow-Origin': 'http://127.0.0.1:5173',
+          // 'Access-Control-Request-Method': 'POST',
+          // 'Access-Control-Request-Headers': 'Content-Type, Authorization',
           'Authorization': `Bearer ${args.accessToken}`
         },
       })
@@ -25,46 +73,30 @@ const getUsers = createAsyncThunk(
       return thunkAPI.rejectWithValue(error.response.data.error.message)
     }
 })
-
-const DUMMY_USERS = [
-  {
-    id: 1,
-    username: 'foo',
-    email: 'foo@bar.com',
-  },
-  {
-    id: 2,
-    username: 'foobar',
-    email: 'foobar@bar.com',
-  },
-]
+ */
 
 const initialState = {
-  users: [],
+  users: false,
   isLoading: true,
-  error: false
+  error: false,
 }
 
 const usersSlice = createSlice({
   name: 'users',
   initialState,
-  reducers: {
-    test: (state) => {
-      state.users = DUMMY_USERS
-      state.isLoading = false
-      state.error = false
-    },
-  },
+  reducers: {},
   extraReducers: {
     [getUsers.pending]: (state) => {
       state.isLoading = true
     },
-    // action will contain the fetched items (if the fetch request is successful)
+
     [getUsers.fulfilled]: (state, action) => {
       // console.log(action) // testing
       state.isLoading = false
+      state.error = false
       state.users = action.payload
     },
+
     [getUsers.rejected]: (state, action) => {
       state.isLoading = false
       // console.log(action)
@@ -75,4 +107,4 @@ const usersSlice = createSlice({
 
 export default usersSlice.reducer
 export { getUsers }
-export const { test } = usersSlice.actions
+// export const {} = usersSlice.actions

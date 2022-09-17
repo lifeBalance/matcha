@@ -56,6 +56,9 @@ class Router {
     private function restDispatcher($http_method, $controller)
     {
         switch ($http_method) {
+            case 'OPTIONS':
+                $method = 'answer_preflight_request';
+                break;
             case 'GET':
                 $method = isset($this->args['id']) ? 'show' : 'index';
                 break;

@@ -75,4 +75,15 @@ class Users
         $id = $args['id'];
         echo json_encode("user $id logging out");
     }
+
+    // Answer Preflight request (During development, client is served from
+    // the development server (Vite) at https://127.0.0.1:5173
+    public function answer_preflight_request($args)
+    {
+        // header('Access-Control-Allow-Origin:  https://127.0.0.1:5173');
+        header('Access-Control-Allow-Origin:  *');
+        header('Access-Control-Allow-Methods: GET');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization');
+        echo json_encode("OK");
+    }
 }

@@ -12,18 +12,19 @@ function Test() {
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
+  /* When the page loads, or where the user logs out, we run the hook */
   React.useEffect(() => {
     if (isLoggedIn)
       dispatch(getUsers({ accessToken }))
     else
       navigate('/', {replace: true})
-  }, [])
+  }, [isLoggedIn])
 
   let contentElem 
 
   if (isLoading)
     contentElem = (<p>Loading...</p>)
-  else if (users && !error)
+  else if (users && !error && !isLoading)
     contentElem = (<ul>{users.map(user => (<p key={user.id}>{user.id} {user.username} {user.email}</p>))}</ul>)
   else if (!users && error)
     contentElem = <p>{error}</p>
