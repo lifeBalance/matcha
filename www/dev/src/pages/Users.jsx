@@ -1,5 +1,4 @@
 import React from 'react'
-import Layout from '../components/UI/Layout'
 import { useNavigate } from 'react-router-dom'
 
 // redux
@@ -30,10 +29,10 @@ function Test() {
     contentElem = <p>{error}</p>
 
   return (
-    <Layout>
-      <h1 className='text-2xl font-bold text-center'>Users</h1>
+    <div className=''>
+    <h1 className='text-2xl font-bold text-center'>Users</h1>
       {contentElem}
-    </Layout>
+    </div>
   )
 }
 
