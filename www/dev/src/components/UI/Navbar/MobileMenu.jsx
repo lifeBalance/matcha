@@ -24,7 +24,7 @@ function MobileMenu() {
         (<>
           <NavLink to='/login' className='hover:text-pink-500 pt-6 pl-4' onClick={() => dispatch(toggleMobileMenu())}>login</NavLink>
 
-          <NavLink to='/login' className='hover:text-pink-500 pt-6 pl-4' onClick={() => dispatch(toggleMobileMenu())}>signup</NavLink>
+          <NavLink to='/signup' className='hover:text-pink-500 pt-6 pl-4' onClick={() => dispatch(toggleMobileMenu())}>signup</NavLink>
         </>)
       }
     </div>

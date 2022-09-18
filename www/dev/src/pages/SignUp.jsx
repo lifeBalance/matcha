@@ -18,7 +18,13 @@ import { login } from '../store/authSlice'
 // helper functions
 function validateName(str) {
   // 3 characters or more
-  return str.length >= 3
+  return str.length >= 2
+}
+
+function validateEmail(str) {
+  const regex = 
+  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  return str.match(regex)
 }
 
 function validatePwd(str) {
@@ -28,7 +34,7 @@ function validatePwd(str) {
   return str.match(regex)
 }
 
-function Login() {
+function SignUp() {
   // Redux
   const dispatch = useDispatch()
   const { isLoggedIn, isLoading, error } = useSelector(slices => slices.auth)
@@ -46,6 +52,30 @@ function Login() {
   } = useInput(validateName)
 
   const {
+    value: firstName,
+    inputHasError: firstNameHasError,
+    inputChangeHandler: firstNameChangeHandler,
+    inputBlurHandler: firstNameBlurHandler,
+    resetInput: resetFirstNameInput,
+  } = useInput(validateName)
+
+  const {
+    value: lastName,
+    inputHasError: lastNameHasError,
+    inputChangeHandler: lastNameChangeHandler,
+    inputBlurHandler: lastNameBlurHandler,
+    resetInput: resetLastNameInput,
+  } = useInput(validateName)
+
+  const {
+    value: email,
+    inputHasError: emailHasError,
+    inputChangeHandler: emailChangeHandler,
+    inputBlurHandler: emailBlurHandler,
+    resetInput: resetEmailInput,
+  } = useInput(validateEmail)
+
+  const {
     value: password,
     inputHasError: passwordHasError,
     inputChangeHandler: passwordChangeHandler,
@@ -53,7 +83,11 @@ function Login() {
     resetInput: resetPasswordInput,
   } = useInput(validatePwd)
 
-  let formIsValid = validateName(username) && validatePwd(password)
+  let formIsValid = validateName(username) && 
+                    validateName(firstName) &&
+                    validateName(lastName) &&
+                    validateEmail(email) &&
+                    validatePwd(password)
 
   function submitHandler(e) {
     e.preventDefault()
@@ -66,6 +100,9 @@ function Login() {
     // if login was successful (otherwise show problem, and do none of what's below)
     if (!error) {
       resetUsernameInput()
+      resetFirstNameInput()
+      resetLastNameInput()
+      resetEmailInput()
       resetPasswordInput()
       navigate('/', {replace: true})
     }
@@ -73,11 +110,33 @@ function Login() {
 
   let usernameErrorContent 
   if (usernameHasError)
-    usernameErrorContent = <><HandRaisedIcon styles='w-5' /> Must be at least 3 characters</>
+    usernameErrorContent = (<>
+      <HandRaisedIcon styles='w-5' /> Must be at least 2 characters
+    </>)
+
+  let firstNameErrorContent 
+  if (firstNameHasError)
+    firstNameErrorContent = (<>
+      <HandRaisedIcon styles='w-5' /> Must be at least 2 characters
+    </>)
+
+let lastNameErrorContent 
+  if (lastNameHasError)
+    lastNameErrorContent = (<>
+      <HandRaisedIcon styles='w-5' /> Must be at least 2 characters
+    </>)
+
+let emailErrorContent 
+  if (emailHasError)
+    emailErrorContent = (<>
+      <HandRaisedIcon styles='w-5' /> Must be a valid email address
+    </>)
 
   let passwordErrorContent 
   if (passwordHasError)
-    passwordErrorContent = <><HandRaisedIcon styles='w-5' /> At least 5 characters, including uppercase, lowercase, digit and symbol</>
+    passwordErrorContent = (<>
+      <HandRaisedIcon styles='w-5' /> At least 5 characters, including uppercase, lowercase, digit and symbol
+    </>)
 
   let submitButtonContent = 'Please, fill the form'
   if (formIsValid) 
@@ -87,8 +146,8 @@ function Login() {
 
   return (
     <Layout>
-      <div className="bg-gradient-to-br from-pink-400 via-red-400 to-yellow-400 p-8 h-screen max-w-3xl mx-auto">
-        <h1 className='text-white text-3xl text-center font-bold my-6 pb-4'>Log In</h1>
+      <div className="bg-gradient-to-br from-pink-400 via-red-400 to-yellow-400 p-8 max-w-3xl mx-auto">
+        <h1 className='text-white text-3xl text-center font-bold my-6 pb-4'>Sign Up</h1>
 
         <form onSubmit={submitHandler} className=''>
           <Input 
@@ -98,6 +157,30 @@ function Login() {
             onBlur={usernameBlurHandler}
             errorContent={usernameErrorContent}
           >username</Input>
+
+          <Input 
+            type='text'
+            value={firstName}
+            onChange={firstNameChangeHandler}
+            onBlur={firstNameBlurHandler}
+            errorContent={firstNameErrorContent}
+          >first name</Input>
+
+          <Input 
+            type='text'
+            value={lastName}
+            onChange={lastNameChangeHandler}
+            onBlur={lastNameBlurHandler}
+            errorContent={lastNameErrorContent}
+          >last name</Input>
+
+          <Input 
+            type='text'
+            value={email}
+            onChange={emailChangeHandler}
+            onBlur={emailBlurHandler}
+            errorContent={emailErrorContent}
+          >email</Input>
 
           <Input 
             type='text'
@@ -112,9 +195,10 @@ function Login() {
               disabled={!formIsValid}
               className='text-white bg-black hover:bg-gray-800 active:bg-white active:text-black font-bold rounded-lg text-2xl w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed hover:disabled:bg-black focus:ring-transparent md:ml-8'
             >{submitButtonContent}</button>
+
             <div className='space-y-6 text-center md:text-right'>
               <p onClick={() => navigate('/forgot', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8'>Forgot Password?</p>
-              <p onClick={() => navigate('/signup', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8'>Create Account?</p>
+              <p onClick={() => navigate('/login', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8'>Already a member? <span className='font-bold'>Login</span></p>
             </div>
           </div>
         </form>
@@ -123,4 +207,4 @@ function Login() {
   )
 }
 
-export default Login
+export default SignUp

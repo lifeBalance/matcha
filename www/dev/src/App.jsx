@@ -9,6 +9,7 @@ import Test from './pages/Test'
 import Profile from './pages/Profile'
 import Users from './pages/Users'
 import Login from './pages/Login'
+import SignUp from './pages/SignUp'
 import ForgotPassword from './pages/ForgotPassword'
 
 // components
@@ -40,6 +41,7 @@ function App() {
         <Route path='test' element={<Test />} />
         <Route path='users' element={<Users />} />
         <Route path='/login' element={<Login />} />
+        <Route path='/signup' element={<SignUp />} />
         <Route path='/forgot' element={<ForgotPassword />} />
       </Routes>
     </BrowserRouter>
