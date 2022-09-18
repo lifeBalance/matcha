@@ -144,12 +144,13 @@ let emailErrorContent
     submitButtonContent = 'Logging in...'
 
   return (
-      <div className="max-w-3xl">
+      <div className="mx-auto">
         <h1 className='text-white text-3xl text-center font-bold my-6 pb-4'>Sign Up</h1>
 
-        <form onSubmit={submitHandler} className='mx-auto'>
+        <form onSubmit={submitHandler} className='flex flex-col items-center w-full'>
           <Input 
             type='text'
+            label='username'
             value={username}
             onChange={usernameChangeHandler}
             onBlur={usernameBlurHandler}
@@ -158,6 +159,7 @@ let emailErrorContent
 
           <Input 
             type='text'
+            label='first name'
             value={firstName}
             onChange={firstNameChangeHandler}
             onBlur={firstNameBlurHandler}
@@ -166,6 +168,7 @@ let emailErrorContent
 
           <Input 
             type='text'
+            label='last name'
             value={lastName}
             onChange={lastNameChangeHandler}
             onBlur={lastNameBlurHandler}
@@ -174,6 +177,7 @@ let emailErrorContent
 
           <Input 
             type='text'
+            label='email'
             value={email}
             onChange={emailChangeHandler}
             onBlur={emailBlurHandler}
@@ -183,6 +187,7 @@ let emailErrorContent
 
           <Input 
             type='text'
+            label='password'
             value={password}
             onChange={passwordChangeHandler}
             onBlur={passwordBlurHandler}

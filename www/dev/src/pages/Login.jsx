@@ -85,12 +85,13 @@ function Login() {
     submitButtonContent = 'Logging in...'
 
   return (
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <h1 className='text-white text-3xl text-center font-bold my-6 pb-4'>Log In</h1>
 
         <form onSubmit={submitHandler} className=''>
           <Input 
             type='text'
+            label='username'
             value={username}
             onChange={usernameChangeHandler}
             onBlur={usernameBlurHandler}
@@ -98,7 +99,8 @@ function Login() {
           >username</Input>
 
           <Input 
-            type='text'
+            type='password'
+            label='password'
             value={password}
             onChange={passwordChangeHandler}
             onBlur={passwordBlurHandler}
