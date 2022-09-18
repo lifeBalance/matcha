@@ -85,10 +85,10 @@ function Login() {
     submitButtonContent = 'Logging in...'
 
   return (
-      <div className="max-w-4xl mx-auto">
+      <div className="mx-auto">
         <h1 className='text-white text-3xl text-center font-bold my-6 pb-4'>Log In</h1>
 
-        <form onSubmit={submitHandler} className=''>
+        <form onSubmit={submitHandler} className='flex flex-col items-center w-full'>
           <Input 
             type='text'
             label='username'
@@ -107,10 +107,10 @@ function Login() {
             errorContent={passwordErrorContent}
           >password</Input>
 
-          <div className="flex flex-col md:flex-row md:justify-between space-y-10 md:space-y-0 items-center mt-10">
+          <div className="flex flex-col md:flex-row md:justify-between space-y-10 md:space-y-0 items-center mt-10 mb-4">
             <button
               disabled={!formIsValid}
-              className='text-white bg-black hover:bg-gray-800 active:bg-white active:text-black font-bold rounded-lg text-2xl w-full sm:w-auto px-3 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed hover:disabled:bg-black focus:ring-transparent md:ml-8'
+              className='text-white bg-black hover:bg-gray-800 active:bg-white active:text-black font-bold rounded-lg text-2xl w-full sm:w-auto px-3 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed hover:disabled:bg-black focus:ring-transparent md:ml-4 md:mr-12'
             >{submitButtonContent}</button>
             <div className='space-y-6 text-center md:text-right'>
               <p onClick={() => navigate('/forgot', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8 hover:cursor-pointer'>Forgot Password?</p>
