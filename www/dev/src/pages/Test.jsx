@@ -1,5 +1,4 @@
 import React from 'react'
-import Layout from '../components/UI/Layout'
 
 // redux
 import { useSelector, useDispatch } from 'react-redux'
@@ -23,10 +22,7 @@ function Test() {
     contentElem = <p>{error}</p>
 
   return (
-    <Layout>
-      <h1 className='text-2xl font-bold text-center'>Test</h1>
-      {contentElem}
-    </Layout>
+    <h1 className='text-2xl font-bold text-center'>{contentElem}</h1>
   )
 }
 

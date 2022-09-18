@@ -1,7 +1,5 @@
 import React from 'react'
 
-import Layout from '../components/UI/Layout'
-
 // redux
 import { useDispatch } from 'react-redux'
 import { refresh } from '../store/authSlice'
@@ -9,12 +7,22 @@ import { refresh } from '../store/authSlice'
 function Home() {
   const dispatch = useDispatch()
   return (
-    <Layout>
+    <div className=''>
       <h1 className='text-2xl font-bold text-center'>Home</h1>
       <p className='text-xl'>
-        Homey, lorem ipsum dolor, sit amet consectetur adipisicing elit,
-        optio qui veritatis odio corporis reprehenderit. Inventore quidem 
-        iste corrupti, iusto itaqur modi eligendi magni! Numquam.
+      fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed! deserunt, doloremque fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed!
+      fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed! deserunt, doloremque fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed!
+      fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed! deserunt, doloremque fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed!
+      fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed! deserunt, doloremque fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed!
+      fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed! deserunt, doloremque fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed!
+      fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed! deserunt, doloremque fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed!
+      fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed! deserunt, doloremque fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed!
+      fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed! deserunt, doloremque fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed!
+      fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed! deserunt, doloremque fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed!
+      fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed! deserunt, doloremque fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed!
+      fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed! deserunt, doloremque fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed!
+      fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed! deserunt, doloremque fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed!
+      fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed! deserunt, doloremque fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed!
       </p>
       <button
         onClick={() => dispatch(refresh())}
@@ -22,7 +30,7 @@ function Home() {
       >
         Refresh token
       </button>
-    </Layout>
+    </div>
   )
 }
 

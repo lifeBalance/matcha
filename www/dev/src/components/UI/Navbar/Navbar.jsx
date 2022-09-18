@@ -18,7 +18,7 @@ function Navbar() {
 
   return (
     <nav className='flex justify-between items-center bg-black py-3 px-8'>
-      <Logo styles='text-6xl font-bold font-logo text-white' />
+      <Logo styles='text-6xl font-bold font-logo text-white min-w-fit' />
 
       <div className='hidden md:flex md:space-x-8 text-white'>
         <MenuItem title='test' route='test' />

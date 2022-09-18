@@ -13,7 +13,8 @@ function Input(props) {
           value={props.value}
           onChange={props.onChange}
           onBlur={props.onBlur}
-          className='bg-gray-50 border border-gray-300 rounded-md px-4 py-1 text-gray-900 text-2xl'
+          className='bg-gray-50 border border-gray-300 rounded-md px-4 py-1 text-gray-900 text-2xl max-w-xs md:max-w-md placeholder:text-gray-300'
+          placeholder={props.placeholder}
         />
       </label>
 
