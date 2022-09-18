@@ -6,9 +6,9 @@ import Footer from './Footer'
 
 function Layout(props) {
   return (
-    <div className='container bg-gradient-to-br from-pink-400 via-red-400 to-yellow-400 min-h-full min-w-full flex flex-col'>
+    <div className='container bg-gradient-to-br from-pink-400 via-red-400 to-yellow-400 min-h-screen min-w-full flex flex-col'>
       <Navbar />
-        <div className="min-h-screen max-w-6xl min-w-xs mx-auto xs:p-8 md:p-12">
+        <div className="max-w-6xl min-w-xs mx-auto p-8 md:p-12 text-white flex">
           {props.children}
         </div>
       <Footer />

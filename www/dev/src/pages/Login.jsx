@@ -111,8 +111,8 @@ function Login() {
               className='text-white bg-black hover:bg-gray-800 active:bg-white active:text-black font-bold rounded-lg text-2xl w-full sm:w-auto px-3 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed hover:disabled:bg-black focus:ring-transparent md:ml-8'
             >{submitButtonContent}</button>
             <div className='space-y-6 text-center md:text-right'>
-              <p onClick={() => navigate('/forgot', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8'>Forgot Password?</p>
-              <p onClick={() => navigate('/signup', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8'>Create Account?</p>
+              <p onClick={() => navigate('/forgot', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8 hover:cursor-pointer'>Forgot Password?</p>
+              <p onClick={() => navigate('/signup', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8 hover:cursor-pointer'>Create Account?</p>
             </div>
           </div>
         </form>

@@ -7,8 +7,9 @@ import { refresh } from '../store/authSlice'
 function Home() {
   const dispatch = useDispatch()
   return (
-    <div className=''>
+    <div>
       <h1 className='text-2xl font-bold text-center'>Home</h1>
+
       <p className='text-xl'>
       fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed! deserunt, doloremque fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed!
       fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed! deserunt, doloremque fugit, vero fugiat. Et harum aperiam doloremque veritatis maxime in ratione quibusdam perspiciatis voluptas ipsum illum iusto facilis expedita quasi, ullam, corrupti rem, inventore sed!

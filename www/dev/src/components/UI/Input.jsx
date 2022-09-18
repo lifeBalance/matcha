@@ -3,8 +3,8 @@ import React from 'react'
 function Input(props) {
   return (
     <div className='relative pb-20'>
-      <label className='flex flex-col'>
-        <span className='text-2xl font-bold text-white pb-2 capitalize'>
+      <label className='flex flex-col items-center'>
+        <span className='text-2xl font-bold text-white pb-2 capitalize text-left'>
           {props.children}
         </span>
 

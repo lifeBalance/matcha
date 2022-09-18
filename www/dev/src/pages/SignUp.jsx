@@ -144,10 +144,10 @@ let emailErrorContent
     submitButtonContent = 'Logging in...'
 
   return (
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-3xl">
         <h1 className='text-white text-3xl text-center font-bold my-6 pb-4'>Sign Up</h1>
 
-        <form onSubmit={submitHandler} className=''>
+        <form onSubmit={submitHandler} className='mx-auto'>
           <Input 
             type='text'
             value={username}
@@ -196,8 +196,8 @@ let emailErrorContent
             >{submitButtonContent}</button>
 
             <div className='space-y-6 text-center md:text-right pb-8'>
-              <p onClick={() => navigate('/forgot', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8'>Forgot Password?</p>
-              <p onClick={() => navigate('/login', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8'>Already a member? <span className='font-bold'>Login</span></p>
+              <p onClick={() => navigate('/forgot', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8 hover:cursor-pointer'>Forgot Password?</p>
+              <p onClick={() => navigate('/login', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8 hover:cursor-pointer'>Already a member? <span className='font-bold'>Login</span></p>
             </div>
           </div>
         </form>
