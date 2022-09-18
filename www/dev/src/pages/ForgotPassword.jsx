@@ -50,6 +50,7 @@ function ForgotPassword() {
 
       <form onSubmit={submitHandler} >
         <Input 
+          label='email'
           type='text'
           value={email}
           onChange={emailChangeHandler}
@@ -61,7 +62,7 @@ function ForgotPassword() {
         <div className="flex justify-center mt-6 md:ml-4">
           <button
             disabled={!formIsValid}
-            className='text-white bg-black hover:bg-gray-800 active:bg-white active:text-black font-bold rounded-lg text-2xl w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed hover:disabled:bg-black focus:ring-transparent '
+            className='text-white bg-black hover:bg-gray-800 active:bg-white active:text-black font-bold rounded-lg text-2xl w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed hover:disabled:bg-black focus:ring-transparent md:min-w-[260px]'
           >{formIsValid ? 'Submit' : 'Enter a valid email'}</button>
         </div>
       </form>
