@@ -8,7 +8,7 @@ import useInput from '../hooks/useInput'
 import Input from '../components/UI/Input'
 
 //icons
-import { HandRaisedIcon } from '../assets/icons'
+import { HandRaisedIcon } from '../components/Icons/icons'
 
 // redux
 import { useSelector, useDispatch } from 'react-redux'

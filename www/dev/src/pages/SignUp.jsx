@@ -1,4 +1,5 @@
 import React from 'react'
+import axios from 'axios'
 
 // hooks
 import { useNavigate } from 'react-router-dom'
@@ -8,7 +9,7 @@ import useInput from '../hooks/useInput'
 import Input from '../components/UI/Input'
 
 //icons
-import { HandRaisedIcon } from '../assets/icons'
+import { HandRaisedIcon, CheckCircle } from '../components/Icons/icons'
 
 // redux
 import { useSelector, useDispatch } from 'react-redux'
@@ -38,6 +39,7 @@ function SignUp() {
   const dispatch = useDispatch()
   const { isLoggedIn, isLoading, error } = useSelector(slices => slices.auth)
   const navigate = useNavigate()
+  const [usernameExistence, setUsernameExistence] = React.useState('')
 
   if (isLoggedIn)
     navigate('/', {replace: true})
@@ -107,11 +109,50 @@ function SignUp() {
     }
   }
 
+  // Debounce username existence in DB
+  React.useEffect(() => {
+    async function checkIfExists(args) {
+      return axios
+      .post('/api/usernames', {
+        username: args.username,
+      })
+      .then(function (response) {
+        console.log(response.data) // <== This prints nicely
+        if (response.data) {
+          setUsernameExistence(true)
+        } else {
+          setUsernameExistence(false)
+        }
+        // return response.data
+      })
+      .catch(function (error) {
+        console.log(error)
+        return error
+      })
+    }
+
+    const timerId = setTimeout(() => {
+      if (!usernameHasError) {
+        checkIfExists({ username })
+      } else {
+        setUsernameExistence(null)
+      }
+    }, 1000);
+
+    return () => clearTimeout(timerId)
+  }, [usernameHasError, username])
+
   let usernameErrorContent 
-  if (usernameHasError)
+  if (usernameHasError) {
     usernameErrorContent = (<>
-      <HandRaisedIcon styles='w-5' /> Must be at least 2 characters
+      <HandRaisedIcon styles='w-5 text-yellow-300' /> Must be at least 2 characters
     </>)
+  } else if (username.length > 0 && !usernameHasError && usernameExistence !== null) {
+    usernameErrorContent = usernameExistence ?
+    (<><HandRaisedIcon styles='w-5 text-yellow-300' /> Sorry, that username is already taken</>)
+    :
+    (<><CheckCircle styles='w-5 text-green-300' /> Username is available!</>)
+  }
 
   let firstNameErrorContent 
   if (firstNameHasError)

@@ -22,5 +22,6 @@ return array(
     'Router' => $baseDir . '/core/Router.php',
     'Test' => $baseDir . '/api/controllers/Test.php',
     'User' => $baseDir . '/api/models/User.php',
+    'Usernames' => $baseDir . '/api/controllers/Usernames.php',
     'Users' => $baseDir . '/api/controllers/Users.php',
 );
