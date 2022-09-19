@@ -42,38 +42,42 @@ class User
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
-    public function create($data)/// RENAME ACTION TO NEW!!!
+    public function create($data)
     {
-        // Fill errors array (if there's any errors in the form) 
-        // $this->validateSignUp($data);
+        $username   = $data['username'];
+        $firstname  = $data['firstname'];
+        $lastname   = $data['lastname'];
+        $email      = $data['email'];
+        $password   = $data['password'];
 
-        // No errors in the form
-        if (empty($this->errors)) {
-            // Check that the username doesn't exist in the database!!!
-            if ($this->getByUsername($data['username']))
-                return ['error' => 'User with that nick already exists'];
-
-            if ($this->getByEmail($data['email']))
-                return ['error' => 'User with that email already exists'];
-
-            // Check both submitted passwords match
-            if ($data['password'] != $data['pwdConfirm'])
-                return ['error' => 'Passwords do not match'];
-
-            // Hash the password
-            $pwd_hash = password_hash($data['password'], PASSWORD_DEFAULT);
-
-            // Let's write to the DB
-            $sql = 'INSERT INTO users (username, email, pwd_hash)
-                    VALUES (:username, :email, :pwd_hash)';
-            $stmt = $this->conn->prepare($sql);
-
-            $stmt->bindValue(':username', $data['username'], PDO::PARAM_STR);
-            $stmt->bindValue(':email', $data['email'], PDO::PARAM_STR);
-            $stmt->bindValue(':pwd_hash', $pwd_hash, PDO::PARAM_STR);
-            $stmt->execute();
-
-            return ['user' => $this->getByUsername($data['username'])];
+        // Double check with the DB
+        // Check that the username doesn't exist in the database!!!
+        // Check that the email doesn't exist in the database!!!
+        if ($this->getByUsername($username) ||
+            $this->getByEmail($email))
+        {
+            return false;
         }
+
+        // Hash the password
+        $pwd_hash = password_hash($password, PASSWORD_DEFAULT);
+
+        // Let's write to the DB
+        $sql = 'INSERT INTO users (
+                    username, firstname, lastname, email, pwd_hash
+                )
+                VALUES (
+                    :username, :firstname, :lastname, :email, :pwd_hash
+                )';
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->bindValue(':username', $username, PDO::PARAM_STR);
+        $stmt->bindValue(':firstname', $firstname, PDO::PARAM_STR);
+        $stmt->bindValue(':lastname', $lastname, PDO::PARAM_STR);
+        $stmt->bindValue(':email', $email, PDO::PARAM_STR);
+        $stmt->bindValue(':pwd_hash', $pwd_hash, PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $this->getByUsername($username);
     }
 }

@@ -20,7 +20,7 @@ function useSignup() {
         setIsLoading(false)
       }
       // console.log(response.status, response.statusText)
-      console.log(response.data)
+      // console.log(response.data)
 
       // return response.data // No need to return
     })

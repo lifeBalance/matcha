@@ -19,7 +19,7 @@ import { useSelector } from 'react-redux'
 // helper functions
 function validateUsername(str) {
   // Between 3-10 characters: uppercase, lowercase and digits
-  const regex = /^[A-Z\d]{2,10}$/
+  const regex = /^[A-Z\d\-_]{2,10}$/
   return str.toUpperCase().trim().match(regex)
 }
 
@@ -95,36 +95,18 @@ function SignUp() {
     resetInput: resetPasswordInput,
   } = useInput(validatePwd)
 
-  let formIsValid = validateName(username) && 
-                    validateName(firstName) &&
-                    validateName(lastName) &&
-                    validateEmail(email) &&
-                    validatePwd(password)
-
-  function submitHandler(e) {
-    e.preventDefault()
-
-    if (!formIsValid) return
-
-    // console.log(`Submitted: ${username} ${password}`)
-    sendRequest({
-      username,
-      firstName,
-      lastName,
-      email,
-      password,
-    })
-
-    // if login was successful (otherwise show problem, and do none of what's below)
-    if (isSignedUp && !isLoading && !signupError) {
-      // resetUsernameInput()
-      // resetFirstNameInput()
-      // resetLastNameInput()
-      // resetEmailInput()
-      // resetPasswordInput()
-      // navigate('/', {replace: true})
-    }
+  function stringsAreEqual(str) {
+    return str === password
   }
+
+  const {
+    value: passwordConf,
+    inputHasError: passwordConfHasError,
+    inputChangeHandler: passwordConfChangeHandler,
+    inputBlurHandler: passwordConfBlurHandler,
+    resetInput: resetPasswordConfInput,
+  } = useInput(stringsAreEqual)
+
 
   const {
     exists: usernameExistence,
@@ -166,10 +148,41 @@ function SignUp() {
     return () => clearTimeout(timerId)
   }, [emailHasError, email])
 
+  let formIsNotValid =  usernameHasError || 
+                        firstNameHasError ||
+                        lastNameHasError ||
+                        emailHasError ||
+                        passwordHasError ||
+                        passwordConfHasError ||
+                        usernameExistence ||
+                        emailExistence
+
+  function submitHandler(e) {
+    e.preventDefault()
+
+    if (formIsNotValid) return
+
+    // console.log(`Submitted: ${username} ${password}`)
+    sendRequest({
+      username,
+      firstName,
+      lastName,
+      email,
+      password,
+      passwordConf,
+    })
+
+    // if login was successful (otherwise show problem, and do none of what's below)
+    if (isSignedUp && !isLoading && !signupError) {
+      navigate('/', {replace: true})
+    }
+  }
+
+
   let usernameErrorContent 
   if (username.length > 0 && usernameHasError) {
     usernameErrorContent = (<>
-      <HandRaisedIcon styles='w-5 text-yellow-300' /> Only letters and numbers (2-10)
+      <HandRaisedIcon styles='w-5 text-yellow-300' /> Min. 2, max 10 (letters, numbers, and underscores)
     </>)
   } else if (username.length > 0 && !usernameHasError && usernameExistence !== null) {
     usernameErrorContent = usernameExistence ?
@@ -181,19 +194,19 @@ function SignUp() {
   let firstNameErrorContent 
   if (firstName.length > 0 && firstNameHasError)
     firstNameErrorContent = (<>
-      <HandRaisedIcon styles='w-5' /> Only letters (from 2 to 30)
+      <HandRaisedIcon styles='w-5 text-yellow-300' /> Only letters (from 2 to 30)
     </>)
 
   let lastNameErrorContent 
   if (lastName.length > 0 && lastNameHasError)
     lastNameErrorContent = (<>
-      <HandRaisedIcon styles='w-5' /> Only letters (from 2 to 30)
+      <HandRaisedIcon styles='w-5 text-yellow-300' /> Only letters (from 2 to 30)
     </>)
 
   let emailErrorContent 
   if (email.length > 0 && emailHasError) {
     emailErrorContent = (<>
-      <HandRaisedIcon styles='w-5' /> Must be a valid email address
+      <HandRaisedIcon styles='w-5 text-yellow-300' /> Must be a valid email address
     </>) 
   } else if (email.length > 0 && !emailHasError && emailExistence !== null) {
     emailErrorContent = emailExistence ?
@@ -205,11 +218,17 @@ function SignUp() {
   let passwordErrorContent 
   if (password.length > 0 && passwordHasError)
     passwordErrorContent = (<>
-      <HandRaisedIcon styles='w-5' /> At least 5 characters, including uppercase, lowercase, digit and symbol
+      <HandRaisedIcon styles='w-5 text-yellow-300' /> At least 5 characters, including uppercase, lowercase, digit and symbol
+    </>)
+
+let passwordConfErrorContent 
+  if (passwordConf.length > 0 && passwordConfHasError)
+    passwordConfErrorContent = (<>
+      <HandRaisedIcon styles='w-5 text-yellow-300' /> Passwords don't match!
     </>)
 
   let submitButtonContent = 'Please, fill the form'
-  if (formIsValid) 
+  if (!formIsNotValid) 
     submitButtonContent = 'Submit'
   else if (isLoading)
     submitButtonContent = 'Signing Up...'
@@ -226,7 +245,7 @@ function SignUp() {
             onChange={usernameChangeHandler}
             onBlur={usernameBlurHandler}
             errorContent={usernameErrorContent}
-          >username</Input>
+          />
 
           <Input 
             type='text'
@@ -235,7 +254,7 @@ function SignUp() {
             onChange={firstNameChangeHandler}
             onBlur={firstNameBlurHandler}
             errorContent={firstNameErrorContent}
-          >first name</Input>
+          />
 
           <Input 
             type='text'
@@ -244,7 +263,7 @@ function SignUp() {
             onChange={lastNameChangeHandler}
             onBlur={lastNameBlurHandler}
             errorContent={lastNameErrorContent}
-          >last name</Input>
+          />
 
           <Input 
             type='text'
@@ -254,7 +273,7 @@ function SignUp() {
             onBlur={emailBlurHandler}
             errorContent={emailErrorContent}
             placeholder='test@test.com'
-          >email</Input>
+          />
 
           <Input 
             type='text'
@@ -263,11 +282,20 @@ function SignUp() {
             onChange={passwordChangeHandler}
             onBlur={passwordBlurHandler}
             errorContent={passwordErrorContent}
-          >password</Input>
+          />
+
+          <Input 
+            type='text'
+            label='password confirmation'
+            value={passwordConf}
+            onChange={passwordConfChangeHandler}
+            onBlur={passwordConfBlurHandler}
+            errorContent={passwordConfErrorContent}
+          />
 
           <div className="flex flex-col md:flex-row md:justify-between space-y-10 md:space-y-0 items-center mt-10">
             <button
-              disabled={!formIsValid}
+              disabled={formIsNotValid}
               className='text-white bg-black hover:bg-gray-800 active:bg-white active:text-black font-bold rounded-lg text-2xl w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed hover:disabled:bg-black focus:ring-transparent md:ml-4 md:mr-12 md:mb-6 md:min-w-[260px]'
             >{submitButtonContent}</button>
 
