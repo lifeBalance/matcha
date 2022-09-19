@@ -9,6 +9,7 @@ return array(
     'Auth' => $baseDir . '/auth/Auth.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Database' => $baseDir . '/core/Database.php',
+    'Emails' => $baseDir . '/api/controllers/Emails.php',
     'ErrorHandler' => $baseDir . '/api/exceptions/ErrorHandler.php',
     'ExceptionHandler' => $baseDir . '/api/exceptions/ExceptionHandler.php',
     'ExpiredTokenException' => $baseDir . '/api/exceptions/ExpiredTokenException.php',

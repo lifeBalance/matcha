@@ -3,7 +3,7 @@ import React from 'react'
 // components
 
 //icons
-import { EnvelopeIcon } from '../assets/icons'
+import { EnvelopeIcon } from '../components/Icons/icons'
 
 function Profile() {
   return (

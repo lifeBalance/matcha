@@ -10,6 +10,7 @@ class ComposerStaticInit1e37e30ac2a4a240a581dcbe746a9e6c
         'Auth' => __DIR__ . '/../..' . '/auth/Auth.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Database' => __DIR__ . '/../..' . '/core/Database.php',
+        'Emails' => __DIR__ . '/../..' . '/api/controllers/Emails.php',
         'ErrorHandler' => __DIR__ . '/../..' . '/api/exceptions/ErrorHandler.php',
         'ExceptionHandler' => __DIR__ . '/../..' . '/api/exceptions/ExceptionHandler.php',
         'ExpiredTokenException' => __DIR__ . '/../..' . '/api/exceptions/ExpiredTokenException.php',

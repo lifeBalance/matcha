@@ -4,7 +4,7 @@ import React from 'react'
 import Input from '../components/UI/Input'
 
 //icons
-import { EnvelopeIcon, HandRaisedIcon } from '../assets/icons'
+import { EnvelopeIcon, HandRaisedIcon } from '../components/Icons/icons'
 
 // hooks
 import useInput from '../hooks/useInput'

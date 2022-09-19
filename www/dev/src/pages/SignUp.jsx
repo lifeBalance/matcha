@@ -4,6 +4,8 @@ import axios from 'axios'
 // hooks
 import { useNavigate } from 'react-router-dom'
 import useInput from '../hooks/useInput'
+import useSignup from '../hooks/useSignup'
+import useCheckIfExists from '../hooks/useCheckIfExists'
 
 // components
 import Input from '../components/UI/Input'
@@ -12,13 +14,19 @@ import Input from '../components/UI/Input'
 import { HandRaisedIcon, CheckCircle } from '../components/Icons/icons'
 
 // redux
-import { useSelector, useDispatch } from 'react-redux'
-import { login } from '../store/authSlice'
+import { useSelector } from 'react-redux'
 
 // helper functions
+function validateUsername(str) {
+  // Between 3-10 characters: uppercase, lowercase and digits
+  const regex = /^[A-Z\d]{2,10}$/
+  return str.toUpperCase().trim().match(regex)
+}
+
 function validateName(str) {
-  // 3 characters or more
-  return str.length >= 2
+  // Between 2-30 characters, uppercase or lowercase (including accents and shit)
+  const regex = /^[A-ZÀ-ÚÄ-Ü\s]{2,30}$/
+  return str.toUpperCase().trim().match(regex)
 }
 
 function validateEmail(str) {
@@ -29,17 +37,20 @@ function validateEmail(str) {
 
 function validatePwd(str) {
   // Between 5-10 characters: 1 upper, 1 lower, 1 digit, 1 special
-  const regex = 
+  const regex =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{5,10}$/
   return str.match(regex)
 }
 
+/**
+ * REACT COMPONENT
+ */
 function SignUp() {
   // Redux
-  const dispatch = useDispatch()
-  const { isLoggedIn, isLoading, error } = useSelector(slices => slices.auth)
+  const { isLoggedIn } = useSelector(slices => slices.auth)
+  const { isSignedUp, signupError, isLoading, sendRequest,} = useSignup()
   const navigate = useNavigate()
-  const [usernameExistence, setUsernameExistence] = React.useState('')
+  // const [usernameExistence, setUsernameExistence] = React.useState('')
 
   if (isLoggedIn)
     navigate('/', {replace: true})
@@ -50,7 +61,7 @@ function SignUp() {
     inputChangeHandler: usernameChangeHandler,
     inputBlurHandler: usernameBlurHandler,
     resetInput: resetUsernameInput,
-  } = useInput(validateName)
+  } = useInput(validateUsername)
 
   const {
     value: firstName,
@@ -96,44 +107,37 @@ function SignUp() {
     if (!formIsValid) return
 
     // console.log(`Submitted: ${username} ${password}`)
-    dispatch(login({ username, password }))
+    sendRequest({
+      username,
+      firstName,
+      lastName,
+      email,
+      password,
+    })
 
     // if login was successful (otherwise show problem, and do none of what's below)
-    if (!error) {
-      resetUsernameInput()
-      resetFirstNameInput()
-      resetLastNameInput()
-      resetEmailInput()
-      resetPasswordInput()
-      navigate('/', {replace: true})
+    if (isSignedUp && !isLoading && !signupError) {
+      // resetUsernameInput()
+      // resetFirstNameInput()
+      // resetLastNameInput()
+      // resetEmailInput()
+      // resetPasswordInput()
+      // navigate('/', {replace: true})
     }
   }
 
-  // Debounce username existence in DB
-  React.useEffect(() => {
-    async function checkIfExists(args) {
-      return axios
-      .post('/api/usernames', {
-        username: args.username,
-      })
-      .then(function (response) {
-        console.log(response.data) // <== This prints nicely
-        if (response.data) {
-          setUsernameExistence(true)
-        } else {
-          setUsernameExistence(false)
-        }
-        // return response.data
-      })
-      .catch(function (error) {
-        console.log(error)
-        return error
-      })
-    }
+  const {
+    exists: usernameExistence,
+    setExists: setUsernameExistence,
+    checkIfExists: checkIfUsernameExists,
+    error: usernameCheckError
+  } = useCheckIfExists()
 
+  // Debounce username existence check in DB
+  React.useEffect(() => {
     const timerId = setTimeout(() => {
       if (!usernameHasError) {
-        checkIfExists({ username })
+        checkIfUsernameExists('/api/usernames', { username })
       } else {
         setUsernameExistence(null)
       }
@@ -142,10 +146,30 @@ function SignUp() {
     return () => clearTimeout(timerId)
   }, [usernameHasError, username])
 
+  const {
+    exists: emailExistence,
+    setExists: setEmailExistence,
+    checkIfExists: checkIfEmailExists,
+    error: emailCheckError
+  } = useCheckIfExists()
+
+  // Debounce email existence check in DB
+  React.useEffect(() => {
+    const timerId = setTimeout(() => {
+      if (!emailHasError) {
+        checkIfEmailExists('/api/emails', { email })
+      } else {
+        setEmailExistence(null)
+      }
+    }, 1000);
+
+    return () => clearTimeout(timerId)
+  }, [emailHasError, email])
+
   let usernameErrorContent 
-  if (usernameHasError) {
+  if (username.length > 0 && usernameHasError) {
     usernameErrorContent = (<>
-      <HandRaisedIcon styles='w-5 text-yellow-300' /> Must be at least 2 characters
+      <HandRaisedIcon styles='w-5 text-yellow-300' /> Only letters and numbers (2-10)
     </>)
   } else if (username.length > 0 && !usernameHasError && usernameExistence !== null) {
     usernameErrorContent = usernameExistence ?
@@ -155,25 +179,31 @@ function SignUp() {
   }
 
   let firstNameErrorContent 
-  if (firstNameHasError)
+  if (firstName.length > 0 && firstNameHasError)
     firstNameErrorContent = (<>
-      <HandRaisedIcon styles='w-5' /> Must be at least 2 characters
+      <HandRaisedIcon styles='w-5' /> Only letters (from 2 to 30)
     </>)
 
-let lastNameErrorContent 
-  if (lastNameHasError)
+  let lastNameErrorContent 
+  if (lastName.length > 0 && lastNameHasError)
     lastNameErrorContent = (<>
-      <HandRaisedIcon styles='w-5' /> Must be at least 2 characters
+      <HandRaisedIcon styles='w-5' /> Only letters (from 2 to 30)
     </>)
 
-let emailErrorContent 
-  if (emailHasError)
+  let emailErrorContent 
+  if (email.length > 0 && emailHasError) {
     emailErrorContent = (<>
       <HandRaisedIcon styles='w-5' /> Must be a valid email address
-    </>)
+    </>) 
+  } else if (email.length > 0 && !emailHasError && emailExistence !== null) {
+    emailErrorContent = emailExistence ?
+    (<><HandRaisedIcon styles='w-5 text-yellow-300' /> Sorry, that email is already taken</>)
+    :
+    (<><CheckCircle styles='w-5 text-green-300' /> Email is available!</>)
+  }
 
   let passwordErrorContent 
-  if (passwordHasError)
+  if (password.length > 0 && passwordHasError)
     passwordErrorContent = (<>
       <HandRaisedIcon styles='w-5' /> At least 5 characters, including uppercase, lowercase, digit and symbol
     </>)
@@ -182,7 +212,7 @@ let emailErrorContent
   if (formIsValid) 
     submitButtonContent = 'Submit'
   else if (isLoading)
-    submitButtonContent = 'Logging in...'
+    submitButtonContent = 'Signing Up...'
 
   return (
       <div className="mx-auto">

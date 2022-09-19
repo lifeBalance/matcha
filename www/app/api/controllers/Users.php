@@ -29,11 +29,16 @@ class Users
         }
     }
 
-    // Create (POST -> /api/users): For creating a user
+    // Create (POST -> /api/users): For creating a user (Sign Up)
     public function create()
     {
+        // Account info (sent as raw JSON data in a POST request)
+        $data = json_decode(file_get_contents('php://input'));
+        echo json_encode($data->username);
+        exit; // SO FAR SO GOOD (next: sanitize received data before anything else)
+
         // Call the model method to create a user in the DB
-        $result = $this->userModel->create($_POST);
+        $result = $this->userModel->create($data);
 
         if (array_key_exists('error', $result)) {
             http_response_code(400); // Bad Request
