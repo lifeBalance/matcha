@@ -62,12 +62,16 @@ class User
         // Hash the password
         $pwd_hash = password_hash($password, PASSWORD_DEFAULT);
 
+        // Generate Email Token (for account confirmation and password resetting)
+        $hash_me = bin2hex(random_bytes(16));
+        $token = hash_hmac('sha256', $hash_me, EMAIL_TOKENS_KEY); // sha256 = 64 characters
+
         // Let's write to the DB
         $sql = 'INSERT INTO users (
-                    username, firstname, lastname, email, pwd_hash
+                    username, firstname, lastname, email, pwd_hash, email_token
                 )
                 VALUES (
-                    :username, :firstname, :lastname, :email, :pwd_hash
+                    :username, :firstname, :lastname, :email, :pwd_hash, :email_token
                 )';
         $stmt = $this->conn->prepare($sql);
 
@@ -76,6 +80,7 @@ class User
         $stmt->bindValue(':lastname', $lastname, PDO::PARAM_STR);
         $stmt->bindValue(':email', $email, PDO::PARAM_STR);
         $stmt->bindValue(':pwd_hash', $pwd_hash, PDO::PARAM_STR);
+        $stmt->bindValue(':email_token', $token, PDO::PARAM_STR);
         $stmt->execute();
 
         return $this->getByUsername($username);

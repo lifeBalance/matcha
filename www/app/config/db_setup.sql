@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS `users` (
     `email` VARCHAR(255) UNIQUE NOT NULL,
     `pwd_hash` VARCHAR(255) NOT NULL,
     `confirmed` BOOLEAN NOT NULL DEFAULT 0,
-    `token` VARCHAR(64) UNIQUE NULL
+    `email_token` VARCHAR(64) UNIQUE NULL
 );
 
 INSERT INTO
@@ -21,7 +21,8 @@ INSERT INTO
         `lastname`,
         `email`,
         `pwd_hash`,
-        `confirmed`
+        `confirmed`,
+        `email_token`
     )
 VALUES
     (
@@ -31,7 +32,8 @@ VALUES
         'Johnson',
         'camagru69@outlook.com',
         '$2y$10$Wt2XXhvVfFyWSkupAL0OzOv3I9b9AZvPMUpoCo7FLosiAyzsD9FiW',
-        1
+        1,
+        '0c7f5439d146449aa79289969b756bf6baffb99057c316ca39d1fe64eb35f3d3'
     ),
     (
         2,
@@ -40,7 +42,8 @@ VALUES
         'Doe',
         'agrucam@hotmail.com',
         '$2y$10$Fza7OXvlIuDKsxNHtG/zuO7.BKlaZyRy.KVRpK0nA3wxhjav3LVHK',
-        1
+        1,
+        'e2f1d6f1fe134cc27b0d9baf51b3fd4b1210d643342de9d3cd5d408b107af94f'
     );
 
 CREATE TABLE IF NOT EXISTS `refresh_tokens` (

@@ -15,9 +15,10 @@ import { useSelector, useDispatch } from 'react-redux'
 import { login } from '../store/authSlice'
 
 // helper functions
-function validateName(str) {
-  // 3 characters or more
-  return str.length >= 3
+function validateUsername(str) {
+  // Between 2-10 characters: uppercase, lowercase and digits
+  const regex = /^[A-Z\d\-_]{2,10}$/
+  return str.toUpperCase().trim().match(regex)
 }
 
 function validatePwd(str) {
@@ -42,7 +43,7 @@ function Login() {
     inputChangeHandler: usernameChangeHandler,
     inputBlurHandler: usernameBlurHandler,
     resetInput: resetUsernameInput,
-  } = useInput(validateName)
+  } = useInput(validateUsername)
 
   const {
     value: password,
@@ -52,7 +53,7 @@ function Login() {
     resetInput: resetPasswordInput,
   } = useInput(validatePwd)
 
-  let formIsValid = validateName(username) && validatePwd(password)
+  let formIsValid = !usernameHasError && !passwordHasError
 
   function submitHandler(e) {
     e.preventDefault()
@@ -72,7 +73,7 @@ function Login() {
 
   let usernameErrorContent 
   if (usernameHasError)
-    usernameErrorContent = <><HandRaisedIcon styles='w-5' /> Must be at least 3 characters</>
+    usernameErrorContent = <><HandRaisedIcon styles='w-5' /> Between 2 and 10 characters. No spaces. Can use _ and -.</>
 
   let passwordErrorContent 
   if (passwordHasError)

@@ -16,6 +16,9 @@ define('APPROOT', dirname(__DIR__));
 define('PUBLIC_DIR', $_SERVER['DOCUMENT_ROOT']);
 define('UPLOADS_DIR', PUBLIC_DIR . '/uploads');
 
+// For hashing email tokens (128 bit = 16 bytes =  32 hex characters (max.)
+define('EMAIL_TOKENS_KEY', 'BBB235ACCAC1FE7EE7328F3587FE9');
+
 // For hashing JWT signatures (256 bit).
 define('SECRET_JWT_KEY', '217A25432A462D4A614E645267556B58703273357538782F413F4428472B4B62');
 

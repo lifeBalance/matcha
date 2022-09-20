@@ -1,10 +1,9 @@
 import React from 'react'
-import axios from 'axios'
 
 // hooks
 import { useNavigate } from 'react-router-dom'
 import useInput from '../hooks/useInput'
-import useSignup from '../hooks/useSignup'
+import useSubmitForm from '../hooks/useSubmitForm'
 import useCheckIfExists from '../hooks/useCheckIfExists'
 
 // components
@@ -18,7 +17,7 @@ import { useSelector } from 'react-redux'
 
 // helper functions
 function validateUsername(str) {
-  // Between 3-10 characters: uppercase, lowercase and digits
+  // Between 2-10 characters: uppercase, lowercase and digits
   const regex = /^[A-Z\d\-_]{2,10}$/
   return str.toUpperCase().trim().match(regex)
 }
@@ -48,9 +47,9 @@ function validatePwd(str) {
 function SignUp() {
   // Redux
   const { isLoggedIn } = useSelector(slices => slices.auth)
-  const { isSignedUp, signupError, isLoading, sendRequest,} = useSignup()
+
+  const { submitError, isSubmitting, submitForm } = useSubmitForm()
   const navigate = useNavigate()
-  // const [usernameExistence, setUsernameExistence] = React.useState('')
 
   if (isLoggedIn)
     navigate('/', {replace: true})
@@ -157,13 +156,13 @@ function SignUp() {
                         usernameExistence ||
                         emailExistence
 
-  function submitHandler(e) {
+  async function submitHandler(e) {
     e.preventDefault()
 
     if (formIsNotValid) return
 
     // console.log(`Submitted: ${username} ${password}`)
-    sendRequest({
+    await submitForm('/api/users', {
       username,
       firstName,
       lastName,
@@ -172,17 +171,16 @@ function SignUp() {
       passwordConf,
     })
 
-    // if login was successful (otherwise show problem, and do none of what's below)
-    if (isSignedUp && !isLoading && !signupError) {
-      navigate('/', {replace: true})
-    }
+    console.log('suzzess?', !isSubmitting, !submitError);
+    // if there was no error
+    if (!isSubmitting && !submitError) navigate('/', {replace: true})
   }
 
 
   let usernameErrorContent 
   if (username.length > 0 && usernameHasError) {
     usernameErrorContent = (<>
-      <HandRaisedIcon styles='w-5 text-yellow-300' /> Min. 2, max 10 (letters, numbers, and underscores)
+      <HandRaisedIcon styles='w-5 text-yellow-300' /> Between 2 and 10 characters. No spaces. Can use _ and -.
     </>)
   } else if (username.length > 0 && !usernameHasError && usernameExistence !== null) {
     usernameErrorContent = usernameExistence ?
@@ -230,7 +228,7 @@ let passwordConfErrorContent
   let submitButtonContent = 'Please, fill the form'
   if (!formIsNotValid) 
     submitButtonContent = 'Submit'
-  else if (isLoading)
+  else if (isSubmitting)
     submitButtonContent = 'Signing Up...'
 
   return (
