@@ -5,11 +5,29 @@ const initialState = {
   isLoggedIn: false,
   accessToken: '',
   isLoggingIn: false,
+  isLoggingOut: false,
   errorLoggingIn: false,
+  errorLoggingOut: false,
 }
 
+const logout = createAsyncThunk('auth/logout', async function(args, thunkAPI) {
+  try {
+    const response = await axios.post('/api/logout', {
+      withCredentials: true
+    })
+
+    localStorage.removeItem('accessToken')
+
+    // console.log(response.data)
+    return response.data
+  } catch (error) {
+    console.log(error.response.data.message);
+    return thunkAPI.rejectWithValue(error.response.data.message)
+  }
+})
+
 const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
-  const { username, password } = args // make sure you send an Object!!!
+  const { username, password } = args // invoke it with an Object!
 
   try {
     const response = await axios.post('/api/login', {
@@ -21,7 +39,8 @@ const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
 
     return response.data
   } catch (error) {
-    console.log(error.response.data);
+     // Server responses sent in an JSON object { "message": "value"}
+    // console.log(error.response.data.message);
     return thunkAPI.rejectWithValue(error.response.data.message)
   }
 })
@@ -49,11 +68,6 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    logout: (state) => {
-      state.isLoggedIn = false
-      state.accessToken = ''
-      localStorage.removeItem('accessToken')
-    },
     loginAfterReload: (state, action) => {
       state.isLoggedIn = true
       state.accessToken = localStorage.getItem('accessToken')
@@ -64,7 +78,6 @@ const authSlice = createSlice({
     [login.pending]: (state) => {
       state.isLoggingIn = true
     },
-
     [login.fulfilled]: (state, action) => {
       state.isLoggingIn = false
       state.isLoggedIn = true
@@ -82,6 +95,24 @@ const authSlice = createSlice({
       state.errorLoggingIn = action.payload
     },
 
+    // LOGOUT
+    [logout.pending]: (state, action) => {
+      state.isLoggingOut = true
+      // if (action) console.log(action)
+    },
+    [logout.fulfilled]: (state, action) => {
+      state.isLoggedIn = false
+      state.errorLoggingIn = false
+      state.accessToken = ''
+      // if (action) console.log(action)
+    },
+    [logout.rejected]: (state, action) => {
+      state.errorLoggingOut = action.payload
+      state.isLoggingOut = false
+      // if (action) console.log(action)
+    },
+
+    // Silent Token Refresh
     [refresh.pending]: (state) => {
       state.isLoggingIn = true
     },
@@ -108,6 +139,6 @@ const authSlice = createSlice({
   },
 })
 
-export const { logout, loginAfterReload } = authSlice.actions
-export { login, refresh }
+export const { loginAfterReload } = authSlice.actions
+export { login, logout, refresh } // async actions
 export default authSlice.reducer

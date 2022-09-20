@@ -39,6 +39,7 @@ function App() {
           <Route path='users' element={<Users />} />
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<SignUp />} />
+          <Route path='/profile' element={<Profile />} />
           <Route path='/forgot' element={<EmailForm title='password recovery' />} />
           <Route path='/confirm' element={<EmailForm title='confirmation email' />} />
         </Routes>

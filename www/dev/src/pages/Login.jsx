@@ -28,7 +28,9 @@ function validatePwd(str) {
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{5,10}$/
   return str.match(regex)
 }
-
+/**
+ * REACT COMPONENT
+ */
 function Login() {
   // Redux
   const dispatch = useDispatch()

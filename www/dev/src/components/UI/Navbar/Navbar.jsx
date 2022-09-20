@@ -28,7 +28,7 @@ function Navbar() {
             <MenuItem title='profile' route='profile' />
 
             <div className='group'>
-              <a href="#" onClick={() => dispatch(logout())} className='text-red-500'>log out</a>
+              <p onClick={() => dispatch(logout())} className='text-red-500 hover:cursor-pointer'>log out</p>
 
               <div className='mx-2 group-hover:border-b group-hover:border-red-500'></div>
             </div>

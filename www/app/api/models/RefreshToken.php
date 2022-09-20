@@ -8,13 +8,14 @@ class RefreshToken
         $this->conn = Database::connect();
     }
 
-    public function create($token, $expiry)
+    public function create($user_id, $token, $expiry)
     {
         // $hash = hash_hmac('sha256', $token, SECRET_JWT_KEY);
         $hash = hash('sha256', $token);
-        $sql = 'INSERT INTO refresh_tokens (token_hash, expires_at)
-                VALUES (:token_hash, :expires_at)';
+        $sql = 'INSERT INTO refresh_tokens (user_id, token_hash, expires_at)
+                VALUES (:user_id, :token_hash, :expires_at)';
         $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':user_id', $user_id, PDO::PARAM_INT);
         $stmt->bindValue(':token_hash', $hash, PDO::PARAM_STR);
         $stmt->bindValue(':expires_at', $expiry, PDO::PARAM_INT);
         return $stmt->execute();

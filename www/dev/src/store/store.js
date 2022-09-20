@@ -10,9 +10,9 @@ import usersReducer from './usersSlice'
 const store = configureStore({
   reducer: {
     burger: burgerReducer,
+    auth: authReducer,
     test: testReducer,
     users: usersReducer,
-    auth: authReducer,
   },
 })
 

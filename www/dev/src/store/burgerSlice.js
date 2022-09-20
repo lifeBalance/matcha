@@ -11,8 +11,11 @@ const burgerSlice = createSlice({
     toggleMobileMenu: (state) => {
       state.burgerIsOpen = !state.burgerIsOpen
     },
+    closeMobileMenu: (state) => {
+      state.burgerIsOpen = false
+    },
   }
 })
 
-export const { toggleMobileMenu } = burgerSlice.actions
+export const { toggleMobileMenu, closeMobileMenu } = burgerSlice.actions
 export default burgerSlice.reducer

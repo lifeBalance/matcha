@@ -59,7 +59,6 @@ function SignUp() {
     inputHasError: usernameHasError,
     inputChangeHandler: usernameChangeHandler,
     inputBlurHandler: usernameBlurHandler,
-    resetInput: resetUsernameInput,
   } = useInput(validateUsername)
 
   const {
@@ -67,7 +66,6 @@ function SignUp() {
     inputHasError: firstNameHasError,
     inputChangeHandler: firstNameChangeHandler,
     inputBlurHandler: firstNameBlurHandler,
-    resetInput: resetFirstNameInput,
   } = useInput(validateName)
 
   const {
@@ -75,7 +73,6 @@ function SignUp() {
     inputHasError: lastNameHasError,
     inputChangeHandler: lastNameChangeHandler,
     inputBlurHandler: lastNameBlurHandler,
-    resetInput: resetLastNameInput,
   } = useInput(validateName)
 
   const {
@@ -91,7 +88,6 @@ function SignUp() {
     inputHasError: passwordHasError,
     inputChangeHandler: passwordChangeHandler,
     inputBlurHandler: passwordBlurHandler,
-    resetInput: resetPasswordInput,
   } = useInput(validatePwd)
 
   function stringsAreEqual(str) {
@@ -103,9 +99,7 @@ function SignUp() {
     inputHasError: passwordConfHasError,
     inputChangeHandler: passwordConfChangeHandler,
     inputBlurHandler: passwordConfBlurHandler,
-    resetInput: resetPasswordConfInput,
-  } = useInput(stringsAreEqual)
-
+  } = useInput(stringsAreEqual.bind(password))
 
   const {
     exists: usernameExistence,
@@ -147,19 +141,21 @@ function SignUp() {
     return () => clearTimeout(timerId)
   }, [emailHasError, email])
 
-  let formIsNotValid =  usernameHasError || 
-                        firstNameHasError ||
-                        lastNameHasError ||
-                        emailHasError ||
-                        passwordHasError ||
-                        passwordConfHasError ||
-                        usernameExistence ||
-                        emailExistence
+  // Derived state
+  let formIsValid = (
+    !usernameHasError && username.length > 0 &&
+    !firstNameHasError && firstName.length > 0 &&
+    !lastNameHasError && lastName.length > 0 &&
+    !emailHasError && email.length > 0 &&
+    !passwordHasError && password.length > 0 &&
+    !passwordConfHasError && passwordConf.length == password.length &&
+    !usernameCheckError && !emailCheckError
+  )
 
   async function submitHandler(e) {
     e.preventDefault()
 
-    if (formIsNotValid) return
+    if (!formIsValid) return
 
     // console.log(`Submitted: ${username} ${password}`)
     await submitForm('/api/users', {
@@ -171,7 +167,7 @@ function SignUp() {
       passwordConf,
     })
 
-    console.log('suzzess?', !isSubmitting, !submitError);
+    // console.log('success?', !isSubmitting, !submitError);
     // if there was no error
     if (!isSubmitting && !submitError) navigate('/', {replace: true})
   }
@@ -226,84 +222,84 @@ let passwordConfErrorContent
     </>)
 
   let submitButtonContent = 'Please, fill the form'
-  if (!formIsNotValid) 
+  if (formIsValid) 
     submitButtonContent = 'Submit'
   else if (isSubmitting)
     submitButtonContent = 'Signing Up...'
 
   return (
-      <div className="mx-auto">
-        <h1 className='text-white text-3xl text-center font-bold my-6 pb-4'>Sign Up</h1>
+    <div className="mx-auto">
+      <h1 className='text-white text-3xl text-center font-bold my-6 pb-4'>Sign Up</h1>
 
-        <form onSubmit={submitHandler} className='flex flex-col items-center w-full'>
-          <Input 
-            type='text'
-            label='username'
-            value={username}
-            onChange={usernameChangeHandler}
-            onBlur={usernameBlurHandler}
-            errorContent={usernameErrorContent}
-          />
+      <form onSubmit={submitHandler} className='flex flex-col items-center w-full'>
+        <Input 
+          type='text'
+          label='username'
+          value={username}
+          onChange={usernameChangeHandler}
+          onBlur={usernameBlurHandler}
+          errorContent={usernameErrorContent}
+        />
 
-          <Input 
-            type='text'
-            label='first name'
-            value={firstName}
-            onChange={firstNameChangeHandler}
-            onBlur={firstNameBlurHandler}
-            errorContent={firstNameErrorContent}
-          />
+        <Input 
+          type='text'
+          label='first name'
+          value={firstName}
+          onChange={firstNameChangeHandler}
+          onBlur={firstNameBlurHandler}
+          errorContent={firstNameErrorContent}
+        />
 
-          <Input 
-            type='text'
-            label='last name'
-            value={lastName}
-            onChange={lastNameChangeHandler}
-            onBlur={lastNameBlurHandler}
-            errorContent={lastNameErrorContent}
-          />
+        <Input 
+          type='text'
+          label='last name'
+          value={lastName}
+          onChange={lastNameChangeHandler}
+          onBlur={lastNameBlurHandler}
+          errorContent={lastNameErrorContent}
+        />
 
-          <Input 
-            type='text'
-            label='email'
-            value={email}
-            onChange={emailChangeHandler}
-            onBlur={emailBlurHandler}
-            errorContent={emailErrorContent}
-            placeholder='test@test.com'
-          />
+        <Input 
+          type='text'
+          label='email'
+          value={email}
+          onChange={emailChangeHandler}
+          onBlur={emailBlurHandler}
+          errorContent={emailErrorContent}
+          placeholder='test@test.com'
+        />
 
-          <Input 
-            type='text'
-            label='password'
-            value={password}
-            onChange={passwordChangeHandler}
-            onBlur={passwordBlurHandler}
-            errorContent={passwordErrorContent}
-          />
+        <Input 
+          type='text'
+          label='password'
+          value={password}
+          onChange={passwordChangeHandler}
+          onBlur={passwordBlurHandler}
+          errorContent={passwordErrorContent}
+        />
 
-          <Input 
-            type='text'
-            label='password confirmation'
-            value={passwordConf}
-            onChange={passwordConfChangeHandler}
-            onBlur={passwordConfBlurHandler}
-            errorContent={passwordConfErrorContent}
-          />
+        <Input 
+          type='text'
+          label='password confirmation'
+          value={passwordConf}
+          onChange={passwordConfChangeHandler}
+          onBlur={passwordConfBlurHandler}
+          errorContent={passwordConfErrorContent}
+        />
 
-          <div className="flex flex-col md:flex-row md:justify-between space-y-10 md:space-y-0 items-center mt-10">
-            <button
-              disabled={formIsNotValid}
-              className='text-white bg-black hover:bg-gray-800 active:bg-white active:text-black font-bold rounded-lg text-2xl w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed hover:disabled:bg-black focus:ring-transparent md:ml-4 md:mr-12 md:mb-6 md:min-w-[260px]'
-            >{submitButtonContent}</button>
+        <div className="flex flex-col md:flex-row md:justify-between space-y-10 md:space-y-0 items-center mt-10">
+          <button
+            disabled={!formIsValid}
+            className='text-white bg-black hover:enabled:bg-gray-800 active:enabled:bg-white active:enabled:text-black font-bold rounded-lg text-2xl w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed focus:ring-transparent md:ml-4 md:mr-12 md:mb-6 md:min-w-[260px]'
+          >{submitButtonContent}</button>
 
-            <div className='space-y-6 text-center md:text-right pb-8'>
-              <p onClick={() => navigate('/forgot', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8 hover:cursor-pointer'>Forgot Password?</p>
-              <p onClick={() => navigate('/login', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8 hover:cursor-pointer'>Already a member? <span className='font-bold'>Login</span></p>
-            </div>
+          <div className='space-y-6 text-center md:text-right pb-8'>
+            <p onClick={() => navigate('/forgot', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8 hover:cursor-pointer'>Forgot Password?</p>
+            <p onClick={() => navigate('/login', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8 hover:cursor-pointer'>Already a member? <span className='font-bold'>Login</span></p>
           </div>
-        </form>
-      </div>
+        </div>
+      </form>
+    </div>
   )
 }
 

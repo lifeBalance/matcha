@@ -11,8 +11,10 @@ function useCheckIfExists() {
     .then(function (response) {
       if (response.data) {
         setExists(true)
+        setError(true) // we could throw an error here too
       } else {
         setExists(false)
+        setError(false)
       }
       // console.log(response.status, response.statusText)
       // console.log(response.data)
@@ -20,7 +22,7 @@ function useCheckIfExists() {
       // return response.data // No need to return
     })
     .catch(function (error) {
-      console.log(error)
+      // console.log(error)
       setError(error)
       // return error
     })

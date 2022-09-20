@@ -1,11 +1,10 @@
 import React from 'react'
 
 // redux
-import { useDispatch } from 'react-redux'
 import { refresh } from '../store/authSlice'
 
 function Home() {
-  const dispatch = useDispatch()
+
   return (
     <div>
       <h1 className='text-2xl font-bold text-center'>Home</h1>

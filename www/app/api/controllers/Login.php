@@ -65,7 +65,7 @@ class Login
         }
 
         // All is good!!
-        // Delete the old Refresh Token (new one is gonna be generated)
+        // Delete the old Refresh Token (a new one is gonna be generated)
         if ($old_refresh_token)
             $this->refreshTokenModel->delete($old_refresh_token);
 
