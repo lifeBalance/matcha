@@ -1,14 +1,15 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 // hooks
 import useInput from '../hooks/useInput'
 
 // components
 import Input from '../components/UI/Input'
+import Modal from '../components/UI/Modal'
 
 //icons
-import { HandRaisedIcon } from '../components/Icons/icons'
+import { HandRaisedIcon, QuestionMarkCircle } from '../components/Icons/icons'
 
 // redux
 import { useSelector, useDispatch } from 'react-redux'
@@ -31,7 +32,15 @@ function validatePwd(str) {
 function Login() {
   // Redux
   const dispatch = useDispatch()
-  const { isLoggedIn, isLoading, error } = useSelector(slices => slices.auth)
+  const { isLoggedIn, isLoggingIn, errorLoggingIn } = useSelector(slices => slices.auth)
+
+  // Modal
+  const [modalIsOpen, setModalIsOpen] = React.useState(false)
+  function closeModalHandler() {
+    setModalIsOpen(false)
+    // navigate('/', { replace: true })
+  }
+
   const navigate = useNavigate()
 
   if (isLoggedIn)
@@ -63,11 +72,12 @@ function Login() {
     // console.log(`Submitted: ${username} ${password}`)
     dispatch(login({ username, password }))
 
-    // if login was successful (otherwise show problem, and do none of what's below)
-    if (!error) {
-      resetUsernameInput()
-      resetPasswordInput()
-      navigate('/', {replace: true})
+    // if login was successful redirect, otherwise show problem in modal
+    if (errorLoggingIn === false) {
+      navigate('/', { replace: true })
+    } else {
+      // console.log(errorLoggingIn);
+      setModalIsOpen(true)
     }
   }
 
@@ -82,11 +92,41 @@ function Login() {
   let submitButtonContent = 'Please, fill the form'
   if (formIsValid) 
     submitButtonContent = 'Submit'
-  else if (isLoading)
+  else if (isLoggingIn)
     submitButtonContent = 'Logging in...'
+
+  let modalContent
+  switch (errorLoggingIn) {
+    case 'incorrect password':
+      modalContent = (
+        <>
+          <HandRaisedIcon styles='w-5 text-red-500 -mt-1 mr-1' />
+          Did you <span className='font-bold'>forgot your password</span>? Click <Link to='/forgot' className='text-blue-500 underline underline-offset-2'>here</Link> to request a reset link to your email.
+        </>
+      )
+      break;
+    case 'account not confirmed':
+      modalContent = (
+        <>
+          <HandRaisedIcon styles='w-5 text-red-500 -mt-1 mr-1' />
+          It seems you didn't <span className='font-bold'>confirm your account</span>. Check your email, or click <Link to='/confirm' className='text-blue-500 underline underline-offset-2'>here</Link> to request a new account confirmation email.
+        </>
+      )
+      break;
+    default:
+      modalContent = (<>
+        <QuestionMarkCircle styles='w-5 text-red-500 -mt-1 mr-1' />
+        We don't know that dude here! 🤔
+      </>)
+  }
 
   return (
       <div className="mx-auto">
+        {modalIsOpen &&
+          <Modal closeModal={closeModalHandler}>
+            <p>{modalContent}</p>
+          </Modal>
+        }
         <h1 className='text-white text-3xl text-center font-bold my-6 pb-4'>Log In</h1>
 
         <form onSubmit={submitHandler} className='flex flex-col items-center w-full'>

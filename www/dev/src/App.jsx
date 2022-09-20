@@ -10,7 +10,7 @@ import Profile from './pages/Profile'
 import Users from './pages/Users'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
-import ForgotPassword from './pages/ForgotPassword'
+import EmailForm from './pages/EmailForm'
 
 // redux
 import { useDispatch, useSelector } from 'react-redux'
@@ -39,7 +39,8 @@ function App() {
           <Route path='users' element={<Users />} />
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<SignUp />} />
-          <Route path='/forgot' element={<ForgotPassword />} />
+          <Route path='/forgot' element={<EmailForm title='password recovery' />} />
+          <Route path='/confirm' element={<EmailForm title='confirmation email' />} />
         </Routes>
       </Layout>
     </BrowserRouter>

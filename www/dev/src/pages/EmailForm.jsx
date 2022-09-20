@@ -19,7 +19,7 @@ function validateEmail(str) {
 /**
  * REACT COMPONENT
  */
-function ForgotPassword() {
+function ForgotPassword(props) {
   const {
     value: email,
     inputHasError: emailHasError,
@@ -46,7 +46,7 @@ function ForgotPassword() {
 
   return (
     <div className="max-w-3xl mx-auto">
-      <h1 className='text-white text-3xl text-center font-bold my-6 pb-4'>Password Recovery</h1>
+      <h1 className='text-white text-3xl text-center font-bold my-6 pb-4 capitalize'>{props.title}</h1>
 
       <form onSubmit={submitHandler} >
         <Input 

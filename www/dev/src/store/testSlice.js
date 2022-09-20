@@ -14,7 +14,8 @@ const getContent = createAsyncThunk(
       // console.log(data);
       return data
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.response.data.error.message)
+      // console.log(error.message)
+      return thunkAPI.rejectWithValue(error.message)
     }
 })
 
@@ -46,7 +47,7 @@ const testSlice = createSlice({
 
     [getContent.rejected]: (state, action) => {
       state.isLoading = false
-      state.error = action.error.message
+      state.error = action.payload
     },
   },
 })

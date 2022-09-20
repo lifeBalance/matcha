@@ -49,13 +49,23 @@ class Login
             header('Content-Type: application/json; charset=UTF-8');
             http_response_code(401);    // 401 Unauthorized
             echo json_encode([
-                "message" => "password doesn't match"
+                "message" => "incorrect password"
             ]);
             exit;
         }
 
-        // Username/Password match!!
-        // Delete the old Refresh Token from the DB (only if successful login)
+        // Account NOT confirmed
+        if (!$user->confirmed) {
+            header('Content-Type: application/json; charset=UTF-8');
+            http_response_code(401);    // 401 Unauthorized
+            echo json_encode([
+                "message" => "account not confirmed"
+            ]);
+            exit;
+        }
+
+        // All is good!!
+        // Delete the old Refresh Token (new one is gonna be generated)
         if ($old_refresh_token)
             $this->refreshTokenModel->delete($old_refresh_token);
 
@@ -71,8 +81,8 @@ class Login
             'exp' => $refresh_token_expiry
         ]);
 
-        // Save new refresh token to DB
-        $this->refreshTokenModel->create($refresh_token, $refresh_token_expiry);
+        // Save new Refresh Token to DB (white-list)
+        $this->refreshTokenModel->create($user->id, $refresh_token, $refresh_token_expiry);
 
         // Set Refresh token in http-only cookie
         // For developing our SPA set temporarily SameSite=None
@@ -85,7 +95,7 @@ class Login
             'samesite'  => 'None'
         ]);
 
-        // Send Access token in the response
+        // Send Access token in the response body
         header('Content-Type: application/json; charset=UTF-8');
         echo json_encode([
             'access_token'  => $access_token

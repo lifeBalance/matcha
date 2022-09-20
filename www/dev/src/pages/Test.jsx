@@ -1,28 +1,43 @@
 import React from 'react'
 
+import Modal from '../components/UI/Modal'
+import { useNavigate } from 'react-router-dom'
+
 // redux
 import { useSelector, useDispatch } from 'react-redux'
 import { getContent } from '../store/testSlice'
 
 function Test() {
-  const { content, error, isLoading } = useSelector(slices => slices.test)
+  const [modalIsOpen, setModalIsOpen] = React.useState(false)
+
+  const { content, error, isLoading } = useSelector((slices) => slices.test)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   React.useEffect(() => {
     dispatch(getContent())
-  }, [])
+    if (error) setModalIsOpen(true)
+  }, [error])
 
-  let contentElem 
+  function closeModalHandler() {
+    setModalIsOpen(false)
+    navigate('/', { replace: true })
+  }
 
-  if (isLoading)
-    contentElem = (<p>Loading...</p>)
-  else if (content && !error)
-    contentElem = (<p>{content}</p>)
-  else if (!content && error)
-    contentElem = <p>{error}</p>
+  let contentElem = isLoading ? 
+    (<p>Loading...</p>)
+    :
+    (<p>{content}</p>)
 
   return (
-    <h1 className='text-2xl font-bold text-center'>{contentElem}</h1>
+    <>
+      {modalIsOpen && (
+        <Modal closeModal={closeModalHandler}>
+          <p>{error}</p>
+        </Modal>
+      )}
+      <h1 className='text-2xl font-bold text-center'>{contentElem}</h1>
+    </>
   )
 }
 

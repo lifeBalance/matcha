@@ -4,29 +4,9 @@ import axios from 'axios'
 const initialState = {
   isLoggedIn: false,
   accessToken: '',
-  isLoading: false,
-  error: false,
+  isLoggingIn: false,
+  errorLoggingIn: false,
 }
-/*
-// Chained version
-const login = createAsyncThunk('auth/login', function (args, thunkAPI) {
-  const { username, password } = args // make sure you send an Object!!!
-
-  return axios
-    .post('/api/login', {
-      username: 'Testing',
-      password: 'Asdf1!',
-    })
-    .then(function (response) {
-      console.log(response.data) // <== This prints nicely
-      return response.data
-    })
-    .catch(function (error) {
-      console.log(error)
-      return error
-    })
-})
- */
 
 const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
   const { username, password } = args // make sure you send an Object!!!
@@ -41,7 +21,7 @@ const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
 
     return response.data
   } catch (error) {
-    console.log(error.response.data.message);
+    console.log(error.response.data);
     return thunkAPI.rejectWithValue(error.response.data.message)
   }
 })
@@ -82,13 +62,13 @@ const authSlice = createSlice({
 
   extraReducers: {
     [login.pending]: (state) => {
-      state.isLoading = true
+      state.isLoggingIn = true
     },
 
     [login.fulfilled]: (state, action) => {
-      state.isLoading = false
+      state.isLoggingIn = false
       state.isLoggedIn = true
-      state.error = null
+      state.errorLoggingIn = false
 
       // console.log(action.payload);
       if (action.payload && action.payload.access_token) {
@@ -97,18 +77,19 @@ const authSlice = createSlice({
       }
     },
     [login.rejected]: (state, action) => {
-      state.isLoading = false
-      state.error = action.payload
+      state.isLoggingIn = false
+      // console.log(action.payload);
+      state.errorLoggingIn = action.payload
     },
 
     [refresh.pending]: (state) => {
-      state.isLoading = true
+      state.isLoggingIn = true
     },
 
     [refresh.fulfilled]: (state, action) => {
-      state.isLoading = false
+      state.isLoggingIn = false
       state.isLoggedIn = true
-      state.error = null
+      state.errorLoggingIn = null
 
       if (action.payload && action.payload.access_token) {
         // localStorage.removeItem('accessToken')
@@ -117,12 +98,12 @@ const authSlice = createSlice({
       }
     },
     [refresh.rejected]: (state, action) => {
-      state.isLoading = false
+      state.isLoggingIn = false
       state.isLoggedIn = false
       localStorage.removeItem('accessToken')
 
       console.log(action.payload)
-      state.error = action.payload
+      state.errorLoggingIn = action.payload
     },
   },
 })
