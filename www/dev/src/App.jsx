@@ -12,6 +12,7 @@ import User from './pages/User'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import EmailForm from './pages/EmailForm'
+import PageNotFound from './pages/PageNotFound'
 
 // redux
 import { useDispatch, useSelector } from 'react-redux'
@@ -69,6 +70,10 @@ function App() {
           <Route
             path='/users/:id'
             element={<User />}
+          />
+          <Route
+            path='*'
+            element={<PageNotFound />}
           />
         </Routes>
       </Layout>

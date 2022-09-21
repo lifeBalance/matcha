@@ -5,10 +5,14 @@ module.exports = {
     "./src/**/*.{js,jsx}",
   ],
   theme: {
-    extend: {},
-    fontFamily: {
-      logo: ['All Round Gothic', 'sans-serif']
-    }
+    extend: {
+      backgroundImage: {
+        'travolta': "url('./assets/travolta.gif')",
+      },
+      fontFamily: {
+        logo: ['All Round Gothic', 'sans-serif']
+      }
+    },
   },
   plugins: [],
 }
