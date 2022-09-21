@@ -6,6 +6,7 @@ import burgerReducer from './burgerSlice'
 import authReducer from './authSlice'
 import testReducer from './testSlice'
 import usersReducer from './usersSlice'
+import userReducer from './userSlice'
 
 const store = configureStore({
   reducer: {
@@ -13,6 +14,7 @@ const store = configureStore({
     auth: authReducer,
     test: testReducer,
     users: usersReducer,
+    user: userReducer,
   },
 })
 

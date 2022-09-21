@@ -56,23 +56,39 @@ class Router {
     private function restDispatcher($http_method, $controller)
     {
         switch ($http_method) {
-            case 'OPTIONS':
-                $method = 'answer_preflight_request';
+            case 'POST':
+                $method = 'create';
                 break;
             case 'GET':
-                $method = isset($this->args['id']) ? 'show' : 'index';
+                $method = 'read';
                 break;
-            case 'POST':
-                $method = isset($this->args['id']) ? 'update' : 'create';
+            case 'PUT':
+                $method = 'update';
                 break;
             case 'DELETE':
                 $method = 'delete';
-                // DELETE HTTP method needs an id!
-                if (!isset($this->args['id'])) {
-                    http_response_code(404);
-                    die();
-                }
+                break;
+            case 'OPTIONS':
+                $method = 'answer_preflight_request';
         }
+        // switch ($http_method) {
+        //     case 'OPTIONS':
+        //         $method = 'answer_preflight_request';
+        //         break;
+        //     case 'GET':
+        //         $method = isset($this->args['id']) ? 'show' : 'index';
+        //         break;
+        //     case 'POST':
+        //         $method = isset($this->args['id']) ? 'update' : 'create';
+        //         break;
+        //     case 'DELETE':
+        //         $method = 'delete';
+        //         // DELETE HTTP method needs an id!
+        //         if (!isset($this->args['id'])) {
+        //             http_response_code(404);
+        //             die();
+        //         }
+        // }
         call_user_func_array([new $controller(), $method], [$this->args]);
     }
 

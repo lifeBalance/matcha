@@ -6,8 +6,8 @@ class Test
         header('Content-Type: application/json; charset=UTF-8');
     }
 
-    // Read (GET): collection.
-    public function index($args)
+    // Read (GET): collection or single item.
+    public function read($args)
     {
         echo json_encode('Hello world');
     }

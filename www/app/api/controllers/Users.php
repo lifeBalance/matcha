@@ -70,24 +70,33 @@ class Users
         exit;
     }
 
-    // Read (GET): collection.
-    public function index($args)
+    // Read (GET): collection or single resource.
+    public function read($args = [])
     {
+        // Read single resource
+        if (!empty($args)) {
+            $this->authorize();
+            // echo json_encode($args['id']); // prints 1 if /api/users?id=1
+            $user = $this->userModel->getById($args['id']);
+            echo json_encode($user);
+            exit;
+        }
         $this->authorize();
+        // Read collection
         $users = $this->userModel->getAll();
         echo json_encode($users);
     }
 
     // Read (GET): one.
-    public function show($args)
-    {
-        $id = $args['id'];
-        // Retrieve the user
-        $user = $this->userModel->getById($id);
-        echo json_encode($user);
-    }
+    // public function show($args)
+    // {
+    //     $id = $args['id'];
+    //     // Retrieve the user
+    //     $user = $this->userModel->getById($id);
+    //     echo json_encode($user);
+    // }
 
-    // Update (POST): For modifying the password
+    // Update (PUT): For modifying the password
     public function update($args)
     {
         $id = $args['id'];
