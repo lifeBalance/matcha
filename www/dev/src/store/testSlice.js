@@ -10,6 +10,8 @@ const getContent = createAsyncThunk(
       const { data } = await axios({
         url: url,
         method: 'get',
+        headers: {'Content-Type': 'application/json'},
+        data: null
       })
       // console.log(data);
       return data

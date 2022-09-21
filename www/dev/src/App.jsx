@@ -72,6 +72,10 @@ function App() {
             element={<User />}
           />
           <Route
+            path='/404'
+            element={<PageNotFound />}
+          />
+          <Route
             path='*'
             element={<PageNotFound />}
           />

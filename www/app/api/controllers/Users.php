@@ -24,6 +24,7 @@ class Users
             die;
         } catch (Exception $e) {
             http_response_code(400); // Bad Request
+            header('Location: /404', TRUE, 301);exit; // Travolta takes it from here
             echo json_encode(['error' => $e->getMessage()]);
             die;
         }

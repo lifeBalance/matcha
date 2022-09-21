@@ -29,8 +29,9 @@ class Router {
             // Send the route to the RESTful dispatcher
             $this->restDispatcher($this->http_method, $controller);
         } else {
-            // That route is not allowed
-            http_response_code(404);
+            // That route is not allowed (Added /404 route with react-router)
+            header('Location: /404', TRUE, 301);
+            // http_response_code(404);
             die();
         }
     }
