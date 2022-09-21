@@ -42,6 +42,14 @@ function MobileMenu() {
       {isLoggedIn ? (
         <>
           <Link
+            to='/users'
+            className='hover:text-pink-500 pt-6 pl-4'
+            onClick={() => dispatch(closeMobileMenu())}
+          >
+            users
+          </Link>
+
+          <Link
             to='/profile'
             className='hover:text-pink-500 pt-6 pl-4'
             onClick={() => dispatch(closeMobileMenu())}

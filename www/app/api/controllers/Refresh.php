@@ -62,7 +62,7 @@ class Refresh
                     $this->refreshTokenModel->delete($old_refresh_token);
 
                     // Save new refresh token to db
-                    $this->refreshTokenModel->create($new_refresh_token, $new_refresh_token_expiry);
+                    $this->refreshTokenModel->create($user->id, $new_refresh_token, $new_refresh_token_expiry);
 
                     // Set Refresh token in http-only cookie
                     setcookie('refreshToken', $new_refresh_token, [
