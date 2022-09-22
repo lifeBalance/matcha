@@ -6,6 +6,20 @@ namespace Composer\Autoload;
 
 class ComposerStaticInit1e37e30ac2a4a240a581dcbe746a9e6c
 {
+    public static $prefixLengthsPsr4 = array (
+        'P' => 
+        array (
+            'PHPMailer\\PHPMailer\\' => 20,
+        ),
+    );
+
+    public static $prefixDirsPsr4 = array (
+        'PHPMailer\\PHPMailer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/phpmailer/phpmailer/src',
+        ),
+    );
+
     public static $classMap = array (
         'Auth' => __DIR__ . '/../..' . '/auth/Auth.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
@@ -19,6 +33,7 @@ class ComposerStaticInit1e37e30ac2a4a240a581dcbe746a9e6c
         'JWT' => __DIR__ . '/../..' . '/auth/JWT.php',
         'Login' => __DIR__ . '/../..' . '/api/controllers/Login.php',
         'Logout' => __DIR__ . '/../..' . '/api/controllers/Logout.php',
+        'Mailer' => __DIR__ . '/../..' . '/api/helpers/Mailer.php',
         'Refresh' => __DIR__ . '/../..' . '/api/controllers/Refresh.php',
         'RefreshToken' => __DIR__ . '/../..' . '/api/models/RefreshToken.php',
         'Router' => __DIR__ . '/../..' . '/core/Router.php',
@@ -31,6 +46,8 @@ class ComposerStaticInit1e37e30ac2a4a240a581dcbe746a9e6c
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
+            $loader->prefixLengthsPsr4 = ComposerStaticInit1e37e30ac2a4a240a581dcbe746a9e6c::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit1e37e30ac2a4a240a581dcbe746a9e6c::$prefixDirsPsr4;
             $loader->classMap = ComposerStaticInit1e37e30ac2a4a240a581dcbe746a9e6c::$classMap;
 
         }, null, ClassLoader::class);

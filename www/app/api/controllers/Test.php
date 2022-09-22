@@ -1,4 +1,6 @@
 <?php
+use PHPMailer\PHPMailer\PHPMailer;
+
 class Test
 {
     public function __construct()
@@ -9,6 +11,13 @@ class Test
     // Read (GET): collection or single item.
     public function read($args)
     {
-        echo json_encode('Hello world');
+        $mail = new Mailer();
+        $mail->send_mail([
+            'recipient' => 'radrubegne@vusra.com',
+            'username'      => 'username goes here',
+            'subject'      => 'subject goes here',
+            'body'      => 'what ?',
+        ]);
+        echo json_encode('Hello world again');
     }
 }

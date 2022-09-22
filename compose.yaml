@@ -7,6 +7,8 @@ services:
     environment:
       APACHE_DOCUMENT_ROOT: /var/www/html/public
       APACHE_LOG_DIR: /var/log/apache2
+      MAIL_FROM: ${MAIL_FROM}
+      MAIL_PWD: ${MAIL_PWD}
     volumes:
       - ./www:/var/www/html
       - ./docker/php_apache/000-default.conf:/etc/apache2/sites-available/000-default.conf
@@ -26,11 +28,6 @@ services:
     command: daemon --docker
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:r
-  composer:
-    image: composer:2.3.9
-    command: ['composer', 'dump-autoload']
-    volumes:
-      - ./www/app:/app
   phpmyadmin:
     depends_on:
       - mysql

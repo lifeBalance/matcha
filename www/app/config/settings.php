@@ -43,3 +43,7 @@ define('DB_OPTS', [
 
 define('DB_SETUP_PHP', APPROOT . '/config/db_setup.php');
 define('DB_SETUP_SQL', APPROOT . '/config/db_setup.sql');
+
+// Define the MAILPWD global variable with the value of MAILPWD env. var.
+define('MAIL_FROM', $_ENV['MAIL_FROM']);
+define('MAIL_PWD', $_ENV['MAIL_PWD']);

@@ -18,6 +18,7 @@ return array(
     'JWT' => $baseDir . '/auth/JWT.php',
     'Login' => $baseDir . '/api/controllers/Login.php',
     'Logout' => $baseDir . '/api/controllers/Logout.php',
+    'Mailer' => $baseDir . '/api/helpers/Mailer.php',
     'Refresh' => $baseDir . '/api/controllers/Refresh.php',
     'RefreshToken' => $baseDir . '/api/models/RefreshToken.php',
     'Router' => $baseDir . '/core/Router.php',

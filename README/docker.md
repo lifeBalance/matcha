@@ -59,6 +59,55 @@ I installed mostly for its handy [autoloader](https://getcomposer.org/doc/articl
 
 ![Composer](./images/composer.png "Composer")
 
+### Installing packages, autoloading classes
+At the very beginning, I only needed **Composer** for generating [classmaps](https://getcomposer.org/doc/04-schema.md#classmap), so that I could have available classes globally, by requiring the resulting `vendor/composer/autoload_classmap.php` file. I decided to add **Composer** as a [Docker service](https://docs.docker.com/engine/reference/commandline/service/) in my [compose.yaml](https://docs.docker.com/compose/compose-file/) file; this was the configuration I was using:
+
+```yml
+composer:
+    image: composer:2.3.9
+    command: ['composer', 'dump-autoload']
+    volumes:
+      - ./www/app:/app
+```
+
+> That way, I just had to add classes to the `composer.json` file, and restart the container with `docker compose restart composer`.
+
+Then I needed to install [PHPMailer](https://github.com/PHPMailer/PHPMailer) and rewrote my service as:
+```yml
+  composer:
+    image: composer:2.4
+    container_name: composer
+    command:
+      - /bin/sh
+      - -c
+      - |
+      - composer dump-autoload
+      - composer update
+    volumes:
+      - ./www/app:/app
+```
+
+Then I realized, that having **Composer** as a **service** was pointless. The intended way to use the container is to run it whenever the contents of `composer.json` changed, which could be easily done with:
+```
+docker run --rm --interactive --tty --volume $PWD/www/app:/app composer update
+```
+
+> Above I'm running the command `composer update` in the container, which gets the packages I added to the `composer.json` file, installed (for example, the files containing the PHPMailer classes in our project filesystem).
+
+## Sending Mail
+As we just mentioned, to send email we chose [PHPMailer](https://github.com/PHPMailer/PHPMailer), which is quite popular in the PHP community. In order not to commit the email address and password used to send email, 
+I defined two environment variables in my `compose.yaml`:
+```yaml
+  MAIL_FROM: ${MAIL_FROM}
+  MAIL_PWD: ${MAIL_PWD}
+```
+
+The values of these variables are used in the `app/config/settings.php` to define PHP [named constants](https://www.php.net/manual/en/function.define), whose values are used in the `Mailer.php` class.
+
+> Important: I hardcoded the value `smtp.gmail.com` for the `Host` in `Mailer.php`. Remember to change it, or better set it as another **environment variable** if you change email provider.
+
+Needless to say, before running `docker compose up` we gotta make sure we exported the aforementioned **environment variables** in our shell.
+
 ---
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
 

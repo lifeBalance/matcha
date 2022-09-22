@@ -5,7 +5,11 @@
             "auth",
             "api/models",
             "api/controllers",
-            "api/exceptions"
+            "api/exceptions",
+            "api/helpers"
         ]
+    },
+    "require": {
+        "phpmailer/phpmailer": "^6.5"
     }
 }
