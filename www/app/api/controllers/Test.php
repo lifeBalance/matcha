@@ -11,13 +11,14 @@ class Test
     // Read (GET): collection or single item.
     public function read($args)
     {
-        $mail = new Mailer();
-        $mail->send_mail([
-            'recipient' => 'radrubegne@vusra.com',
-            'username'      => 'username goes here',
-            'subject'      => 'subject goes here',
-            'body'      => 'what ?',
-        ]);
+        // Testing that emails are being sent
+        // $mail = new Mailer();
+        // $mail->send_mail([
+        //     'recipient' => 'agrucam@hotmail.com',
+        //     'username'      => 'username goes here',
+        //     'subject'      => 'subject goes here',
+        //     'body'      => 'what ?',
+        // ]);
         echo json_encode('Hello world again');
     }
 }

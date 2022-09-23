@@ -30,6 +30,21 @@ class Users
         }
     }
 
+    // Send the Account confirmation mail
+    private function sendMail(Array $user, String $email_token)
+    {
+
+        $mail = new Mailer();
+        $mail->send_mail([
+            'recipient' => $user['email'],
+            'username'  => $user['firstname'],
+            'subject'   => 'Confirm your Matcha account',
+            'body'      =>
+                "<h1>Welcome to Matcha</h1>
+                <p>Please, click <a href=\"https://localhost/confirm/{$user['email']}/{$email_token}\" >here</a> to get the party started!</p>"
+        ]);
+    }
+
     // Create (POST -> /api/users): For creating a user (Sign Up)
     public function create()
     {
@@ -57,18 +72,36 @@ class Users
             exit;
         }
 
+        // Generate Email Token (account confirmation and password resetting)
+        $email_token = bin2hex(random_bytes(16)); // 32 chars
+
         $clean_data = [
-            'username'  => $username,
-            'firstname' => $firstname,
-            'lastname'  => $lastname,
-            'email'     => $email,
-            'password'  => $password
+            'username'      => $username,
+            'firstname'     => $firstname,
+            'lastname'      => $lastname,
+            'email'         => $email,
+            'password'      => $password
         ];
 
         // Call the model method to create a user in the DB
         $user = $this->userModel->create($clean_data);
-        echo json_encode($user);
-        exit;
+        // echo json_encode(['created user'=>$user->firstname]);exit;
+        if ($user) {
+            $emailTokenModel = new EmailToken();
+            $createdToken = $emailTokenModel->create($user->email,
+                                                    $email_token,
+                                                    time() + EMAIL_TOKEN_EXP);
+            // echo json_encode($createdToken);exit;
+        }
+        // Instantiate the emailToken class (model) to create email token in DB
+        // Sent a Confirmation Email with the token
+        if ($user && $createdToken) {
+            // echo json_encode([
+            //     'user'=>$user->firstname,
+            //     'token'=> $createdToken->email_token]);
+            // exit;
+            $this->sendMail($clean_data, $createdToken->email_token);
+        }
     }
 
     // Read (GET): collection or single resource.
@@ -96,13 +129,6 @@ class Users
     //     $user = $this->userModel->getById($id);
     //     echo json_encode($user);
     // }
-
-    // Update (PUT): For modifying the password
-    public function update($args)
-    {
-        $id = $args['id'];
-        echo json_encode("user $id updating credentials");
-    }
 
     // Delete (DELETE): For logging out
     public function delete($args)

@@ -15,9 +15,12 @@ class Mailer
     {
         try {
             //Server settings
-            $this->mail->SMTPDebug = 0; // For production
-            // $this->mail->SMTPDebug = SMTP::DEBUG_SERVER; //Enable verbose debug output
-            $this->mail->isSMTP();                                            //Send using SMTP
+             // For production: Disable verbose output in the response
+            $this->mail->SMTPDebug = 0;
+             // For debugging: Enable verbose output
+            // $this->mail->SMTPDebug = SMTP::DEBUG_SERVER;
+
+            $this->mail->isSMTP(); //Send using SMTP
             /* Disable some SSL checks. */
             $this->mail->SMTPOptions = array(
                 'ssl' => array(

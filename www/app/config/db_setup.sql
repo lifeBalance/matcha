@@ -9,8 +9,7 @@ CREATE TABLE IF NOT EXISTS `users` (
     `lastname` VARCHAR(50) NOT NULL,
     `email` VARCHAR(255) UNIQUE NOT NULL,
     `pwd_hash` VARCHAR(255) NOT NULL,
-    `confirmed` BOOLEAN NOT NULL DEFAULT 0,
-    `email_token` VARCHAR(64) UNIQUE NULL
+    `confirmed` BOOLEAN NOT NULL DEFAULT 0
 );
 
 INSERT INTO
@@ -21,8 +20,7 @@ INSERT INTO
         `lastname`,
         `email`,
         `pwd_hash`,
-        `confirmed`,
-        `email_token`
+        `confirmed`
     )
 VALUES
     (
@@ -30,26 +28,28 @@ VALUES
         'crazyBear',
         'Robert',
         'Johnson',
-        'camagru69@outlook.com',
-        '$2y$10$Wt2XXhvVfFyWSkupAL0OzOv3I9b9AZvPMUpoCo7FLosiAyzsD9FiW',
-        1,
-        '0c7f5439d146449aa79289969b756bf6baffb99057c316ca39d1fe64eb35f3d3'
+        'test@test.com',
+        '$2y$10$m2E7H1mg/MJ7.4cwqIDiTe/iJ48i/yULkd/XLVSRL4RUE8qf5jkcG',
+        1
     ),
     (
         2,
         'bjQueen',
         'Lynda',
         'Doe',
-        'agrucam@hotmail.com',
-        '$2y$10$Fza7OXvlIuDKsxNHtG/zuO7.BKlaZyRy.KVRpK0nA3wxhjav3LVHK',
-        1,
-        'e2f1d6f1fe134cc27b0d9baf51b3fd4b1210d643342de9d3cd5d408b107af94f'
+        'test2@test.com',
+        '$2y$10$m2E7H1mg/MJ7.4cwqIDiTe/iJ48i/yULkd/XLVSRL4RUE8qf5jkcG',
+        1
     );
 
 CREATE TABLE IF NOT EXISTS `refresh_tokens` (
-    user_id INT UNSIGNED,
-    token_hash VARCHAR(64) NOT NULL,
-    expires_at INT UNSIGNED NOT NULL,
-    PRIMARY KEY(token_hash),
-    INDEX(expires_at)
+    `user_id` INT UNSIGNED,
+    `token_hash` VARCHAR(64) PRIMARY KEY NOT NULL,
+    `expires_at` INT UNSIGNED NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS `email_tokens` (
+    `email` VARCHAR(255) UNIQUE NOT NULL,
+    `email_token` VARCHAR(32) NOT NULL,
+    `expires_at` INT UNSIGNED NOT NULL
 );

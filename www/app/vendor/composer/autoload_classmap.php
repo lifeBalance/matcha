@@ -6,9 +6,11 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'AccountConfirmations' => $baseDir . '/api/controllers/AccountConfirmations.php',
     'Auth' => $baseDir . '/auth/Auth.php',
     'Composer\\InstalledVersions' => $vendorDir . '/composer/InstalledVersions.php',
     'Database' => $baseDir . '/core/Database.php',
+    'EmailToken' => $baseDir . '/api/models/EmailToken.php',
     'Emails' => $baseDir . '/api/controllers/Emails.php',
     'ErrorHandler' => $baseDir . '/api/exceptions/ErrorHandler.php',
     'ExceptionHandler' => $baseDir . '/api/exceptions/ExceptionHandler.php',

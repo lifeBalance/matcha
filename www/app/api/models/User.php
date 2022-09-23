@@ -42,17 +42,34 @@ class User
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
+    public function confirmAccount($uid)
+    {
+        $sql = 'UPDATE users
+                SET confirmed = 1
+                WHERE id = ?';
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([$uid]);
+    }
+
+    public function deleteConfirmToken($uid)
+    {
+        $sql = 'DELETE FROM email_tokens email_token
+                WHERE user_id = ?';
+        $stmt = $this->conn->prepare($sql);
+        return $stmt->execute([$uid]);
+    }
+
     public function create($data)
     {
-        $username   = $data['username'];
-        $firstname  = $data['firstname'];
-        $lastname   = $data['lastname'];
-        $email      = $data['email'];
-        $password   = $data['password'];
+        $username       = $data['username'];
+        $firstname      = $data['firstname'];
+        $lastname       = $data['lastname'];
+        $email          = $data['email'];
+        $password       = $data['password'];
 
-        // Double check with the DB
-        // Check that the username doesn't exist in the database!!!
-        // Check that the email doesn't exist in the database!!!
+        // Double check with the DB (in case of front-end tampering)
+        // Check that the username doesn't already exist in the database!!!
+        // Check that the email doesn't already exist in the database!!!
         if ($this->getByUsername($username) ||
             $this->getByEmail($email))
         {
@@ -62,17 +79,14 @@ class User
         // Hash the password
         $pwd_hash = password_hash($password, PASSWORD_DEFAULT);
 
-        // Generate Email Token (for account confirmation and password resetting)
-        $hash_me = bin2hex(random_bytes(16));
-        $token = hash_hmac('sha256', $hash_me, EMAIL_TOKENS_KEY); // sha256 = 64 characters
-
         // Let's write to the DB
         $sql = 'INSERT INTO users (
-                    username, firstname, lastname, email, pwd_hash, email_token
+                    username, firstname, lastname, email, pwd_hash
                 )
                 VALUES (
-                    :username, :firstname, :lastname, :email, :pwd_hash, :email_token
+                    :username, :firstname, :lastname, :email, :pwd_hash
                 )';
+
         $stmt = $this->conn->prepare($sql);
 
         $stmt->bindValue(':username', $username, PDO::PARAM_STR);
@@ -80,9 +94,10 @@ class User
         $stmt->bindValue(':lastname', $lastname, PDO::PARAM_STR);
         $stmt->bindValue(':email', $email, PDO::PARAM_STR);
         $stmt->bindValue(':pwd_hash', $pwd_hash, PDO::PARAM_STR);
-        $stmt->bindValue(':email_token', $token, PDO::PARAM_STR);
         $stmt->execute();
 
         return $this->getByUsername($username);
+        // return $stmt->fetch(PDO::FETCH_OBJ);
+        // echo json_encode(['user created' => $stmt->fetch(PDO::FETCH_OBJ)]);exit;
     }
 }

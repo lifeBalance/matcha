@@ -12,6 +12,7 @@ import User from './pages/User'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import EmailForm from './pages/EmailForm'
+import Confirm from './pages/Confirm'
 import PageNotFound from './pages/PageNotFound'
 
 // redux
@@ -39,42 +40,50 @@ function App() {
             path='/'
             element={<Home />}
           />
+
           <Route
             path='test'
             element={<Test />}
           />
+
           <Route
             path='users'
             element={<Users />}
           />
+
           <Route
             path='/login'
             element={<Login />}
           />
+
           <Route
             path='/signup'
             element={<SignUp />}
           />
+
           <Route
             path='/profile'
             element={<Profile />}
           />
+
           <Route
             path='/forgot'
             element={<EmailForm title='password recovery' />}
           />
-          <Route
-            path='/confirm'
-            element={<EmailForm title='confirmation email' />}
-          />
+
+          <Route path='confirm' element={<Confirm />} />
+          <Route path='confirm/:useremail/:usertoken' element={<Confirm />} />
+
           <Route
             path='/users/:id'
             element={<User />}
           />
+
           <Route
             path='/404'
             element={<PageNotFound />}
           />
+
           <Route
             path='*'
             element={<PageNotFound />}

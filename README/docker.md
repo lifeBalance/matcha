@@ -104,10 +104,11 @@ I defined two environment variables in my `compose.yaml`:
 
 The values of these variables are used in the `app/config/settings.php` to define PHP [named constants](https://www.php.net/manual/en/function.define), whose values are used in the `Mailer.php` class.
 
-> Important: I hardcoded the value `smtp.gmail.com` for the `Host` in `Mailer.php`. Remember to change it, or better set it as another **environment variable** if you change email provider.
+> **Important**: I hardcoded the value `smtp.gmail.com` for the `Host` in `Mailer.php`. Remember to change it, or better set it as another **environment variable** if you change email provider.
 
 Needless to say, before running `docker compose up` we gotta make sure we exported the aforementioned **environment variables** in our shell.
 
+> **Important**: make sure you you run `docker compose up`, if you just use `docker compose restart` from another terminal tab, you're restarting the containers in the other tab, where the **environment variables** are not set.
 ---
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
 

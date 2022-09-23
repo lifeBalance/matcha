@@ -21,9 +21,11 @@ class ComposerStaticInit1e37e30ac2a4a240a581dcbe746a9e6c
     );
 
     public static $classMap = array (
+        'AccountConfirmations' => __DIR__ . '/../..' . '/api/controllers/AccountConfirmations.php',
         'Auth' => __DIR__ . '/../..' . '/auth/Auth.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Database' => __DIR__ . '/../..' . '/core/Database.php',
+        'EmailToken' => __DIR__ . '/../..' . '/api/models/EmailToken.php',
         'Emails' => __DIR__ . '/../..' . '/api/controllers/Emails.php',
         'ErrorHandler' => __DIR__ . '/../..' . '/api/exceptions/ErrorHandler.php',
         'ExceptionHandler' => __DIR__ . '/../..' . '/api/exceptions/ExceptionHandler.php',
