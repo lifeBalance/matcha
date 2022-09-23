@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, Navigate } from 'react-router-dom'
 
 // hooks
 import useInput from '../hooks/useInput'
@@ -13,7 +13,7 @@ import { HandRaisedIcon, QuestionMarkCircle } from '../components/Icons/icons'
 
 // redux
 import { useSelector, useDispatch } from 'react-redux'
-import { login } from '../store/authSlice'
+import { login, resetLoggingInErrors } from '../store/authSlice'
 
 // helper functions
 function validateUsername(str) {
@@ -36,17 +36,20 @@ function Login() {
   const dispatch = useDispatch()
   const { isLoggedIn, isLoggingIn, errorLoggingIn } = useSelector(slices => slices.auth)
 
+  const navigate = useNavigate()
+
   // Modal
   const [modalIsOpen, setModalIsOpen] = React.useState(false)
   function closeModalHandler() {
     setModalIsOpen(false)
-    // navigate('/', { replace: true })
+    dispatch(resetLoggingInErrors())
+    navigate('/', { replace: true })
   }
 
-  const navigate = useNavigate()
-
-  if (isLoggedIn)
-    navigate('/', {replace: true})
+  React.useEffect(() => {
+    if (isLoggedIn)
+      navigate('/', { replace: true })
+  }, [])
 
   const {
     value: username,
@@ -73,23 +76,26 @@ function Login() {
 
     // console.log(`Submitted: ${username} ${password}`)
     dispatch(login({ username, password }))
-
-    // if login was successful redirect, otherwise show problem in modal
-    if (errorLoggingIn === false) {
-      navigate('/', { replace: true })
-    } else {
-      // console.log(errorLoggingIn);
-      setModalIsOpen(true)
-    }
   }
+
+  React.useEffect(() => {
+    if (errorLoggingIn)
+      setModalIsOpen(true)
+  }, [errorLoggingIn])
 
   let usernameErrorContent 
   if (usernameHasError)
-    usernameErrorContent = <><HandRaisedIcon styles='w-5' /> Between 2 and 10 characters. No spaces. Can use _ and -.</>
+    usernameErrorContent = (<>
+      <HandRaisedIcon styles='w-5' />
+      Between 2 and 10 characters. No spaces. Can use _ and -.
+    </>)
 
   let passwordErrorContent 
   if (passwordHasError)
-    passwordErrorContent = <><HandRaisedIcon styles='w-5' /> At least 5 characters, including uppercase, lowercase, digit and symbol</>
+    passwordErrorContent = (<>
+      <HandRaisedIcon styles='w-5' />
+      At least 5 characters, including uppercase, lowercase, digit and symbol
+    </>)
 
   let submitButtonContent = 'Please, fill the form'
   if (formIsValid) 
@@ -103,17 +109,15 @@ function Login() {
       modalContent = (
         <>
           <HandRaisedIcon styles='w-5 text-red-500 -mt-1 mr-1' />
-          Did you <span className='font-bold'>forgot your password</span>? Click <Link to='/forgot' className='text-blue-500 underline underline-offset-2'>here</Link> to request a reset link to your email.
+          Did you forgot your password?
         </>
       )
       break;
     case 'account not confirmed':
-      modalContent = (
-        <>
-          <HandRaisedIcon styles='w-5 text-red-500 -mt-1 mr-1' />
-          It seems you didn't <span className='font-bold'>confirm your account</span>. Check your email, or click <Link to='/confirm' className='text-blue-500 underline underline-offset-2'>here</Link> to request a new account confirmation email.
-        </>
-      )
+      modalContent = (<>
+        <HandRaisedIcon styles='w-5 text-red-500 -mt-1 mr-1' />
+        It seems you didn't <span className='font-bold'>confirm your account</span>. Check your email, or request a new <span className='font-bold'>Account Confirmation email</span>.
+      </>)
       break;
     default:
       modalContent = (<>
@@ -125,9 +129,9 @@ function Login() {
   return (
       <div className="mx-auto">
         {modalIsOpen &&
-          <Modal closeModal={closeModalHandler}>
+          (<Modal closeModal={closeModalHandler}>
             <p>{modalContent}</p>
-          </Modal>
+          </Modal>)
         }
         <h1 className='text-white text-3xl text-center font-bold my-6 pb-4'>Log In</h1>
 

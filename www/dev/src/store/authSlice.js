@@ -21,7 +21,7 @@ const logout = createAsyncThunk('auth/logout', async function(args, thunkAPI) {
     // console.log(response.data)
     return response.data
   } catch (error) {
-    console.log(error.response.data.message);
+    // console.log(error.response.data.message);
     return thunkAPI.rejectWithValue(error.response.data.message)
   }
 })
@@ -59,7 +59,7 @@ const refresh = createAsyncThunk('auth/refresh', async (args, thunkAPI) => {
 
     return response.data
   } catch (error) {
-    console.log(error.response.data.message);
+    // console.log(error.response.data.message);
     return thunkAPI.rejectWithValue(error.response.data.message)
   }
 })
@@ -72,6 +72,9 @@ const authSlice = createSlice({
       state.isLoggedIn = true
       state.accessToken = localStorage.getItem('accessToken')
     },
+    resetLoggingInErrors: (state) => {
+      state.errorLoggingIn = false
+    }
   },
 
   extraReducers: {
@@ -83,7 +86,7 @@ const authSlice = createSlice({
       state.isLoggedIn = true
       state.errorLoggingIn = false
 
-      // console.log(action.payload);
+      console.log(action.payload);
       if (action.payload && action.payload.access_token) {
         localStorage.setItem('accessToken', action.payload.access_token)
         state.accessToken = action.payload.access_token
@@ -91,8 +94,9 @@ const authSlice = createSlice({
     },
     [login.rejected]: (state, action) => {
       state.isLoggingIn = false
-      // console.log(action.payload);
       state.errorLoggingIn = action.payload
+      // console.log(action.payload)
+      // console.log(state.errorLoggingIn)
     },
 
     // LOGOUT
@@ -133,12 +137,12 @@ const authSlice = createSlice({
       state.isLoggedIn = false
       localStorage.removeItem('accessToken')
 
-      console.log(action.payload)
+      // console.log(action.payload)
       state.errorLoggingIn = action.payload
     },
   },
 })
 
-export const { loginAfterReload } = authSlice.actions
+export const { loginAfterReload, resetLoggingInErrors } = authSlice.actions
 export { login, logout, refresh } // async actions
 export default authSlice.reducer

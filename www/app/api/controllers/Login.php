@@ -14,8 +14,9 @@ class Login
     {
         // Login credentials (sent as raw JSON data in a POST request)
         $data = json_decode(file_get_contents('php://input'));
-        // Maybe there's an old Refresh Token in the httponly cookie
-        $old_refresh_token = $_COOKIE['refreshToken'];
+        // Maybe there's an old Refresh Token in the httponly cookie (maybe not)
+        if (isset($_COOKIE['refreshToken']))
+            $old_refresh_token = $_COOKIE['refreshToken'];
 
         // Sanitize all things
         $username   = filter_var($data->username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -33,6 +34,7 @@ class Login
 
         // Retrieve the user (if exists in the db)
         $user = $this->userModel->getByUsername($username);
+        // echo json_encode($user); exit; // <==== TESTING!!!
 
         // Non-existing User
         if (!$user) {
@@ -54,6 +56,7 @@ class Login
             exit;
         }
 
+        // echo json_encode(['confirmed?' => $user->confirmed]); exit; // TESTING!
         // Account NOT confirmed
         if (!$user->confirmed) {
             header('Content-Type: application/json; charset=UTF-8');
