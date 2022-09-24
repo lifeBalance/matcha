@@ -27,7 +27,7 @@ const logout = createAsyncThunk('auth/logout', async function(args, thunkAPI) {
 })
 
 const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
-  const { username, password } = args // invoke it with an Object!
+  const { username, password, openModal } = args // invoke it with an Object!
 
   try {
     const response = await axios.post('/api/login', {
@@ -37,11 +37,14 @@ const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
       withCredentials: true
     })
 
+    // console.log(response.data);
     return response.data
   } catch (error) {
      // Server responses sent in an JSON object { "message": "value"}
     // console.log(error.response.data.message);
     return thunkAPI.rejectWithValue(error.response.data.message)
+  } finally {
+    openModal() // setModalIsOpen
   }
 })
 

@@ -69,27 +69,25 @@ function Login() {
 
   let formIsValid = !usernameHasError && !passwordHasError
 
+  // pass this function to the reducer to open the modal ;-)
+  function openModal() {
+    setModalIsOpen(true)
+  }
+
   function submitHandler(e) {
     e.preventDefault()
 
     if (!formIsValid) return
 
-    // console.log(`Submitted: ${username} ${password}`)
-    dispatch(login({ username, password }))
-    if (!errorLoggingIn)
-      navigate('/', { replace: true })
+    // console.log(`Submitted: ${username} ${password}`) // testing
+    dispatch(login({ username, password, openModal }))
   }
-
-  React.useEffect(() => {
-    if (errorLoggingIn)
-      setModalIsOpen(true)
-  }, [errorLoggingIn])
 
   let usernameErrorContent 
   if (usernameHasError)
     usernameErrorContent = (<>
       <HandRaisedIcon styles='w-5' />
-      Between 2 and 10 characters. No spaces. Can use _ and -.
+      Between 2 and 10 characters. No spaces (Can use _ and -).
     </>)
 
   let passwordErrorContent 
@@ -107,6 +105,12 @@ function Login() {
 
   let modalContent
   switch (errorLoggingIn) {
+    case false:
+      modalContent = (<>
+        <HandRaisedIcon styles='w-5 text-green-500 -mt-1 mr-1' />
+        Successfully logged in!
+      </>)
+      break;
     case 'incorrect password':
       modalContent = (
         <>
