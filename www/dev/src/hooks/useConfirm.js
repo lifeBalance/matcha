@@ -14,12 +14,12 @@ function useConfirm() {
         url: url,
         data: data
       })
-      console.log(resp.data) // testing
+      // console.log(resp.data) // testing
       setConfirmError(false)
       setIsConfirming(false)
       callback()
     } catch (error) {
-      console.log(error.response.data) // testing
+      // console.log(error.response.data) // testing
       setConfirmError(error.response.data)
       setIsConfirming(false)
       callback()

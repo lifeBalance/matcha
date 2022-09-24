@@ -37,7 +37,8 @@ function Confirm(props) {
   const {
     isConfirming,
     confirmError,
-    confirm } = useConfirm()
+    confirm
+  } = useConfirm()
 
   // Request Confirmation Email
   const {
@@ -52,8 +53,7 @@ function Confirm(props) {
   const [modalIsOpen, setModalIsOpen] = React.useState(false)
   function closeModalHandler() {
     setModalIsOpen(false)
-    if (!confirmError)
-      navigate('/', { replace: true })
+    navigate('/', { replace: true })
   }
 
   const {
@@ -72,7 +72,7 @@ function Confirm(props) {
     if (!formIsValid) return
 
     requestEmail('/api/confirm', 'post', { email }, () => setModalIsOpen(true))
-    console.log(`Submitted: ${email}`)
+    // console.log(`Submitted: ${email}`)
 
     resetEmailInput()
   }
@@ -89,7 +89,7 @@ function Confirm(props) {
       confirm('/api/confirm', 'put', {
         email: useremail,
         token: usertoken
-      })
+      }, () => setModalIsOpen(true))
     }
   }, [])
 
