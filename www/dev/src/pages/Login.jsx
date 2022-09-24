@@ -127,7 +127,7 @@ function Login() {
   }
 
   return (
-      <div className="mx-auto">
+      <div className="mx-auto py-10">
         {modalIsOpen &&
           (<Modal closeModal={closeModalHandler}>
             <p>{modalContent}</p>
@@ -154,14 +154,18 @@ function Login() {
             errorContent={passwordErrorContent}
           >password</Input>
 
-          <div className="flex flex-col md:flex-row md:justify-between space-y-10 md:space-y-0 items-center mt-10 mb-4">
-            <button
-              disabled={!formIsValid}
-              className='text-white bg-black hover:bg-gray-800 active:bg-white active:text-black font-bold rounded-lg text-2xl w-full px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed hover:disabled:bg-black focus:ring-transparent md:ml-4 md:mr-32 md:min-w-[260px]'
-            >{submitButtonContent}</button>
+          <div className="flex flex-col md:flex-row md:justify-between space-y-10 md:space-y-0 items-center mt-10 mb-10">
             <div className='space-y-6 text-center md:text-right'>
-              <p onClick={() => navigate('/forgot', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8 hover:cursor-pointer'>Forgot Password?</p>
+              <button
+                disabled={!formIsValid}
+                className='text-white bg-black hover:bg-gray-800 active:bg-white active:text-black font-bold rounded-lg text-2xl w-full md:w-2/3 px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed hover:disabled:bg-black focus:ring-transparent md:ml-4 md:mr-32 md:min-w-[260px]'
+              >{submitButtonContent}</button>
+              <p onClick={() => navigate('/forgot', {replace: true})} className='text-white mx-5 text-lg md:text-left hover:underline hover:underline-offset-8 hover:cursor-pointer'>Forgot Password?</p>
+            </div>
+
+            <div className='space-y-10 text-center md:text-right'>
               <p onClick={() => navigate('/signup', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8 hover:cursor-pointer'>Create Account?</p>
+              <p onClick={() => navigate('/confirm', {replace: true})} className='text-white mx-5 text-lg md:text-right hover:underline hover:underline-offset-8 hover:cursor-pointer'>Confirm Account?</p>
             </div>
           </div>
         </form>

@@ -156,7 +156,7 @@ function Confirm(props) {
     buttonContent = 'Requesting...'
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-3xl mx-auto py-10">
       <h1 className='text-white text-3xl text-center font-bold my-6 pb-4 capitalize'>confirmation email</h1>
 
       <form onSubmit={submitHandler} >
