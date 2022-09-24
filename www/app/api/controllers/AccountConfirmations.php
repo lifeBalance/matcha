@@ -34,10 +34,15 @@ class AccountConfirmations
             exit;
         }
 
+        // Instantiate the EmailToken model (we're gonna hit that table)
+        $emailTokenModel = new EmailToken();
+
+        // Delete old token (if any) before trying to write a new one to the DB
+        $emailTokenModel->deleteByEmail($user->email);
+
         // Generate Email Token (account confirmation and password resetting)
         $email_token = bin2hex(random_bytes(16)); // 32 chars
 
-        $emailTokenModel = new EmailToken();
         // Create the Email token in the 'email_tokens' table
         $createdToken = $emailTokenModel->create(
             $user->email, $email_token, time() + EMAIL_TOKEN_EXP);

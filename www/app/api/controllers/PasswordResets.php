@@ -37,7 +37,7 @@ class PasswordResets
         // Instantiate the EmailToken model (we're gonna hit that table)
         $emailTokenModel = new EmailToken();
 
-        // Delete old token (if any) first
+        // Delete old token (if any) before trying to write a new one to the DB
         $emailTokenModel->deleteByEmail($user->email);
 
         // Generate Email Token (password resetting)

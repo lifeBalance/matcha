@@ -43,7 +43,8 @@ function Confirm(props) {
   const {
     isConfirming: isRequestingEmail,
     confirmError: emailRequestError,
-    confirm: requestEmail } = useConfirm()
+    confirm: requestEmail
+  } = useConfirm()
   const { useremail, usertoken } = useParams()
   const navigate = useNavigate()
 
@@ -51,7 +52,8 @@ function Confirm(props) {
   const [modalIsOpen, setModalIsOpen] = React.useState(false)
   function closeModalHandler() {
     setModalIsOpen(false)
-    navigate('/', { replace: true })
+    if (!confirmError)
+      navigate('/', { replace: true })
   }
 
   const {
@@ -69,7 +71,7 @@ function Confirm(props) {
 
     if (!formIsValid) return
 
-    requestEmail('/api/confirm', 'post', { email })
+    requestEmail('/api/confirm', 'post', { email }, () => setModalIsOpen(true))
     console.log(`Submitted: ${email}`)
 
     resetEmailInput()
@@ -91,10 +93,10 @@ function Confirm(props) {
     }
   }, [])
 
-  React.useEffect(() => {
-    if (confirmAccount && !isConfirming)
-      setModalIsOpen(true)
-  }, [confirmAccount, isConfirming])
+  // React.useEffect(() => {
+  //   if (confirmAccount && !isConfirming)
+  //     setModalIsOpen(true)
+  // }, [confirmAccount, isConfirming])
 
   // CONFIRMING ACCOUNT MODE
   if (confirmAccount) {
@@ -157,6 +159,10 @@ function Confirm(props) {
 
   return (
     <div className="max-w-3xl mx-auto py-10">
+      {!isRequestingEmail && modalIsOpen &&
+        <Modal closeModal={closeModalHandler}>
+          <p>{modalContent}</p>
+        </Modal>}
       <h1 className='text-white text-3xl text-center font-bold my-6 pb-4 capitalize'>confirmation email</h1>
 
       <form onSubmit={submitHandler} >
