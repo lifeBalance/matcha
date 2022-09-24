@@ -14,9 +14,6 @@ class Login
     {
         // Login credentials (sent as raw JSON data in a POST request)
         $data = json_decode(file_get_contents('php://input'));
-        // Maybe there's an old Refresh Token in the httponly cookie (maybe not)
-        if (isset($_COOKIE['refreshToken']))
-            $old_refresh_token = $_COOKIE['refreshToken'];
 
         // Sanitize all things
         $username   = filter_var($data->username, FILTER_SANITIZE_FULL_SPECIAL_CHARS);
@@ -68,9 +65,12 @@ class Login
         }
 
         // All is good!!
-        // Delete the old Refresh Token (a new one is gonna be generated)
-        if ($old_refresh_token)
+        // Maybe there's an old Refresh Token in the httponly cookie (maybe not)
+        if (isset($_COOKIE['refreshToken'])) {
+            $old_refresh_token = $_COOKIE['refreshToken'];
+            // Delete the old Refresh Token (a new one is gonna be generated)
             $this->refreshTokenModel->delete($old_refresh_token);
+        }
 
         // Generate a new pair of tokens:
         $access_token = JWT::encode([

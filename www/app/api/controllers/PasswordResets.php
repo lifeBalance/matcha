@@ -65,9 +65,20 @@ class PasswordResets
     {
         // Account info is sent as raw JSON data in a PUT request.
         $data = json_decode(file_get_contents('php://input'));
+        $email = filter_var($data->email, FILTER_SANITIZE_EMAIL);
+        $token  = filter_var($data->token, FILTER_SANITIZE_SPECIAL_CHARS);
+        $pwd  = filter_var($data->password, FILTER_SANITIZE_SPECIAL_CHARS);
+        $pwd_conf = filter_var($data->pwdConf, FILTER_SANITIZE_SPECIAL_CHARS);
+        if ($pwd !== $pwd_conf ||
+            strlen($pwd) > 255 ||
+            strlen($pwd_conf) > 255)
+        {
+            http_response_code(401);
+            echo json_encode(['error' => 'something went wrong']);
+            exit;
+        }
 
-        $user = $this->userModel->getByEmail($data->email);
-
+        $user = $this->userModel->getByEmail($email);
         // If there's no user with such email (fake confirmation link)
         if (!$user) {
             http_response_code(401);
@@ -76,7 +87,7 @@ class PasswordResets
         }
 
         $emailTokenModel = new EmailToken();
-        $emailToken = $emailTokenModel->getByEmail($user->email);
+        $emailToken = $emailTokenModel->getByEmail($email);
         // echo json_encode([
             //     'email'=>$user->email,
             //     'email token'=>$emailToken
@@ -84,16 +95,9 @@ class PasswordResets
             // exit; // testing
 
         // If there's no token in the DB, or it's different (fake link or old token)
-        if (!$emailToken || $emailToken->email_token !== $data->token) {
+        if (!$emailToken || $emailToken->email_token !== $token) {
             http_response_code(401);
             echo json_encode(['error' => 'invalid token']);
-            exit;
-        }
-
-        // If the user account is already confirmed
-        if ($user->confirmed) {
-            http_response_code(401);
-            echo json_encode(['error' => 'already confirmed']);
             exit;
         }
 
@@ -102,14 +106,15 @@ class PasswordResets
             echo json_encode(['error' => 'token expired']);
             exit;
         }
-        // All is good: Proceed to confirm the account!
-        // echo json_encode(['success' => 'token woot']);
-        $ret = $this->userModel->confirmAccount($user->id);
+
+        // Delete old token (expired or not)
         $emailTokenModel->deleteByEmail($user->email);
-        echo json_encode([
-            'success' => 'account confirmed',
-            'ret' => $ret
-        ]);
+
+        // All is good: Proceed to update the user's password!
+        // echo json_encode(['success' => 'token woot']);
+        $ret = $this->userModel->updatePassword($email, $pwd);
+
+        echo json_encode(['message' => 'password updated']);
     }
 
     // Send the Password reset mail
@@ -123,7 +128,7 @@ class PasswordResets
             'subject'   => 'Reset your Matcha Password',
             'body'      =>
                 "<h1>Lots of things in your head, huh?</h1>
-                <p>Please, click <a href=\"https://localhost/forgot/{$user['email']}/{$email_token}\" >here</a> to reset your password!</p>"
+                <p>Please, click <a href=\"https://localhost/reset/{$user['email']}/{$email_token}\" >here</a> to reset your password!</p>"
         ]);
     }
 }

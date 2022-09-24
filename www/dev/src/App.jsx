@@ -12,6 +12,7 @@ import User from './pages/User'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import RequestPassword from './pages/RequestPassword'
+import ResetPassword from './pages/ResetPassword'
 import Confirm from './pages/Confirm'
 import PageNotFound from './pages/PageNotFound'
 
@@ -70,6 +71,7 @@ function App() {
             path='/forgot'
             element={<RequestPassword />}
           />
+          <Route path='reset/:email/:token' element={<ResetPassword />} />
 
           <Route path='confirm' element={<Confirm />} />
           <Route path='confirm/:useremail/:usertoken' element={<Confirm />} />

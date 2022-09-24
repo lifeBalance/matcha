@@ -34,6 +34,20 @@ class User
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
+    public function updatePassword($email, $password)
+    {
+        // Hash the password (PASSWORD_DEFAULT = bcrypt algorithm)
+        $pwd_hash = password_hash($password, PASSWORD_DEFAULT);
+
+        $sql = 'UPDATE users
+                SET pwd_hash = :pwd_hash
+                WHERE email = :email';
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':email', $email, PDO::PARAM_STR);
+        $stmt->bindValue(':pwd_hash', $pwd_hash, PDO::PARAM_STR);
+        return $stmt->execute(); // true or false
+    }
+
     public function getByUsername($username)
     {
         $stmt = $this->conn->prepare("SELECT * FROM users WHERE username = ?");

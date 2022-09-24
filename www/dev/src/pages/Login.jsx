@@ -76,6 +76,8 @@ function Login() {
 
     // console.log(`Submitted: ${username} ${password}`)
     dispatch(login({ username, password }))
+    if (!errorLoggingIn)
+      navigate('/', { replace: true })
   }
 
   React.useEffect(() => {

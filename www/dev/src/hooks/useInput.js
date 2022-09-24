@@ -38,6 +38,7 @@ function useInput(validate) {
   return {
     value,
     inputHasError,
+    setInputHasError,
     inputChangeHandler,
     inputBlurHandler,
     resetInput
