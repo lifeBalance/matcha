@@ -5,7 +5,7 @@ function useConfirm() {
   const [confirmError, setConfirmError] = React.useState(false)
   const [isConfirming, setIsConfirming] = React.useState(false)
 
-  const confirm = React.useCallback(async function (url, method, data) {
+  const confirm = React.useCallback(async function (url, method, data, callback) {
     setIsConfirming(true)
 
     try {
@@ -14,12 +14,15 @@ function useConfirm() {
         url: url,
         data: data
       })
-      console.log(resp.data) // testing
-    } catch (error) {
-      console.log(error.response.data)
-      setConfirmError(error.response.data)
-    } finally {
+      // console.log(resp.data) // testing
+      setConfirmError(false)
       setIsConfirming(false)
+      callback()
+    } catch (error) {
+      // console.log(error.response.data) // testing
+      setConfirmError(error.response.data)
+      setIsConfirming(false)
+      callback()
     }
   }, [])
 

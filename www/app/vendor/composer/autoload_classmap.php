@@ -21,6 +21,7 @@ return array(
     'Login' => $baseDir . '/api/controllers/Login.php',
     'Logout' => $baseDir . '/api/controllers/Logout.php',
     'Mailer' => $baseDir . '/api/helpers/Mailer.php',
+    'PasswordResets' => $baseDir . '/api/controllers/PasswordResets.php',
     'Refresh' => $baseDir . '/api/controllers/Refresh.php',
     'RefreshToken' => $baseDir . '/api/models/RefreshToken.php',
     'Router' => $baseDir . '/core/Router.php',

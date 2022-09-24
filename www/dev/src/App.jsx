@@ -11,7 +11,7 @@ import Users from './pages/Users'
 import User from './pages/User'
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
-import EmailForm from './pages/EmailForm'
+import RequestPassword from './pages/RequestPassword'
 import Confirm from './pages/Confirm'
 import PageNotFound from './pages/PageNotFound'
 
@@ -68,7 +68,7 @@ function App() {
 
           <Route
             path='/forgot'
-            element={<EmailForm title='password recovery' />}
+            element={<RequestPassword />}
           />
 
           <Route path='confirm' element={<Confirm />} />
