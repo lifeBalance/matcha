@@ -133,7 +133,7 @@ function Login() {
   }
 
   return (
-      <div className="mx-auto py-10">
+      <div className="px-4 py-10">
         {modalIsOpen &&
           (<Modal closeModal={closeModalHandler}>
             <p>{modalContent}</p>

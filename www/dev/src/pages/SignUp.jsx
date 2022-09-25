@@ -228,7 +228,7 @@ let passwordConfErrorContent
     submitButtonContent = 'Signing Up...'
 
   return (
-    <div className="mx-auto py-8">
+    <div className="py-8">
       <h1 className='text-white text-3xl text-center font-bold my-6 pb-4'>Sign Up</h1>
 
       <form onSubmit={submitHandler} className='flex flex-col items-center w-full'>

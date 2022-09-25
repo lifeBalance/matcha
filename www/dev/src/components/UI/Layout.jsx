@@ -8,7 +8,7 @@ function Layout(props) {
   return (
     <div className='container bg-gradient-to-br from-pink-400 via-red-400 to-yellow-400 min-h-screen min-w-full flex flex-col'>
       <Navbar />
-        <div className="max-w-6xl min-w-xs mx-auto text-white flex">
+        <div className="mx-auto flex">
           {props.children}
         </div>
       <Footer />

@@ -1,0 +1,18 @@
+import React from 'react'
+
+function Select(props) {
+  const options = props.options.map(option => (
+    <option key={option.value} value={option.value}>{option.label}</option>
+  ))
+  return (
+    <div className='relative flex flex-col pb-20 w-full '>
+      <label htmlFor={props.for} className="block mb-2 text-2xl font-medium text-white">{props.label}</label>
+
+      <select id={props.id} className="bg-white text-black border border-gray-300 text-2xl rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full px-3 py-1">
+        {options}
+      </select>
+    </div>
+  )
+}
+
+export default Select
