@@ -12,7 +12,10 @@ export default defineConfig({
         target: 'https://127.0.0.1',
         secure: false
       }
-    }
+    },
+  },
+  build: {
+    outDir: '../public'
   },
   plugins: [
     react(),
