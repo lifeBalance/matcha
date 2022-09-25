@@ -3,12 +3,42 @@ For this project we'll mount our **webroot** as a [volume](https://docs.docker.c
 ```
 www/
     app/
+    dev/
     public/
+        api/
         index.php
 ```
 
-* `app` is where we'll put our source code.
-* `public` is what we'll be serving to the user.
+* `app` is where we'll put our **back-end** source code (The PHP Web API).
+* `dev` is where we'll put our **front-end** source code (Our React app). Here is where we'll be developing our React code, which will be served with the development server.
+* `public` is what we'll be serving to the user. Here we'll have two elements:
+
+  * The `api` folder only contains an `index.php` file, which is the [front controller](https://en.wikipedia.org/wiki/Front_controller) for our API.
+  * The `public` folder will contain the **build** of our React app.
+
+During development, we'll be using two servers:
+
+* Apache, running inside the docker container.
+* The development server included in [Vite](). Once we're ready to deploy our front-end, we just have to `npm run build`, and place the generated files (usually should be generated inside a `dist` folder) into the `public` folder.
+
+> Basically, we'll be serving the React front-end from the `public` folder, as static files (the `index.html` and the bundled JavaScript and the resources resulting of the build).
+
+## Help! Can't open links!
+One maddening issue I suffered once I implemented email with links to reset password or confirm account, was that I couldn't open those links from my mail app. Then I tried refreshing pages other than `localhost`, and I was getting 404 error. The issue is well explained [here](https://create-react-app.dev/docs/deployment/#serving-apps-with-client-side-routing).
+
+> Even though I was using [Vite](https://vitejs.dev/) for developing the front-end, that article from [Create React App](https://create-react-app.dev) has the answer to anyone using the [Apache HTTP Server](https://httpd.apache.org/).
+
+The solution was creating an `.htaccess` file within the `public` folder, an put inside the following:
+```
+Options -MultiViews
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.html [QSA,L]
+```
+
+> I tried created another virtual host with the configuration mentioned in the article above, but couldn't make it work!
+
+That made those issues go away.
 
 ## Setting the `DocumentRoot`
 The **document root** is the top-level directory that will be visible from the web. By default is in `/var/www/html` (which we've mounted as a volume in `www`), but we want to move it to the `public` folder. In order to do that we have to set the value of the [DocumentRoot](https://httpd.apache.org/docs/2.4/mod/core.html#documentroot) directive.
