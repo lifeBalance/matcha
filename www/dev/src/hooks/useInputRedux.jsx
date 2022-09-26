@@ -1,6 +1,6 @@
 import React from 'react'
 
-function useInputRedux(sliceValue, setSliceValue, validate, setSliceInputError) {
+function useInputRedux(sliceValue, setSliceValue, validate, setSliceInputError, setFormWasModified) {
   function InputRedux(props) {
     const [inputWasChanged, setInputWasChanged] = React.useState(false)
 
@@ -18,6 +18,7 @@ function useInputRedux(sliceValue, setSliceValue, validate, setSliceInputError) 
     // Debounce user input
     React.useEffect(() => {
       if (!inputWasChanged) return
+      setFormWasModified()
 
       const timerId = setTimeout(() => {
         setSliceInputError(!validate(sliceValue))

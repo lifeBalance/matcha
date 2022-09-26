@@ -1,6 +1,5 @@
 import axios from 'axios'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { useDispatch } from 'react-redux'
 
 import { refresh } from '../store/authSlice'
 
@@ -14,13 +13,13 @@ const initialState = {
   email: '',
   gender: 2,
   preferences: 2,
-  about: '',
+  aboutYou: '',
   profileIsLoading: false,
   errorLoadingProfile: false,
-  modified: false,
   firstNameHasError: false,
   lastNameHasError: false,
   emailHasError: false,
+  profileWasModified: false,
   formIsValid: false
 }
 
@@ -78,6 +77,14 @@ const profileSlice = createSlice({
       state.email = action.payload
       console.log('email?', action.payload);
     },
+    setGender: (state, action) => {
+      state.gender = action.payload
+      console.log('gender?', action.payload);
+    },
+    setPreferences: (state, action) => {
+      state.preferences = action.payload
+      console.log('preferences?', action.payload);
+    },
     setAboutYou: (state, action) => {
       state.aboutYou = action.payload
       console.log(action.payload);
@@ -98,9 +105,9 @@ const profileSlice = createSlice({
       state.formIsValid = action.payload
       console.log('form is valid?', action.payload);
     },
-    setModified: (state, action) => {
-      state.modified = action.payload
-      console.log('form has been modified?', action.payload);
+    setProfileWasModified: (state, action) => {
+      state.profileWasModified = action.payload
+      console.log('profile form has been modified?', action.payload);
     },
   },
   extraReducers: {
@@ -128,11 +135,13 @@ export const {
   setFirstName,
   setLastName,
   setEmail,
+  setGender,
+  setPreferences,
   setFirstNameHasError,
   setLastNameHasError,
   setEmailHasError,
   setFormIsValid,
-  setModified,
+  setProfileWasModified,
 } = profileSlice.actions
 
 export { loadProfile } // async actions

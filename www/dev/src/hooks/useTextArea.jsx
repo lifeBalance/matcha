@@ -1,15 +1,14 @@
 import React from 'react'
 
-function useTextArea(maxLength, callback = null) {
+function useTextArea(maxLength, sliceValue, setSliceValue) {
   function TextArea(props) {
     const [charactersLeft, setCharactersLeft] = React.useState(maxLength)
-    const [value, setValue] = React.useState('')
+    // const [value, setValue] = React.useState('')
 
     function areaChangeHandler(e) {
-      setValue(e.target.value)
+      // setValue(e.target.value)
       setCharactersLeft(maxLength - e.target.value.length)
-      if (callback)
-        callback(value)
+      setSliceValue(e.target.value)
     }
 
     return (
@@ -25,7 +24,7 @@ function useTextArea(maxLength, callback = null) {
           id={props.id}
           rows={props.rows}
           className='bg-white text-black border border-gray-300 text-2xl rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full px-3 py-1'
-          value={value}
+          value={sliceValue}
           placeholder={props.placeholder}
           maxLength={maxLength}
           onChange={areaChangeHandler}

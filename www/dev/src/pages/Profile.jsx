@@ -7,19 +7,21 @@ import {
   setFirstName,
   setLastName,
   setEmail,
+  setGender,
+  setPreferences,
   setFirstNameHasError,
   setLastNameHasError,
   setEmailHasError,
   setFormIsValid,
-  setModified
+  setProfileWasModified
 } from '../store/profileSlice'
 
 // hooks
 import useTextArea from '../hooks/useTextArea'
 import useInputRedux from '../hooks/useInputRedux'
+import useSelectRedux from '../hooks/useSelectRedux'
 
 // components
-import Select from '../components/UI/Select'
 import FilePicker from '../components/UI/FilePicker'
 
 //icons
@@ -40,37 +42,54 @@ function validateEmail(str) {
 
 function Profile() {
   const dispatch = useDispatch()
-  // Let's pull in from the slice, the pieces of state we're gonna need
+  // Let's pull from the slice, the pieces of state we're gonna need
   const {
     firstName,
     lastName,
     email,
+    gender,
+    preferences,
+    aboutYou,
     firstNameHasError,
     lastNameHasError,
     emailHasError,
     formIsValid,
-    modified
+    profileWasModified
   } = useSelector(slices => slices.profile)
 
   const { InputRedux: InputFirstName } = useInputRedux(
                     firstName,
                     val => dispatch(setFirstName(val)),
                     validateName,
-                    validationFn => dispatch(setFirstNameHasError(validationFn)))
+                    validationFn => dispatch(setFirstNameHasError(validationFn)),
+                    () => dispatch(setProfileWasModified(true)))
 
   const { InputRedux: InputLastName } = useInputRedux(
                     lastName,
                     val => dispatch(setLastName(val)),
                     validateName,
-                    validationFn => dispatch(setLastNameHasError(validationFn)))
+                    validationFn => dispatch(setLastNameHasError(validationFn)),
+                    () => dispatch(setProfileWasModified(true)))
 
   const { InputRedux: InputEmail } = useInputRedux(
                     email,
                     val => dispatch(setEmail(val)),
                     validateEmail,
-                    validationFn => dispatch(setEmailHasError(validationFn)))
+                    validationFn => dispatch(setEmailHasError(validationFn)),
+                    () => dispatch(setProfileWasModified(true)))
 
-  const { TextArea } = useTextArea(255, (value) => dispatch(setAboutYou(value)))
+  const { TextArea } = useTextArea(
+                    255,
+                    aboutYou,
+                    (value) => dispatch(setAboutYou(value)))
+
+  const { Select: SelectGender } = useSelectRedux(
+                    gender,
+                    (value) => dispatch(setGender(value)))
+
+  const { Select: SelectPreferences } = useSelectRedux(
+                    preferences,
+                    (value) => dispatch(setPreferences(value)))
 
   let firstNameErrorContent
   if (firstNameHasError)
@@ -94,22 +113,30 @@ function Profile() {
   }
 
   React.useEffect(() => {
-    dispatch(setModified(true))
-  }, [firstName, lastName, email])
-
-  React.useEffect(() => {
-    dispatch(setModified(true))
-    if (!firstNameHasError && !lastNameHasError && !emailHasError)
+    if (!firstNameHasError &&
+        !lastNameHasError &&
+        !emailHasError &&
+        firstName.length > 0 &&
+        lastName.length > 0 &&
+        email.length > 0)
+    {
       dispatch(setFormIsValid(true))
-    else
+    } else {
       dispatch(setFormIsValid(false))
+    }
   }, [firstNameHasError, lastNameHasError, emailHasError])
 
-  let submitButtonContent = 'Save changes'
-  if (formIsValid) 
-    submitButtonContent = 'Submit'
-  // else if (isSubmitting)
-  //   submitButtonContent = 'Submitting...'
+  function onCancelButtonHandler(e) {
+    e.preventDefault()
+  }
+
+  let submitButtonStyles
+  if (profileWasModified && formIsValid) 
+    submitButtonStyles = 'bg-green-600 hover:bg-green-500 text-white'
+  else if (profileWasModified && !formIsValid)
+    submitButtonStyles = 'bg-red-600 hover:bg-red-500 text-white'
+  else 
+    submitButtonStyles = 'bg-gray-600 text-gray-500'
 
   return (
     <div className='py-10 px-4'>
@@ -136,34 +163,34 @@ function Profile() {
           errorContent: emailErrorContent
         })}
 
-        <Select
-          label='Gender'
-          id='gender'
-          options={[
+        {SelectGender({
+          label: 'Gender',
+          id: 'gender',
+          options: [
             { value: '2', label: 'non-binary 🙅'},
             { value: '1', label: 'man 🍆'},
             { value: '0', label: 'woman 🍑'},
-          ]}
-          for='gender'
-        />
+          ],
+          for: 'gender'
+        })}
 
-        <Select
-          label='Preferences'
-          id='preferences'
-          options={[
+        {SelectPreferences({
+          label: 'Preferences',
+          id: 'preferences',
+          options: [
             { value: '2', label: 'men & women 😏'},
             { value: '1', label: 'only men 🕺'},
             { value: '0', label: 'only women 💃'},
-          ]}
-          for='preferences'
-        />
+          ],
+          for: 'preferences'
+        })}
 
-        <TextArea
-          id='about'
-          label='about you'
-          rows='4'
-          placeholder='Tell us something about you...'
-        />
+        {TextArea({
+          id: 'about',
+          label: 'about you',
+          rows: '4',
+          placeholder: 'Tell us something about you...'
+        })}
 
         <FilePicker
           label='upload some pics'
@@ -172,11 +199,12 @@ function Profile() {
         <div className="flex flex-col md:flex-row md:justify-between space-y-10 md:space-y-0 mt-10 md:items-start">
           <button
             disabled={!formIsValid}
-            className='text-gray-500 bg-gray-600 hover:enabled:bg-gray-800 active:enabled:bg-white active:enabled:text-black font-bold rounded-lg text-2xl w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed focus:ring-transparent md:ml-4 md:mr-12 md:mb-6 min-w-[240px]'
-          >{submitButtonContent}</button>
+            className={`${submitButtonStyles} font-bold rounded-lg text-2xl w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed focus:ring-transparent md:ml-4 md:mr-12 md:mb-6 min-w-[240px]`}
+          >Save Changes</button>
 
           <button
-            className='bg-white text-black hover:enabled:bg-gray-800 active:enabled:bg-white active:enabled:text-black font-bold rounded-lg text-2xl w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed focus:ring-transparent md:ml-4 md:mr-12 md:mb-6 min-w-[240px]'
+            className='bg-black text-white hover:bg-gray-800 font-bold rounded-lg text-2xl w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed focus:ring-transparent md:ml-4 md:mr-12 md:mb-6 min-w-[240px]'
+            onClick={onCancelButtonHandler}
           >Cancel</button>
         </div>
       </form>
