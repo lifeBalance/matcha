@@ -17,6 +17,7 @@ function Textarea(props) {
         placeholder={props.placeholder}
         maxLength={props.maxLength}
       ></textarea>
+      <p className='text-white ml-2'>You have {props.charactersLeft} characters left.</p>
     </div>
   )
 }

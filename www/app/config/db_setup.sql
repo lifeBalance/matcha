@@ -53,3 +53,12 @@ CREATE TABLE IF NOT EXISTS `email_tokens` (
     `email_token` VARCHAR(32) NOT NULL,
     `expires_at` INT UNSIGNED NOT NULL
 );
+
+CREATE TABLE IF NOT EXISTS `profiles` (
+    `id`  INT UNSIGNED PRIMARY KEY NOT NULL,
+    `first_name` VARCHAR(32) NULL,
+    `last_name` VARCHAR(32) NULL,
+    `gender` INT UNSIGNED 2,
+    `preferences` INT UNSIGNED 2,
+    `about` VARCHAR(255) NULL
+);

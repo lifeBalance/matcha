@@ -1,12 +1,25 @@
 import React from 'react'
 
+// redux
+import { useSelector, useDispatch } from 'react-redux'
+import {
+  setAboutYou,
+  setFirstName,
+  setLastName,
+  setEmail,
+  setFirstNameHasError,
+  setLastNameHasError,
+  setEmailHasError,
+  setFormIsValid,
+  setModified
+} from '../store/profileSlice'
+
 // hooks
-import useInput from '../hooks/useInput'
+import useTextArea from '../hooks/useTextArea'
+import useInputRedux from '../hooks/useInputRedux'
 
 // components
-import Input from '../components/UI/Input'
 import Select from '../components/UI/Select'
-import Textarea from '../components/UI/Textarea'
 import FilePicker from '../components/UI/FilePicker'
 
 //icons
@@ -15,7 +28,7 @@ import { HandRaisedIcon } from '@heroicons/react/24/outline'
 // helper functions
 function validateName(str) {
   // Between 2-10 characters: uppercase, lowercase and digits
-  const regex = /^[A-Z\-\s]{2,20}$/
+  const regex = /^[A-Z\-\s]{2,32}$/
   return str.toUpperCase().trim().match(regex)
 }
 
@@ -26,26 +39,38 @@ function validateEmail(str) {
 }
 
 function Profile() {
+  const dispatch = useDispatch()
+  // Let's pull in from the slice, the pieces of state we're gonna need
   const {
-    value: firstName,
-    inputHasError: firstNameHasError,
-    inputChangeHandler: firstNameChangeHandler,
-    inputBlurHandler: firstNameBlurHandler,
-  } = useInput(validateName)
+    firstName,
+    lastName,
+    email,
+    firstNameHasError,
+    lastNameHasError,
+    emailHasError,
+    formIsValid,
+    modified
+  } = useSelector(slices => slices.profile)
 
-  const {
-    value: lastName,
-    inputHasError: lastNameHasError,
-    inputChangeHandler: lastNameChangeHandler,
-    inputBlurHandler: lastNameBlurHandler,
-  } = useInput(validateName)
+  const { InputRedux: InputFirstName } = useInputRedux(
+                    firstName,
+                    val => dispatch(setFirstName(val)),
+                    validateName,
+                    validationFn => dispatch(setFirstNameHasError(validationFn)))
 
-  const {
-    value: email,
-    inputHasError: emailHasError,
-    inputChangeHandler: emailChangeHandler,
-    inputBlurHandler: emailBlurHandler,
-  } = useInput(validateEmail)
+  const { InputRedux: InputLastName } = useInputRedux(
+                    lastName,
+                    val => dispatch(setLastName(val)),
+                    validateName,
+                    validationFn => dispatch(setLastNameHasError(validationFn)))
+
+  const { InputRedux: InputEmail } = useInputRedux(
+                    email,
+                    val => dispatch(setEmail(val)),
+                    validateEmail,
+                    validationFn => dispatch(setEmailHasError(validationFn)))
+
+  const { TextArea } = useTextArea(255, (value) => dispatch(setAboutYou(value)))
 
   let firstNameErrorContent
   if (firstNameHasError)
@@ -53,6 +78,7 @@ function Profile() {
     <HandRaisedIcon className='inline w-5 -mt-1 text-orange-200' />
     Between 2 and 20 letters (Can use - and space).
   </>)
+
   let lastNameErrorContent
   if (lastNameHasError)
   lastNameErrorContent = (<>
@@ -67,9 +93,21 @@ function Profile() {
     </>)
   }
 
-  // let submitButtonContent = 'Save changes'
-  // if (formIsValid) 
-  //   submitButtonContent = 'Submit'
+  React.useEffect(() => {
+    dispatch(setModified(true))
+  }, [firstName, lastName, email])
+
+  React.useEffect(() => {
+    dispatch(setModified(true))
+    if (!firstNameHasError && !lastNameHasError && !emailHasError)
+      dispatch(setFormIsValid(true))
+    else
+      dispatch(setFormIsValid(false))
+  }, [firstNameHasError, lastNameHasError, emailHasError])
+
+  let submitButtonContent = 'Save changes'
+  if (formIsValid) 
+    submitButtonContent = 'Submit'
   // else if (isSubmitting)
   //   submitButtonContent = 'Submitting...'
 
@@ -77,37 +115,32 @@ function Profile() {
     <div className='py-10 px-4'>
       <h1 className='text-4xl font-bold text-center mb-8 text-white'>Profile</h1>
       <form className='flex flex-col items-center w-full'>
-        <Input 
-          type='text'
-          label='first name'
-          value={firstName}
-          onChange={firstNameChangeHandler}
-          onBlur={firstNameBlurHandler}
-          errorContent={firstNameErrorContent}
-        />
+        {InputFirstName({
+          type: 'text',
+          label: 'first name',
+          placeholder: 'write your first name...',
+          errorContent: firstNameErrorContent
+        })}
 
-        <Input 
-          type='text'
-          label='last name'
-          value={lastName}
-          onChange={lastNameChangeHandler}
-          onBlur={lastNameBlurHandler}
-          errorContent={lastNameErrorContent}
-        />
+        {InputLastName({
+          type: 'text',
+          label: 'last name',
+          placeholder: 'write your last name...',
+          errorContent: lastNameErrorContent
+        })}
 
-        <Input 
-          type='email'
-          label='email'
-          value={email}
-          onChange={emailChangeHandler}
-          onBlur={emailBlurHandler}
-          errorContent={emailErrorContent}
-          />
+        {InputEmail({
+          type: 'email',
+          label: 'email',
+          placeholder: 'write your email...',
+          errorContent: emailErrorContent
+        })}
 
         <Select
           label='Gender'
           id='gender'
           options={[
+            { value: '2', label: 'non-binary 🙅'},
             { value: '1', label: 'man 🍆'},
             { value: '0', label: 'woman 🍑'},
           ]}
@@ -118,18 +151,18 @@ function Profile() {
           label='Preferences'
           id='preferences'
           options={[
-            { value: '2', label: 'man & woman 😏'},
-            { value: '1', label: 'only man 🕺'},
-            { value: '0', label: 'only woman 💃'},
+            { value: '2', label: 'men & women 😏'},
+            { value: '1', label: 'only men 🕺'},
+            { value: '0', label: 'only women 💃'},
           ]}
           for='preferences'
         />
 
-        <Textarea
+        <TextArea
+          id='about'
           label='about you'
-          placeholder='Tell us something about you...'
           rows='4'
-          maxLength='255'
+          placeholder='Tell us something about you...'
         />
 
         <FilePicker
@@ -138,9 +171,9 @@ function Profile() {
 
         <div className="flex flex-col md:flex-row md:justify-between space-y-10 md:space-y-0 mt-10 md:items-start">
           <button
-            // disabled={!formIsValid}
-            className='text-white bg-black hover:enabled:bg-gray-800 active:enabled:bg-white active:enabled:text-black font-bold rounded-lg text-2xl w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed focus:ring-transparent md:ml-4 md:mr-12 md:mb-6 min-w-[240px]'
-          >Save changes</button>
+            disabled={!formIsValid}
+            className='text-gray-500 bg-gray-600 hover:enabled:bg-gray-800 active:enabled:bg-white active:enabled:text-black font-bold rounded-lg text-2xl w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed focus:ring-transparent md:ml-4 md:mr-12 md:mb-6 min-w-[240px]'
+          >{submitButtonContent}</button>
 
           <button
             className='bg-white text-black hover:enabled:bg-gray-800 active:enabled:bg-white active:enabled:text-black font-bold rounded-lg text-2xl w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed focus:ring-transparent md:ml-4 md:mr-12 md:mb-6 min-w-[240px]'
