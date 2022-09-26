@@ -37,6 +37,7 @@ class ComposerStaticInit1e37e30ac2a4a240a581dcbe746a9e6c
         'Logout' => __DIR__ . '/../..' . '/api/controllers/Logout.php',
         'Mailer' => __DIR__ . '/../..' . '/api/helpers/Mailer.php',
         'PasswordResets' => __DIR__ . '/../..' . '/api/controllers/PasswordResets.php',
+        'Profile' => __DIR__ . '/../..' . '/api/models/Profile.php',
         'Refresh' => __DIR__ . '/../..' . '/api/controllers/Refresh.php',
         'RefreshToken' => __DIR__ . '/../..' . '/api/models/RefreshToken.php',
         'Router' => __DIR__ . '/../..' . '/core/Router.php',

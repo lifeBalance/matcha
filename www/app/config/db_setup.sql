@@ -55,10 +55,29 @@ CREATE TABLE IF NOT EXISTS `email_tokens` (
 );
 
 CREATE TABLE IF NOT EXISTS `profiles` (
-    `id`  INT UNSIGNED PRIMARY KEY NOT NULL,
-    `first_name` VARCHAR(32) NULL,
-    `last_name` VARCHAR(32) NULL,
-    `gender` INT UNSIGNED 2,
-    `preferences` INT UNSIGNED 2,
-    `about` VARCHAR(255) NULL
+    `id` INT UNSIGNED PRIMARY KEY NOT NULL,
+    `gender` INT UNSIGNED DEFAULT 2,
+    `preferences` INT UNSIGNED DEFAULT 2,
+    `about` VARCHAR(255) DEFAULT ''
 );
+
+INSERT INTO
+    `profiles` (
+        `id`,
+        `gender`,
+        `preferences`,
+        `about`
+    )
+VALUES
+    (
+        1,
+        1,
+        0,
+        "I like long walks in the beach with my girlfriend, until the acid wears off, and I realize I'm draggin a manequin through the parking lot."
+    ),
+    (
+        2,
+        0,
+        2,
+        "If you are looking for a woman with personality, well it's your lucky day, because I have multiple"
+    );

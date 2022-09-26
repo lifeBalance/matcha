@@ -87,20 +87,21 @@ class Users
         $user = $this->userModel->create($clean_data);
         // echo json_encode(['created user'=>$user->firstname]);exit;
         if ($user) {
+            // Instantiate the emailToken class (model) to create email token in DB
             $emailTokenModel = new EmailToken();
             $createdToken = $emailTokenModel->create($user->email,
                                                     $email_token,
                                                     time() + EMAIL_TOKEN_EXP);
-            // echo json_encode($createdToken);exit;
-        }
-        // Instantiate the emailToken class (model) to create email token in DB
-        // Sent a Confirmation Email with the token
-        if ($user && $createdToken) {
-            // echo json_encode([
-            //     'user'=>$user->firstname,
-            //     'token'=> $createdToken->email_token]);
-            // exit;
-            $this->sendMail($clean_data, $createdToken->email_token);
+                                                    // echo json_encode($createdToken);exit;
+            if ($createdToken) {
+                // Sent a Confirmation Email with the token
+                $this->sendMail($clean_data, $createdToken->email_token);
+
+                // Create a profile (mostly empty) linked to her id
+                $profileModel = new Profile();
+                $ret = $profileModel->create($user->id);
+                // echo json_encode($ret); // testing
+            }
         }
     }
 
