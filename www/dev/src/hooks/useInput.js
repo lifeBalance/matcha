@@ -21,13 +21,13 @@ function useInput(validate) {
 
   function inputChangeHandler(e) {
     setValue(e.target.value)
+    // console.log(e.target.value); // testing
     setInputHasError(false)
     setInputWasChanged(true)
   }
 
   function inputBlurHandler(e) {
     setInputHasError(!validate(value))
-    setInputWasChanged(true)
   }
 
   function resetInput() {
@@ -38,6 +38,7 @@ function useInput(validate) {
   return {
     value,
     inputHasError,
+    inputWasChanged,
     setInputHasError,
     inputChangeHandler,
     inputBlurHandler,
