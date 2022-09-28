@@ -177,6 +177,7 @@ function Profile() {
 
   function onCancelButtonHandler(e) {
     e.preventDefault()
+    navigate('/', { replace: true })
   }
 
   let submitButtonStyles

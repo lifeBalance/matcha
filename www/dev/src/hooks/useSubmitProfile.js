@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 
 // redux
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { refresh } from '../store/authSlice'
 
 const sendRequest = axios.create({
@@ -32,7 +32,6 @@ sendRequest.interceptors.response.use(
 function useSubmitProfile() {
   const [submitError, setSubmitError] = React.useState(false)
   const [isSubmitting, setIsSubmitting] = React.useState(false)
-  // const { uid, accessToken } = useSelector(slices => slices.auth.accessToken)
   const dispatch = useDispatch()
 
   const submitProfile = React.useCallback(async function (method, accessToken, formRawData = null, callback = null) {
