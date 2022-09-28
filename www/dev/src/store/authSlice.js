@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
 const initialState = {
+  uid: false,
   isLoggedIn: false,
   accessToken: '',
   isLoggingIn: false,
@@ -89,10 +90,11 @@ const authSlice = createSlice({
       state.isLoggedIn = true
       state.errorLoggingIn = false
 
-      // console.log(action.payload); // testing
+      console.log(action.payload); // testing
       if (action.payload && action.payload.access_token) {
         localStorage.setItem('accessToken', action.payload.access_token)
         state.accessToken = action.payload.access_token
+        state.uid = action.payload.uid
       }
     },
     [login.rejected]: (state, action) => {

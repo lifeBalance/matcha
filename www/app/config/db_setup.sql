@@ -57,16 +57,16 @@ CREATE TABLE IF NOT EXISTS `email_tokens` (
 CREATE TABLE IF NOT EXISTS `profiles` (
     `id` INT UNSIGNED PRIMARY KEY NOT NULL,
     `gender` INT UNSIGNED DEFAULT 2,
-    `preferences` INT UNSIGNED DEFAULT 2,
-    `about` VARCHAR(255) DEFAULT ''
+    `prefers` INT UNSIGNED DEFAULT 2,
+    `bio` VARCHAR(255) DEFAULT ''
 );
 
 INSERT INTO
     `profiles` (
         `id`,
         `gender`,
-        `preferences`,
-        `about`
+        `prefers`,
+        `bio`
     )
 VALUES
     (

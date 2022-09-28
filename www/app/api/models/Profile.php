@@ -8,9 +8,9 @@ class Profile
         $this->conn = Database::connect();
     }
 
-    public function getByUserId($uid)
+    public function getById($uid)
     {
-        $stmt = $this->conn->prepare("SELECT * FROM profiles WHERE user_id = ?");
+        $stmt = $this->conn->prepare("SELECT * FROM profiles WHERE id = ?");
         $stmt->execute([$uid]);
 
         return $stmt->fetch(PDO::FETCH_OBJ);
@@ -22,5 +22,23 @@ class Profile
         $stmt = $this->conn->prepare($sql);
 
         return $stmt->execute([$uid]); // true if everything's aight!
+    }
+
+    public function update($data)
+    {
+        $sql = 'UPDATE profiles
+                SET
+                    gender = :gender,
+                    prefers = :prefers,
+                    bio = :bio
+                WHERE id = :id';
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':gender', $data['gender'], PDO::PARAM_INT);
+        $stmt->bindValue(':prefers', $data['prefers'], PDO::PARAM_INT);
+        $stmt->bindValue(':bio', $data['bio'], PDO::PARAM_STR);
+        $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT);
+
+        return $stmt->execute(); // true if everything's aight!
     }
 }

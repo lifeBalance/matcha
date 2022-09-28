@@ -101,7 +101,8 @@ class Login
         // Send Access token in the response body
         header('Content-Type: application/json; charset=UTF-8');
         echo json_encode([
-            'access_token'  => $access_token
+            'access_token'  => $access_token,
+            'uid'           => $user->id
         ]); // 200 OK (default)
     }
 }

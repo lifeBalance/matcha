@@ -114,4 +114,24 @@ class User
         // return $stmt->fetch(PDO::FETCH_OBJ);
         // echo json_encode(['user created' => $stmt->fetch(PDO::FETCH_OBJ)]);exit;
     }
+    public function update($data)
+    {
+        $sql = 'UPDATE users
+                SET
+                    firstname = :firstname,
+                    lastname = :lastname,
+                    email = :email,
+                    confirmed = :confirmed
+                WHERE id = :id';
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':firstname', $data['firstname'], PDO::PARAM_STR);
+        $stmt->bindValue(':lastname', $data['lastname'], PDO::PARAM_STR);
+        $stmt->bindValue(':email', $data['email'], PDO::PARAM_STR);
+        $stmt->bindValue(':confirmed', $data['confirmed'], PDO::PARAM_INT);
+        $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT);
+
+        return $stmt->execute(); // true if everything's aight!
+    }
+
 }

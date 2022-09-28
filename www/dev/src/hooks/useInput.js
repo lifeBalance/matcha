@@ -37,6 +37,7 @@ function useInput(validate) {
 
   return {
     value,
+    setValue,
     inputHasError,
     inputWasChanged,
     setInputHasError,

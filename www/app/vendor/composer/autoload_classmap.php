@@ -23,6 +23,7 @@ return array(
     'Mailer' => $baseDir . '/api/helpers/Mailer.php',
     'PasswordResets' => $baseDir . '/api/controllers/PasswordResets.php',
     'Profile' => $baseDir . '/api/models/Profile.php',
+    'Profiles' => $baseDir . '/api/controllers/Profiles.php',
     'Refresh' => $baseDir . '/api/controllers/Refresh.php',
     'RefreshToken' => $baseDir . '/api/models/RefreshToken.php',
     'Router' => $baseDir . '/core/Router.php',

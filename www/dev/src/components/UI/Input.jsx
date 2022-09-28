@@ -16,7 +16,7 @@ function Input(props) {
         />
       </div>
 
-      <p className='absolute top-24 left-2'>{props.errorContent}</p>
+      <p className='absolute top-24 left-2 text-white'>{props.errorContent}</p>
     </div>
   )
 }

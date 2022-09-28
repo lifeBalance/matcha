@@ -17,7 +17,7 @@ class Auth
                 if ($payload['exp'] < time()) {
                     throw new ExpiredTokenException();
                 } else {
-                    return $payload;
+                    return $payload; // Array: [sub => '', email => '', exp => '']
                 }
             }
         } catch (InvalidArgumentException) {

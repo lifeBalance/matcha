@@ -24,10 +24,10 @@ define('SECRET_JWT_KEY', '217A25432A462D4A614E645267556B58703273357538782F413F44
 
 // Expiry dates of tokens
 define('REFRESH_TOKEN_EXP',  60 * 60 * 5);  // 5 HOURS
-// define('ACCESS_TOKEN_EXP',  60 * 60);    // 60 Mins
+define('ACCESS_TOKEN_EXP',  60 * 60);    // 60 Mins
 // define('ACCESS_TOKEN_EXP',  60 * 15);    // 15 Mins
 // define('ACCESS_TOKEN_EXP',  60 * 1);     //  1 Min
-define('ACCESS_TOKEN_EXP',  20);            // 20 Seconds
+// define('ACCESS_TOKEN_EXP',  20);            // 20 Seconds
 define('EMAIL_TOKEN_EXP',  60 * 60 * 24);   // 24 Hours
 
 /**
