@@ -7,7 +7,7 @@ $app->add('/api/refresh', ['POST'], 'Refresh'); // POST??
 
 // Other API routes
 $app->add('/api/users', ['GET', 'POST', 'DELETE', 'OPTIONS'], 'Users');
-$app->add('/api/profiles', ['GET', 'PUT'], 'Profiles');
+$app->add('/api/profiles', ['GET', 'POST'], 'Profiles');
 
 // Routes for Account confirmations and password resets
 $app->add('/api/confirm', ['POST', 'PUT'], 'AccountConfirmations');

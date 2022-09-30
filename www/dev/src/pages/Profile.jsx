@@ -11,6 +11,7 @@ import useInput from '../hooks/useInput'
 import useSelect from '../hooks/useSelect'
 import useTextArea from '../hooks/useTextArea'
 import useSubmitProfile from '../hooks/useSubmitProfile'
+import useGetProfile from '../hooks/useGetProfile'
 import useFilePicker from '../hooks/useFilePicker'
 
 // components
@@ -48,11 +49,17 @@ function Profile() {
   const { accessToken, isLoggedIn } = useSelector((slices) => slices.auth)
   const dispatch = useDispatch()
 
+  // const {
+  //   isSubmitting: gettingProfile,
+  //   submitError: errorGettingProfile,
+  //   submitProfile: getProfile,
+  // } = useSubmitProfile()
+
   const {
-    isSubmitting: gettingProfile,
-    submitError: errorGettingProfile,
-    submitProfile: getProfile,
-  } = useSubmitProfile()
+    gettingProfile,
+    errorGettingProfile,
+    getProfile,
+  } = useGetProfile()
 
   const {
     value: firstName,
@@ -122,6 +129,7 @@ function Profile() {
     setGenderValue(data.genderValue)
     setPreferencesValue(data.preferencesValue)
     setBioValue(data.bioValue)
+    // set the files here!
   }
 
   React.useEffect(() => {
@@ -252,16 +260,17 @@ function Profile() {
 
     // FIND A WAY OF ADDING THE PICTURES TO THE DATA TO SEND
     submitProfile(
-      'put',
+      'put', // ignored atm
       accessToken,
-      JSON.stringify({
+      {
         firstName,
         lastName,
         email,
         genderValue,
         preferencesValue,
         bioValue,
-      }),
+        files
+      },
       getModalFeedback
     )
   }

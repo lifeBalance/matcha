@@ -9,7 +9,7 @@ class Profiles
     {
         set_exception_handler('ExceptionHandler::handleException');
         set_error_handler('ErrorHandler::handleError');
-        header('Content-Type: application/json; charset=UTF-8');
+        // header('Content-Type: application/json; charset=UTF-8');
 
         $this->userModel = new User();
         $this->profileModel = new Profile();
@@ -47,24 +47,66 @@ class Profiles
         ]);
     }
 
-    // Create (PUT -> /api/profiles): For modifying a user's profile
-    public function update()
+    private function savePic($pic, $uid)
+    {
+        if (is_uploaded_file($pic['tmp_name'])) {
+            if ($pic['size'] > 200000 ||
+                !preg_match('/^(image\/)(png|jpe?g|gif)$/', $pic['type']) ||
+                !getimagesize($pic['tmp_name']))
+            {
+                http_response_code(400); // Bad Request
+                echo json_encode('shenanigans');
+                exit;
+            }
+            // Get the mime type
+            $mime = getimagesize($pic['tmp_name'])['mime'];
+            // Extract extension
+            $ext = explode('/', $mime)[1];
+            // Generate unique filename
+            $name = uniqid();
+            // Create a user's directory if it doesn't exist
+            $user_dir = UPLOADS_DIR . "/$uid";
+            if (!is_dir($user_dir)) mkdir($user_dir, 0777, true);
+            // Move the pic to the user's directory
+            $src = $pic['tmp_name'];
+            $dst = $user_dir . "/$name.$ext";
+            move_uploaded_file($src, $dst);
+        } else {
+            http_response_code(400); // Bad Request
+            echo json_encode('shenanigans: no file uploaded');
+            exit;
+        }
+    }
+
+    // Create (POST -> /api/profiles): For modifying a user's profile
+    public function create()
     {
         // Extract the User ID from the Access Token payload
         $accessTokenUid = $this->authorize()['sub'];    // as a string
         $accessTokenUid = (int)$accessTokenUid;         // as an int (as in DB)
-        
-        // Profile data (sent as raw JSON data in a PUT request)
-        $data = json_decode(file_get_contents('php://input'));
 
+        // Are there files in the request? Save them to the user's folder.
+        // Here I should count the existing files, so they can't be more than 5!
+        if (isset($_FILES)) {
+            foreach ($_FILES as $pic) {
+                $this->savePic($pic, $accessTokenUid);
+            }
+        }
+
+        // Profile data (this time sent in a POST request)
         // Let's sanitize, in case some little shit messed with our front-end
-        $firstname  = filter_var($data->firstName, FILTER_SANITIZE_SPECIAL_CHARS);
-        $lastname   = filter_var($data->lastName, FILTER_SANITIZE_SPECIAL_CHARS);
-        $email      = filter_var($data->email, FILTER_SANITIZE_EMAIL);
-
-        $bio     = filter_var($data->bioValue, FILTER_SANITIZE_SPECIAL_CHARS);
-        $gender  = filter_var($data->genderValue, FILTER_VALIDATE_INT);
-        $prefers = filter_var($data->preferencesValue, FILTER_VALIDATE_INT);
+        if (isset($_POST['firstName']))
+            $firstname = filter_var($_POST['firstName'], FILTER_SANITIZE_SPECIAL_CHARS);
+        if (isset($_POST['lastName']))
+            $lastname = filter_var($_POST['lastName'], FILTER_SANITIZE_SPECIAL_CHARS);
+        if (isset($_POST['email']))
+            $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+        if (isset($_POST['bioValue']))
+            $bio = filter_var($_POST['bioValue'], FILTER_SANITIZE_SPECIAL_CHARS);
+        if (isset($_POST['genderValue']))
+            $gender = filter_var($_POST['genderValue'], FILTER_VALIDATE_INT);
+        if (isset($_POST['preferencesValue']))
+            $prefers = filter_var($_POST['preferencesValue'], FILTER_VALIDATE_INT);
 
         // Double check data consistent with our front-end regexes
         if (strlen($firstname) < 2  || strlen($firstname) > 50 ||
@@ -74,7 +116,7 @@ class Profiles
             $gender < 0 || $gender > 2 || $prefers < 0 || $prefers > 2)
         {
             http_response_code(400); // Bad Request
-            echo json_encode('Shenanigans...');
+            echo json_encode('shenanigans');
             exit;
         }
 
