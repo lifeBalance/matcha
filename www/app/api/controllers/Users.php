@@ -11,6 +11,7 @@ class Users
         header('Content-Type: application/json; charset=UTF-8');
 
         $this->userModel = new User();
+        $this->profileModel = new Profile();
     }
 
     // Authorize request
@@ -45,7 +46,7 @@ class Users
         ]);
     }
 
-    // Create (POST -> /api/users): For creating a user (Sign Up)
+    // Create (POST -> /api/users): For creating a User Account (Sign Up)
     public function create()
     {
         // Account info (sent as raw JSON data in a POST request)
@@ -110,42 +111,45 @@ class Users
     {
         // Read single resource
         if (!empty($args)) {
+            // Extract uid from access token, see if user can access user
             $this->authorize();
+            // WARNING: CHECK for BLOCKED USERS (don't serve profile to them)!!
             // echo json_encode($args['id']); // prints 1 if /api/users?id=1
             $user = $this->userModel->getById($args['id']);
-            echo json_encode($user);
+            $profile = $this->profileModel->getById($args['id']);
+
+            // Let's gather pictures in user's folder (if any)
+            $pics = [];
+            $user_dir = UPLOADS_DIR . "/{$args['id']}";
+            if (is_dir($user_dir))
+                $pics = array_diff(scandir($user_dir), array('.', '..'));
+
+            echo json_encode([
+                'id'        => $user->id,
+                'userName'  => $user->username,
+                'firstName' => $user->firstname,
+                'lastName'  => $user->lastname,
+                'gender'    => $profile->gender,
+                'prefers'   => $profile->prefers,
+                'bio'       => html_entity_decode($profile->bio, ENT_QUOTES),
+                'pics'      => array_values($pics)
+            ]);
             exit;
+        } else {    // Read collection
+            $this->authorize();
+            $users = $this->userModel->getAll();
+            echo json_encode($users);
         }
-        $this->authorize();
-        // Read collection
-        $users = $this->userModel->getAll();
-        echo json_encode($users);
-    }
-
-    // Read (GET): one.
-    // public function show($args)
-    // {
-    //     $id = $args['id'];
-    //     // Retrieve the user
-    //     $user = $this->userModel->getById($id);
-    //     echo json_encode($user);
-    // }
-
-    // Delete (DELETE): For logging out
-    public function delete($args)
-    {
-        $id = $args['id'];
-        echo json_encode("user $id logging out");
     }
 
     // Answer Preflight request (During development, client is served from
     // the development server (Vite) at https://127.0.0.1:5173
-    public function answer_preflight_request($args)
-    {
-        // header('Access-Control-Allow-Origin:  https://127.0.0.1:5173');
-        header('Access-Control-Allow-Origin:  *');
-        header('Access-Control-Allow-Methods: GET');
-        header('Access-Control-Allow-Headers: Content-Type, Authorization');
-        echo json_encode("OK");
-    }
+    // public function answer_preflight_request($args)
+    // {
+    //     // header('Access-Control-Allow-Origin:  https://127.0.0.1:5173');
+    //     header('Access-Control-Allow-Origin:  *');
+    //     header('Access-Control-Allow-Methods: GET');
+    //     header('Access-Control-Allow-Headers: Content-Type, Authorization');
+    //     echo json_encode("OK");
+    // }
 }

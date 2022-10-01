@@ -17,6 +17,8 @@ export default defineConfig({
   build: {
     outDir: '../public'
   },
+  root: './',             // disable before build
+  publicDir: '../public', // disable before build
   plugins: [
     react(),
     basicSsl()
