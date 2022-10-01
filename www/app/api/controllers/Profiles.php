@@ -103,6 +103,8 @@ class Profiles
             $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
         if (isset($_POST['bioValue']))
             $bio = filter_var($_POST['bioValue'], FILTER_SANITIZE_SPECIAL_CHARS);
+        if (isset($_POST['age']))
+            $age = filter_var($_POST['age'], FILTER_VALIDATE_INT);
         if (isset($_POST['genderValue']))
             $gender = filter_var($_POST['genderValue'], FILTER_VALIDATE_INT);
         if (isset($_POST['preferencesValue']))
@@ -113,7 +115,8 @@ class Profiles
             strlen($lastname) < 2   || strlen($lastname) > 50 ||
             strlen($email) < 6      || strlen($email) > 255 ||
             strlen($bio) > 255      || !is_int($gender) || !is_int($prefers) ||
-            $gender < 0 || $gender > 2 || $prefers < 0 || $prefers > 2)
+            $gender < 0 || $gender > 2 || $prefers < 0 || $prefers > 2 ||
+            $age < 18)
         {
             http_response_code(400); // Bad Request
             echo json_encode('shenanigans');
@@ -124,6 +127,7 @@ class Profiles
         $profile_data = [
             'id'        => $accessTokenUid,
             'gender'    => $gender,
+            'age'       => $age,
             'prefers'   => $prefers,
             'bio'       => $bio
         ];
@@ -202,6 +206,7 @@ class Profiles
             'firstName'         => $user->firstname,
             'lastName'          => $user->lastname,
             'email'             => $user->email,
+            'age'               => $profile->age,
             'genderValue'       => $profile->gender,
             'preferencesValue'  => $profile->prefers,
             'bioValue'          => $profile->bio

@@ -28,12 +28,14 @@ class Profile
     {
         $sql = 'UPDATE profiles
                 SET
-                    gender = :gender,
+                    age     = :age,
+                    gender  = :gender,
                     prefers = :prefers,
-                    bio = :bio
+                    bio     = :bio
                 WHERE id = :id';
 
         $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':age', $data['age'], PDO::PARAM_INT);
         $stmt->bindValue(':gender', $data['gender'], PDO::PARAM_INT);
         $stmt->bindValue(':prefers', $data['prefers'], PDO::PARAM_INT);
         $stmt->bindValue(':bio', $data['bio'], PDO::PARAM_STR);

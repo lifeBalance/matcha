@@ -70,35 +70,35 @@ function User() {
 
   let gender
   if (user.gender === 0)
-    gender = '🍑 Female'
+    gender = '🍑 (Female)'
   else if (user.gender === 1)
-    gender = '🍆 Male'
+    gender = '🍆 (Male)'
   else
-    gender = '🙅 Non-binary'
+    gender = ' 🙅 (Non-binary)'
     
   let preferences
   if (user.preferences === 0)
-    preferences = '🍑 Females'
+    preferences = '🍑 (Females)'
   else if (user.gender === 1)
-    preferences = '🍆 Males'
+    preferences = '🍆 (Males)'
   else
-    preferences = '🍆 Males and 🍑 Females (😏)'
+    preferences = '🍆 and 🍑 (Males and Females 😏)'
 
   let youLikeUser = true
   let userLikesYou = true
   return (
     <>
       {!errorGettingUser && !userIsLoading && user && (<div className='bg-white p-4 rounded-lg my-8 mx-4' id={user.userName}>
-          <h1 className='text-gray-700 text-2xl font-bold text-center my-3'>{user.userName}</h1>
+          <h1 className='text-gray-700 text-2xl font-bold text-center pt-6 pb-8'>{user.userName}</h1>
 
-          <div className="h-96 lg:h-[700px] xl:h-[800px] bg-gray-800 rounded-lg mx-auto">
+          <div className="flex h-96 lg:h-[700px] xl:h-[800px] bg-gray-800 rounded-lg mx-auto">
             {user.pics.length > 0 ?
             (<Carousel slide={false}>
               {user.pics && user.pics.length > 0 && user.pics.map((pic, idx) => (
                 <img key={Math.random()} src={`/uploads/${user.id}/${pic}`} />
               ))}
             </Carousel>) :
-            <UserCircleIcon className='text-white w-1/2 mx-auto'/>}
+            <UserCircleIcon className='text-white w-[50%] justify-center mx-auto'/>}
           </div>
 
           <div className="p-8 text-xl text-gray-700 space-y-3">
@@ -106,6 +106,7 @@ function User() {
             <p><span className='font-semibold'>Gender:</span>{gender}</p>
             <p><span className='font-semibold'>Prefers: </span>{preferences}</p>
             <p><span className='font-semibold'>Age: </span>44</p>
+            <p><span className='font-semibold'>Rated: </span>12 ⭐</p>
             <p><span className='font-semibold'>Bio: </span>{user.bio}</p>
           </div>
 

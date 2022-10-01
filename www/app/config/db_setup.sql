@@ -56,15 +56,27 @@ CREATE TABLE IF NOT EXISTS `email_tokens` (
 
 CREATE TABLE IF NOT EXISTS `profiles` (
     `id` INT UNSIGNED PRIMARY KEY NOT NULL,
+    `age` INT UNSIGNED DEFAULT 18,
     `gender` INT UNSIGNED DEFAULT 2,
     `prefers` INT UNSIGNED DEFAULT 2,
     `bio` VARCHAR(255) DEFAULT ''
+);
+
+CREATE TABLE IF NOT EXISTS `liked_users` (
+    `id` INT UNSIGNED PRIMARY KEY NOT NULL,
+    `likes` INT UNSIGNED NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS `blocked_users` (
+    `id` INT UNSIGNED PRIMARY KEY NOT NULL,
+    `blocks` INT UNSIGNED NOT NULL
 );
 
 INSERT INTO
     `profiles` (
         `id`,
         `gender`,
+        `age`,
         `prefers`,
         `bio`
     )
@@ -72,12 +84,14 @@ VALUES
     (
         1,
         1,
+        31,
         0,
         "I like long walks in the beach with my girlfriend, until the acid wears off, and I realize I'm draggin a manequin through the parking lot."
     ),
     (
         2,
         0,
+        30,
         2,
         "If you are looking for a woman with personality, well it's your lucky day, because I have multiple"
     );

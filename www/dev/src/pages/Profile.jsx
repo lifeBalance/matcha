@@ -37,6 +37,11 @@ function validateEmail(str) {
   return str.match(regex)
 }
 
+function validateAge(str) {
+  const num = parseInt(str)
+  return num >= 18
+}
+
 function Profile() {
   const [modalContent, setModalContent] = React.useState('')
   const [modalIsOpen, setModalIsOpen] = React.useState(false)
@@ -89,6 +94,15 @@ function Profile() {
   } = useInput(validateEmail)
 
   const {
+    value: age,
+    setValue: setAge,
+    inputWasChanged: ageWasChanged,
+    inputHasError: ageHasError,
+    inputChangeHandler: ageChangeHandler,
+    inputBlurHandler: ageBlurHandler,
+  } = useInput(validateAge)
+
+  const {
     selectValue: genderValue,
     setSelectValue: setGenderValue,
     selectChangeHandler: genderChangeHandler,
@@ -126,6 +140,7 @@ function Profile() {
     setFirstName(data.firstName)
     setLastName(data.lastName)
     setEmail(data.email)
+    setAge(data.age)
     setGenderValue(data.genderValue)
     setPreferencesValue(data.preferencesValue)
     setBioValue(data.bioValue)
@@ -135,7 +150,7 @@ function Profile() {
   React.useEffect(() => {
     if (!isLoggedIn) navigate('/', { replace: true })
     else getProfile('get', accessToken, null, (data) => setProfile(data))
-  }, [])
+  }, [isLoggedIn])
 
   let firstNameErrorContent
   if (firstNameHasError)
@@ -165,11 +180,21 @@ function Profile() {
     )
   }
 
+  let ageErrorContent
+  if (ageHasError) {
+    ageErrorContent = (
+      <>
+        <HandRaisedIcon className='inline w-5 -mt-1 text-orange-200' />
+        Must be at least 18 (age of consent)
+      </>)
+  }
+
   React.useEffect(() => {
     if (
       !firstNameHasError &&
       !lastNameHasError &&
       !emailHasError &&
+      !ageHasError &&
       firstName.length > 0 &&
       lastName.length > 0
     ) {
@@ -184,6 +209,7 @@ function Profile() {
       firstNameWasChanged ||
       lastNameWasChanged ||
       emailWasChanged ||
+      ageWasChanged ||
       genderWasChanged ||
       preferencesWasChanged ||
       bioWasChanged ||
@@ -197,6 +223,7 @@ function Profile() {
     firstNameWasChanged,
     lastNameWasChanged,
     emailWasChanged,
+    ageWasChanged,
     genderWasChanged,
     preferencesWasChanged,
     bioWasChanged,
@@ -266,6 +293,7 @@ function Profile() {
         firstName,
         lastName,
         email,
+        age,
         genderValue,
         preferencesValue,
         bioValue,
@@ -334,6 +362,15 @@ function Profile() {
           onChange={emailChangeHandler}
           onBlur={emailBlurHandler}
           errorContent={emailErrorContent}
+        />
+
+        <Input
+          label='age'
+          value={age}
+          type='number'
+          onChange={ageChangeHandler}
+          onBlur={ageBlurHandler}
+          errorContent={ageErrorContent}
         />
 
         <Select
