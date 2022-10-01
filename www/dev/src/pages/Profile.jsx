@@ -202,7 +202,7 @@ function Profile() {
     } else {
       setFormIsValid(false)
     }
-  }, [firstName, lastName, firstNameHasError, lastNameHasError, emailHasError])
+  }, [firstName, lastName, ageHasError, firstNameHasError, lastNameHasError, emailHasError])
 
   React.useEffect(() => {
     if (
@@ -287,7 +287,6 @@ function Profile() {
 
     // FIND A WAY OF ADDING THE PICTURES TO THE DATA TO SEND
     submitProfile(
-      'put', // ignored atm
       accessToken,
       {
         firstName,

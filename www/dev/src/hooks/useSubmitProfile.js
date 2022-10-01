@@ -32,13 +32,14 @@ function useSubmitProfile() {
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const dispatch = useDispatch()
 
-  const submitProfile = React.useCallback(async function (method, accessToken, data = null, callback = null) {
+  const submitProfile = React.useCallback(async function (accessToken, data = null, callback = null) {
     setIsSubmitting(true)
     console.log(data)
 
     const formData = new FormData()
     formData.append('firstName', data.firstName)
     formData.append('lastName', data.lastName)
+    formData.append('age', data.age)
     formData.append('email', data.email)
     formData.append('genderValue', data.genderValue)
     formData.append('preferencesValue', data.preferencesValue)

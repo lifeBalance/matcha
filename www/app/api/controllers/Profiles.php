@@ -116,7 +116,7 @@ class Profiles
             strlen($email) < 6      || strlen($email) > 255 ||
             strlen($bio) > 255      || !is_int($gender) || !is_int($prefers) ||
             $gender < 0 || $gender > 2 || $prefers < 0 || $prefers > 2 ||
-            $age < 18)
+            isset($age) && $age < 18)
         {
             http_response_code(400); // Bad Request
             echo json_encode('shenanigans');

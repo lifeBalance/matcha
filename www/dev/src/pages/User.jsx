@@ -41,9 +41,10 @@ function User() {
       userName: data.userName,
       firstName: data.firstName,
       lastName: data.lastName,
+      age: parseInt(data.age),
+      gender: parseInt(data.gender),
+      preferences: parseInt(data.prefers),
       bio: data.bio,
-      gender: data.gender,
-      preferences: data.prefers,
       pics: data.pics
     })
   }
@@ -105,7 +106,7 @@ function User() {
             <p><span className='font-semibold'>Full name:</span> {user.firstName} {user.lastName}</p>
             <p><span className='font-semibold'>Gender:</span>{gender}</p>
             <p><span className='font-semibold'>Prefers: </span>{preferences}</p>
-            <p><span className='font-semibold'>Age: </span>44</p>
+            <p><span className='font-semibold'>Age: </span>{user.age}</p>
             <p><span className='font-semibold'>Rated: </span>12 ⭐</p>
             <p><span className='font-semibold'>Bio: </span>{user.bio}</p>
           </div>

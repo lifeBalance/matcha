@@ -129,6 +129,7 @@ class Users
                 'userName'  => $user->username,
                 'firstName' => $user->firstname,
                 'lastName'  => $user->lastname,
+                'age'       => $profile->age,
                 'gender'    => $profile->gender,
                 'prefers'   => $profile->prefers,
                 'bio'       => html_entity_decode($profile->bio, ENT_QUOTES),
