@@ -5,7 +5,6 @@ import { configureStore } from '@reduxjs/toolkit'
 import burgerReducer from './burgerSlice'
 import authReducer from './authSlice'
 import testReducer from './testSlice'
-import usersReducer from './usersSlice'
 import userReducer from './userSlice'
 
 const store = configureStore({
@@ -13,7 +12,6 @@ const store = configureStore({
     burger: burgerReducer,
     auth: authReducer,
     test: testReducer,
-    users: usersReducer,
     user: userReducer,
   },
 })
