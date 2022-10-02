@@ -46,11 +46,15 @@ function useUsers(params) {
       const response = await fetchUsers({
         url: '/users',
         method: 'get',
-        headers: { 'Authorization': `Bearer ${args.accessToken}` },
+        params: { page: args.page },
+        headers: {
+          'Authorization': `Bearer ${args.accessToken}`
+        },
         refreshTokens: () => dispatch(refresh()),
       })
-  
-      setUsers(response.data)
+      // console.log(response.data); // testing
+      // setUsers(prevState => [...prevState, ...response.data])
+      setUsers(prevState => [...prevState, ...response.data].filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i))
     } catch (error) {
       return setErrorLoadingUsers(error.response.data.error.message)
     } finally {

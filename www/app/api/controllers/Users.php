@@ -109,8 +109,9 @@ class Users
     // Read (GET): collection or single resource.
     public function read($args = [])
     {
+        // print_r($args); exit;
         // Read single resource
-        if (!empty($args)) {
+        if (isset($args['id'])) {
             // Extract uid from access token, see if user can access user
             $this->authorize();
             // WARNING: CHECK for BLOCKED USERS (don't serve profile to them)!!
@@ -136,9 +137,10 @@ class Users
                 'pics'      => array_values($pics)
             ]);
             exit;
-        } else {    // Read collection
-            $this->authorize();
-            $users = $this->userModel->getAll();
+        } else if (isset($args['page'])) {    // Read collection
+            $p = (int)$args['page'];
+            // $this->authorize();
+            $users = $this->userModel->getPage($p, 1); // array of users
             echo json_encode($users);
         }
     }

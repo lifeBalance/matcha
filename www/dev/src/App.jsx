@@ -4,8 +4,9 @@ import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 // pages
-import Home from './pages/Home'
-import Test from './pages/Test'
+import Test from './pages/Test' // for testing!
+
+import Hero from './pages/Hero'
 import Profile from './pages/Profile'
 import Users from './pages/Users'
 import User from './pages/User'
@@ -39,7 +40,7 @@ function App() {
         <Routes>
           <Route
             path='/'
-            element={<Home />}
+            element={<Users />}
           />
 
           <Route
@@ -47,10 +48,10 @@ function App() {
             element={<Test />}
           />
 
-          <Route
+          {/* <Route
             path='users'
             element={<Users />}
-          />
+          /> */}
 
           <Route
             path='/login'

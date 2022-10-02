@@ -18,6 +18,20 @@ class User
         return $stmt->fetchAll(PDO::FETCH_OBJ);
     }
 
+    public function getPage($page, $items_per_page)
+    {
+        $offset = ($page - 1) * $items_per_page; // offset is the starting row
+        $sql = 'SELECT * FROM users
+                LIMIT :offset, :items_per_page';
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+        $stmt->bindValue(':items_per_page', $items_per_page, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
     public function getById($id)
     {
         $stmt = $this->conn->prepare("SELECT * FROM users WHERE id = ?");
