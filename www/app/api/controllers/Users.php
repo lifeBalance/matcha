@@ -133,7 +133,7 @@ class Users
                 'age'       => $profile->age,
                 'gender'    => $profile->gender,
                 'prefers'   => $profile->prefers,
-                'bio'       => html_entity_decode($profile->bio, ENT_QUOTES),
+                'bio'       => $profile->bio,
                 'pics'      => array_values($pics)
             ]);
             exit;

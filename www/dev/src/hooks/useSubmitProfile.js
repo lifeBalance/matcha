@@ -34,7 +34,7 @@ function useSubmitProfile() {
 
   const submitProfile = React.useCallback(async function (accessToken, data = null, callback = null) {
     setIsSubmitting(true)
-    console.log(data)
+    // console.log(data) // testing
 
     const formData = new FormData()
     formData.append('firstName', data.firstName)
@@ -57,12 +57,13 @@ function useSubmitProfile() {
         formData,
         {
           headers: {
-            'Authorization': `Bearer ${accessToken}`},
+            'Authorization': `Bearer ${accessToken}`
+          },
           refreshTokens: () => dispatch(refresh()),
         })
+      console.log(resp.data) // testing
       if (callback)
         callback(resp.data)
-      console.log(resp.data) // testing
       // return resp.data
     } catch (error) {
       console.log(error)

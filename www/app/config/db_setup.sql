@@ -59,7 +59,8 @@ CREATE TABLE IF NOT EXISTS `profiles` (
     `age` INT UNSIGNED DEFAULT 18,
     `gender` INT UNSIGNED DEFAULT 2,
     `prefers` INT UNSIGNED DEFAULT 2,
-    `bio` VARCHAR(255) DEFAULT ''
+    `bio` VARCHAR(255) DEFAULT '',
+    `profile_pic` VARCHAR(32) DEFAULT ''
 );
 
 CREATE TABLE IF NOT EXISTS `checked_users` (

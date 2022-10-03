@@ -71,6 +71,8 @@ class Profiles
             $src = $pic['tmp_name'];
             $dst = $user_dir . "/$name.$ext";
             move_uploaded_file($src, $dst);
+
+            return "uploads/$uid/$name.$ext";  // RELATIVE path to the picture
         } else {
             http_response_code(400); // Bad Request
             echo json_encode('shenanigans: no file uploaded');
@@ -84,12 +86,17 @@ class Profiles
         // Extract the User ID from the Access Token payload
         $accessTokenUid = $this->authorize()['sub'];    // as a string
         $accessTokenUid = (int)$accessTokenUid;         // as an int (as in DB)
+        $profile_pic = '';
 
         // Are there files in the request? Save them to the user's folder.
         // Here I should count the existing files, so they can't be more than 5!
         if (isset($_FILES)) {
-            foreach ($_FILES as $pic) {
-                $this->savePic($pic, $accessTokenUid);
+            foreach ($_FILES as $k => $pic) {
+                if ($k === array_key_first($_FILES)) {
+                    $profile_pic = $this->savePic($pic, $accessTokenUid);
+                    // echo json_encode($profile_pic);exit;
+                } else
+                    $this->savePic($pic, $accessTokenUid);
             }
         }
 
@@ -125,11 +132,12 @@ class Profiles
 
         // Let's split the data according to the DB table it belongs
         $profile_data = [
-            'id'        => $accessTokenUid,
-            'gender'    => $gender,
-            'age'       => $age,
-            'prefers'   => $prefers,
-            'bio'       => $bio
+            'id'            => $accessTokenUid,
+            'gender'        => $gender,
+            'age'           => $age,
+            'prefers'       => $prefers,
+            'bio'           => $bio,
+            'profile_pic'   =>$profile_pic
         ];
 
         $user_data = [
@@ -186,7 +194,10 @@ class Profiles
         $ret2 = $this->profileModel->update($profile_data);
 
         if ($user_data['confirmed']) {
-            echo json_encode([ 'message' => 'success' ]);
+            echo json_encode([
+                'message' => 'success',
+                'profilePic' => $profile_data['profile_pic']
+            ]);
         } else {
             echo json_encode([ 'message' => 'confirm' ]);
         }
@@ -209,7 +220,8 @@ class Profiles
             'age'               => $profile->age,
             'genderValue'       => $profile->gender,
             'preferencesValue'  => $profile->prefers,
-            'bioValue'          => $profile->bio
+            'bioValue'          => $profile->bio,
+            'profilePic'       => $profile->profile_pic
         ]);
     }
 }

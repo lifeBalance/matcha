@@ -29,40 +29,39 @@ sendRequest.interceptors.response.use(
   }
 )
 
-function useGetUser() {
-  const [userIsLoading, setUserIsLoading] = React.useState(false)
-  const [errorGettingUser, setErrorGettingUser] = React.useState(false)
+function useGetProfilePic() {
+  const [picIsLoading, setPicIsLoading] = React.useState(false)
+  const [errorGettingPic, setErrorGettingPic] = React.useState(false)
   const dispatch = useDispatch()
 
-  const getUser = React.useCallback(async function (uid, accessToken, callback = null) {
-    setUserIsLoading(true)
+  const getProfilePic = React.useCallback(async function (accessToken, callback = null) {
+    setPicIsLoading(true)
 
     try {
       const resp = await sendRequest({
-        url: '/users',
+        url: '/profile-pics',
         method: 'get',
-        params: { id: uid },
         headers: { 'Authorization': `Bearer ${accessToken}` },
         refreshTokens: () => dispatch(refresh())
       })
 
+      // console.log(resp.data.profilePic); return // testing
       if (callback)
-        callback(resp.data) // used to set state in the component
-      // console.log(resp.data) // testing
+        callback(resp.data.profilePic) // used to set state in the component
       // return resp.data
     } catch (error) {
       console.log(error)
-      setErrorGettingUser(true)
+      setErrorGettingPic(true)
     } finally {
-      setUserIsLoading(false)
+      setPicIsLoading(false)
     }
   }, [])
 
   return {
-    userIsLoading,
-    errorGettingUser,
-    getUser
+    picIsLoading,
+    errorGettingPic,
+    getProfilePic
   }
 }
 
-export default useGetUser
+export default useGetProfilePic

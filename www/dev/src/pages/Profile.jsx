@@ -42,7 +42,7 @@ function validateAge(str) {
   return num >= 18
 }
 
-function Profile() {
+function Profile(props) {
   const [modalContent, setModalContent] = React.useState('')
   const [modalIsOpen, setModalIsOpen] = React.useState(false)
 
@@ -144,7 +144,7 @@ function Profile() {
     setGenderValue(data.genderValue)
     setPreferencesValue(data.preferencesValue)
     setBioValue(data.bioValue)
-    // set the files here!
+    // set the files here! (mb we don't need it w/o the 'delete pics feature'
   }
 
   React.useEffect(() => {
@@ -255,6 +255,8 @@ function Profile() {
           Profile Successfully updated.
         </>
       )
+      // SET THE PROFILE PICTURE (If the user added one)
+      if (data.profilePic) props.setProfilePic(data.profilePic)
       setModalIsOpen(true)
     } else if (data.message === 'confirm') {
       setModalContent(

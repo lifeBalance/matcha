@@ -6,7 +6,6 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 // pages
 import Test from './pages/Test' // for testing!
 
-import Hero from './pages/Hero'
 import Profile from './pages/Profile'
 import Users from './pages/Users'
 import User from './pages/User'
@@ -22,9 +21,30 @@ import { useDispatch, useSelector } from 'react-redux'
 import { loginAfterReload } from './store/authSlice'
 import Layout from './components/UI/Layout'
 
+// hooks
+import useGetProfilePic from './hooks/useGetProfilePic'
+
 function App() {
   const dispatch = useDispatch()
-  const isLoggedIn = useSelector((slices) => slices.auth.isLoggedIn)
+  // const isLoggedIn = useSelector((slices) => slices.auth.isLoggedIn)
+  const {
+    isLoggedIn,
+    accessToken
+  } = useSelector(slices => slices.auth)
+
+  // 'profilePic' state must be here, because it must be passed down to
+  // the Layout > Navbar; also, 'setProfilePic' is passed to the 'Profile' comp.
+  const [profilePic, setProfilePic] = React.useState(null)
+  const {
+    picIsLoading,
+    errorGettingPic,
+    getProfilePic
+  } = useGetProfilePic() // small hook to get the user's profile picture.
+
+  React.useEffect(() => {
+    if (!isLoggedIn) return
+    getProfilePic(accessToken, setProfilePic)
+  }, [profilePic, isLoggedIn, accessToken])
 
   /* Retrieve the Access Token from Local Storage and set the proper isLoggedIn
     state in the UI. Useful for when the user refreshes the page, or closes
@@ -36,7 +56,7 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Layout>
+      <Layout profilePic={profilePic} >
         <Routes>
           <Route
             path='/'
@@ -47,11 +67,6 @@ function App() {
             path='test'
             element={<Test />}
           />
-
-          {/* <Route
-            path='users'
-            element={<Users />}
-          /> */}
 
           <Route
             path='/login'
@@ -65,7 +80,7 @@ function App() {
 
           <Route
             path='/profile'
-            element={<Profile />}
+            element={<Profile setProfilePic={setProfilePic} />}
           />
 
           <Route

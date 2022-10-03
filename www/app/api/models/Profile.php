@@ -16,6 +16,15 @@ class Profile
         return $stmt->fetch(PDO::FETCH_OBJ);
     }
 
+    public function getProfilePic($uid)
+    {
+        $sql = 'SELECT profile_pic FROM profiles WHERE id = ?';
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$uid]);
+
+        return $stmt->fetch(PDO::FETCH_OBJ);
+    }
+
     public function create($uid)
     {
         $sql = 'INSERT INTO profiles (id) VALUES (?)';
@@ -31,15 +40,17 @@ class Profile
                     age     = :age,
                     gender  = :gender,
                     prefers = :prefers,
-                    bio     = :bio
+                    bio     = :bio,
+                    profile_pic = :profile_pic
                 WHERE id = :id';
 
         $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT);
         $stmt->bindValue(':age', $data['age'], PDO::PARAM_INT);
         $stmt->bindValue(':gender', $data['gender'], PDO::PARAM_INT);
         $stmt->bindValue(':prefers', $data['prefers'], PDO::PARAM_INT);
         $stmt->bindValue(':bio', $data['bio'], PDO::PARAM_STR);
-        $stmt->bindValue(':id', $data['id'], PDO::PARAM_INT);
+        $stmt->bindValue(':profile_pic', $data['profile_pic'], PDO::PARAM_STR);
 
         return $stmt->execute(); // true if everything's aight!
     }
