@@ -210,6 +210,12 @@ class Profiles
         $accessTokenUid = $this->authorize()['sub'];    // as a string
         $accessTokenUid = (int)$accessTokenUid;         // as an int (as in DB)
 
+        // Compute amount of pics in user's uploads folder
+        $pics_left = 5;
+        $user_dir = UPLOADS_DIR . "/{$accessTokenUid}";
+        if (is_dir("$user_dir"))
+            $pics_left = 5 - count(array_diff(scandir($user_dir), array('.', '..')));
+
         // Fetch data from DB
         $profile =  $this->profileModel->getById($accessTokenUid);
         $user =     $this->userModel->getById($accessTokenUid);
@@ -221,7 +227,8 @@ class Profiles
             'genderValue'       => $profile->gender,
             'preferencesValue'  => $profile->prefers,
             'bioValue'          => $profile->bio,
-            'profilePic'       => $profile->profile_pic
+            'profilePic'        => $profile->profile_pic,
+            'filesLeft'         => $pics_left
         ]);
     }
 }

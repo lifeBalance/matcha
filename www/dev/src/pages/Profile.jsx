@@ -1,5 +1,5 @@
 import React from 'react'
-
+import { unescape } from 'lodash'
 import { useNavigate } from 'react-router-dom'
 
 // redux
@@ -143,8 +143,8 @@ function Profile(props) {
     setAge(data.age)
     setGenderValue(data.genderValue)
     setPreferencesValue(data.preferencesValue)
-    setBioValue(data.bioValue)
-    // set the files here! (mb we don't need it w/o the 'delete pics feature'
+    setBioValue(unescape(data.bioValue))
+    setFilesLeft(data.filesLeft)
   }
 
   React.useEffect(() => {
@@ -284,10 +284,10 @@ function Profile(props) {
     setFilePickerError(false)
   }
 
+  // Submit profile
   function submitHandler(e) {
     e.preventDefault()
 
-    // FIND A WAY OF ADDING THE PICTURES TO THE DATA TO SEND
     submitProfile(
       accessToken,
       {
