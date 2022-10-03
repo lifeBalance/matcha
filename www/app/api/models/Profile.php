@@ -37,10 +37,10 @@ class Profile
     {
         $sql = 'UPDATE profiles
                 SET
-                    age     = :age,
-                    gender  = :gender,
-                    prefers = :prefers,
-                    bio     = :bio,
+                    age         = :age,
+                    gender      = :gender,
+                    prefers     = :prefers,
+                    bio         = :bio,
                     profile_pic = :profile_pic
                 WHERE id = :id';
 

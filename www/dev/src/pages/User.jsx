@@ -1,5 +1,6 @@
 import React from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { unescape } from 'lodash'
 
 // components
 import {Carousel, Tooltip} from 'flowbite-react'
@@ -44,7 +45,7 @@ function User() {
       age: parseInt(data.age),
       gender: parseInt(data.gender),
       preferences: parseInt(data.prefers),
-      bio: data.bio,
+      bio: unescape(data.bio),
       pics: data.pics
     })
   }
@@ -89,14 +90,14 @@ function User() {
   let userLikesYou = true
   return (
     <>
-      {!errorGettingUser && !userIsLoading && user && (<div className='bg-white p-4 rounded-lg my-8 mx-4' id={user.userName}>
+      {!errorGettingUser && !userIsLoading && user && (<div className='bg-white p-4 rounded-lg my-8 mx-4 max-w-2xl' id={user.userName}>
           <h1 className='text-gray-700 text-2xl font-bold text-center pt-6 pb-8'>{user.userName}</h1>
 
-          <div className="flex h-96 lg:h-[700px] xl:h-[800px] bg-gray-800 rounded-lg mx-auto">
+          <div className="h-96 bg-gray-800 rounded-lg mx-auto">
             {user.pics.length > 0 ?
             (<Carousel slide={false}>
               {user.pics && user.pics.length > 0 && user.pics.map((pic, idx) => (
-                <img key={Math.random()} src={`/uploads/${user.id}/${pic}`} />
+                <img key={Math.random()} src={`/uploads/${user.id}/${pic}`} className=' object-cover h-96 sm:object-contain' />
               ))}
             </Carousel>) :
             <UserCircleIcon className='text-white w-[50%] justify-center mx-auto'/>}

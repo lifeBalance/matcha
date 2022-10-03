@@ -86,13 +86,17 @@ class Profiles
         // Extract the User ID from the Access Token payload
         $accessTokenUid = $this->authorize()['sub'];    // as a string
         $accessTokenUid = (int)$accessTokenUid;         // as an int (as in DB)
-        $profile_pic = '';
+
+        $profile_pic = $this->profileModel->getProfilePic($accessTokenUid)->profile_pic; // either NULL or relative path to the image
 
         // Are there files in the request? Save them to the user's folder.
         // Here I should count the existing files, so they can't be more than 5!
         if (isset($_FILES)) {
             foreach ($_FILES as $k => $pic) {
-                if ($k === array_key_first($_FILES)) {
+                // Save the 'profile_pic' ONLY if it's not set (empty string)
+                if ($k === array_key_first($_FILES) &&
+                    $profile_pic === '')
+                {
                     $profile_pic = $this->savePic($pic, $accessTokenUid);
                     // echo json_encode($profile_pic);exit;
                 } else

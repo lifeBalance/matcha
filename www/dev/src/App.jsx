@@ -34,7 +34,7 @@ function App() {
 
   // 'profilePic' state must be here, because it must be passed down to
   // the Layout > Navbar; also, 'setProfilePic' is passed to the 'Profile' comp.
-  const [profilePic, setProfilePic] = React.useState(null)
+  const [profilePic, setProfilePic] = React.useState('')
   const {
     picIsLoading,
     errorGettingPic,

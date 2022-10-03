@@ -40,7 +40,7 @@ function Navbar(props) {
   //   getProfilePic(accessToken, setProfilePic)
   // }, [profilePic, isLoggedIn])
 
-  let imgElem = props.profilePic === null ?
+  let imgElem = props.profilePic === '' ?
     <UserCircleIcon className='w-12 hover:text-blue-400' />
     :
     <img src={`/${props.profilePic}`} alt="" className='rounded-full h-12 w-12 object-cover' />
