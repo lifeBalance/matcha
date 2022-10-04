@@ -45,9 +45,9 @@ function useGetProfile() {
         refreshTokens: () => dispatch(refresh()),
         data: formRawData
       })
+      // console.log(resp.data) // testing
       if (callback)
         callback(resp.data)
-      // console.log(resp.data) // testing
       // return resp.data
     } catch (error) {
       console.log(error)

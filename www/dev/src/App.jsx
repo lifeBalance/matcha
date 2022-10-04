@@ -6,6 +6,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 // pages
 import Test from './pages/Test' // for testing!
 
+import Settings from './pages/Settings'
 import Profile from './pages/Profile'
 import Users from './pages/Users'
 import User from './pages/User'
@@ -79,8 +80,13 @@ function App() {
           />
 
           <Route
+            path='/settings'
+            element={<Settings setProfilePic={setProfilePic} />}
+          />
+
+          <Route
             path='/profile'
-            element={<Profile setProfilePic={setProfilePic} />}
+            element={<Profile />}
           />
 
           <Route

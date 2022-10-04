@@ -198,13 +198,17 @@ class Profiles
         // Compute amount of pics in user's uploads folder
         $pics_left = 5;
         $user_dir = UPLOADS_DIR . "/{$accessTokenUid}";
-        if (is_dir("$user_dir"))
+        if (is_dir("$user_dir")) {
             $pics_left = 5 - count(array_diff(scandir($user_dir), array('.', '..')));
+            $pics = array_diff(scandir($user_dir), array('.', '..'));
+        }
 
         // Fetch data from DB
         $profile =  $this->profileModel->getById($accessTokenUid);
         $user =     $this->userModel->getById($accessTokenUid);
         echo json_encode([
+            'id'                => $user->id,
+            'userName'         => $user->username,
             'firstName'         => $user->firstname,
             'lastName'          => $user->lastname,
             'email'             => $user->email,
@@ -213,7 +217,8 @@ class Profiles
             'preferencesValue'  => $profile->prefers,
             'bioValue'          => $profile->bio,
             'profilePic'        => $profile->profile_pic,
-            'filesLeft'         => $pics_left
+            'filesLeft'         => $pics_left,
+            'pics'              => array_values($pics)
         ]);
     }
 }
