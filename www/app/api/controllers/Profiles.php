@@ -197,6 +197,7 @@ class Profiles
 
         // Compute amount of pics in user's uploads folder
         $pics_left = 5;
+        $pics = [];
         $user_dir = UPLOADS_DIR . "/{$accessTokenUid}";
         if (is_dir("$user_dir")) {
             $pics_left = 5 - count(array_diff(scandir($user_dir), array('.', '..')));
