@@ -32,7 +32,7 @@ function App() {
     accessToken
   } = useSelector(slices => slices.auth)
 
-  // 'profilePic' state must be here, because it must be passed down to
+  // 'profilePic' state must be set here in order to be passed down to
   // the Layout > Navbar; also, 'setProfilePic' is passed to the 'Profile' comp.
   const [profilePic, setProfilePic] = React.useState('')
   const {

@@ -14,28 +14,28 @@ class ProfilePics
     }
 
     // Authorize request
-    private function authorize()
-    {
-        try {
-            return Auth::authorize($_SERVER['HTTP_AUTHORIZATION']);
-        } catch (ExpiredTokenException) {
-            http_response_code(401); // Unauthorized
-            echo json_encode(['error' => 'Invalid token error']);
-            die;
-        } catch (Exception $e) {
-            http_response_code(400); // Bad Request
-            header('Location: /404', TRUE, 301);exit; // Travolta takes it from here
-            echo json_encode(['error' => $e->getMessage()]);
-            die;
-        }
-    }
+    // private function authorize()
+    // {
+    //     try {
+    //         return Auth::authorize($_SERVER['HTTP_AUTHORIZATION']);
+    //     } catch (ExpiredTokenException) {
+    //         http_response_code(401); // Unauthorized
+    //         echo json_encode(['error' => 'Invalid token error']);
+    //         die;
+    //     } catch (Exception $e) {
+    //         http_response_code(400); // Bad Request
+    //         header('Location: /404', TRUE, 301);exit; // Travolta takes it from here
+    //         echo json_encode(['error' => $e->getMessage()]);
+    //         die;
+    //     }
+    // }
 
     public function read()
     {
-        // Extract the User ID from the Access Token payload
-        $accessTokenUid = $this->authorize()['sub'];    // as a string
-        $accessTokenUid = (int)$accessTokenUid;         // as an int (as in DB)
-        $pdoObj = $this->profileModel->getProfilePic($accessTokenUid);
+        // Extract the User ID from the token in the Authorization Header.
+        $uid =  Auth::getUidFromToken($_SERVER['HTTP_AUTHORIZATION']);
+
+        $pdoObj = $this->profileModel->getProfilePic($uid);
         echo json_encode(['profilePic' => $pdoObj->profile_pic]);
     }
 }

@@ -4,8 +4,8 @@ import React from 'react'
 import useUsers from '../hooks/useUsers'
 
 // components
+import Hero from '../components/Hero'
 import UserMiniCard from '../components/UserMiniCard'
-import Hero from './Hero'
 
 // redux
 import { useSelector } from 'react-redux'

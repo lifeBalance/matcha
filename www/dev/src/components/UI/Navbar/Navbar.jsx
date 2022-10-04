@@ -28,26 +28,11 @@ function Navbar(props) {
     isLoggedIn,
     accessToken
   } = useSelector(slices => slices.auth)
-  // const [profilePic, setProfilePic] = React.useState(null)
-  // const {
-  //   picIsLoading,
-  //   errorGettingPic,
-  //   getProfilePic
-  // } = useGetProfilePic()
-
-  // React.useEffect(() => {
-  //   if (!isLoggedIn) return
-  //   getProfilePic(accessToken, setProfilePic)
-  // }, [profilePic, isLoggedIn])
 
   let imgElem = props.profilePic === '' ?
     <UserCircleIcon className='w-12 hover:text-blue-400' />
     :
     <img src={`/${props.profilePic}`} alt="" className='rounded-full h-12 w-12 object-cover' />
-  // const imgElem = profilePic === null ?
-  //   <UserCircleIcon className='w-12 hover:text-blue-400' />
-  //   :
-  //   <img src={`/${profilePic}`} alt="" className='rounded-full h-12 w-12 object-cover' />
 
   return (
     <nav className='bg-black'>

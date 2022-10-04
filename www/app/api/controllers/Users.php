@@ -14,23 +14,6 @@ class Users
         $this->profileModel = new Profile();
     }
 
-    // Authorize request
-    private function authorize()
-    {
-        try {
-            Auth::authorize($_SERVER['HTTP_AUTHORIZATION']);
-        } catch (ExpiredTokenException) {
-            http_response_code(401); // Unauthorized
-            echo json_encode(['error' => 'Invalid token error']);
-            die;
-        } catch (Exception $e) {
-            http_response_code(400); // Bad Request
-            header('Location: /404', TRUE, 301);exit; // Travolta takes it from here
-            echo json_encode(['error' => $e->getMessage()]);
-            die;
-        }
-    }
-
     // Send the Account confirmation mail
     private function sendMail(Array $user, String $email_token)
     {
@@ -69,7 +52,7 @@ class Users
             strlen($password) < 5 || strlen($password) > 10 || $password !== $pwd_conf)
         {
             http_response_code(400); // Bad Request
-            echo json_encode('Shenanigans...');
+            echo json_encode('shenanigans');
             exit;
         }
 
@@ -112,8 +95,9 @@ class Users
         // print_r($args); exit;
         // Read single resource
         if (isset($args['id'])) {
-            // Extract uid from access token, see if user can access user
-            $this->authorize();
+            // Extract the UID from the user requesting the profile.
+            $uid = Auth::getUidFromToken($_SERVER['HTTP_AUTHORIZATION']);
+
             // WARNING: CHECK for BLOCKED USERS (don't serve profile to them)!!
             // echo json_encode($args['id']); // prints 1 if /api/users?id=1
             $user = $this->userModel->getById($args['id']);

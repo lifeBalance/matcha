@@ -15,23 +15,6 @@ class Profiles
         $this->profileModel = new Profile();
     }
 
-    // Authorize request
-    private function authorize()
-    {
-        try {
-            return Auth::authorize($_SERVER['HTTP_AUTHORIZATION']);
-        } catch (ExpiredTokenException) {
-            http_response_code(401); // Unauthorized
-            echo json_encode(['error' => 'Invalid token error']);
-            die;
-        } catch (Exception $e) {
-            http_response_code(400); // Bad Request
-            header('Location: /404', TRUE, 301);exit; // Travolta takes it from here
-            echo json_encode(['error' => $e->getMessage()]);
-            die;
-        }
-    }
-
     // Send the Account confirmation mail
     private function sendMail(Array $user, String $email_token)
     {
@@ -83,9 +66,8 @@ class Profiles
     // Create (POST -> /api/profiles): For modifying a user's profile
     public function create()
     {
-        // Extract the User ID from the Access Token payload
-        $accessTokenUid = $this->authorize()['sub'];    // as a string
-        $accessTokenUid = (int)$accessTokenUid;         // as an int (as in DB)
+        // Extract the User ID from the token in the Authorization Header.
+        $accessTokenUid =  Auth::getUidFromToken($_SERVER['HTTP_AUTHORIZATION']);
 
         $profile_pic = $this->profileModel->getProfilePic($accessTokenUid)->profile_pic; // either NULL or relative path to the image
 
@@ -210,9 +192,8 @@ class Profiles
     // Read (GET): Read a single resource: the profile of a given user
     public function read()
     {
-        // Extract the User ID from the Access Token payload
-        $accessTokenUid = $this->authorize()['sub'];    // as a string
-        $accessTokenUid = (int)$accessTokenUid;         // as an int (as in DB)
+        // Extract the User ID from the token in the Authorization Header.
+        $accessTokenUid = Auth::getUidFromToken($_SERVER['HTTP_AUTHORIZATION']);
 
         // Compute amount of pics in user's uploads folder
         $pics_left = 5;
