@@ -4,20 +4,20 @@ require('dotenv').config()
 
 const express = require('express')
 const app = express()
+const fs = require('fs')
 
 const bodyParser = require('body-parser') // middleware to parse incoming data
 
 // routes
 const testRoute = require('./src/routes/test')
 
-app.get('/', (req, res) => {
-  res.send('hello worlda!')
-})
-
 // app.use(bodyParser.urlencoded()) // x-www-form-urlencoded <form> 
 app.use(bodyParser.json()) // Content-Type: application-json
 
-// middleware to avoid CROSS errors
+// middleware to serve static files (our React bundle)
+app.use(express.static('public'))
+
+// middleware to avoid CROSS errors (no package needed)
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE')
@@ -33,16 +33,19 @@ app.listen(3000, () => {
 
 // const mysql = require('mysql2')
 // const connection = mysql.createConnection({
-//     host:     process.env.DB_HOSTNAME,
-//     user:     process.env.DB_USER,
-//     password: process.env.DB_PASSWORD,
+//   host:               process.env.DB_HOSTNAME,
+//   user:               process.env.DB_USER,
+//   password:           process.env.DB_PASSWORD,
+//   multipleStatements: true  // needed for running SQL scripts
 // })
 
-// connection.connect();
+// connection.connect()
 
-// connection.query('CREATE DATABASE IF NOT EXISTS `matchax`', (error) => {
-//   if (error) throw error;
-//   console.log('The solution is: ');
+// const sql = fs.readFileSync('./src/db/db_setup.sql', 'utf8')
+
+// connection.query(sql, (error) => {
+//   if (error) throw error
+//   console.log('matcha DB created!')
 // })
 
 // connection.end()

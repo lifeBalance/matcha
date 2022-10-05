@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY ./package*.json /app/
 
-RUN npm install
+RUN npm install --global knex && npm install
 
 EXPOSE 3000
 

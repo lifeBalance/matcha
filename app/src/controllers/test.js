@@ -8,6 +8,11 @@ exports.getTests = (req, res, next) => {
   })
 }
 
+exports.getTest = (req, res, next) => {
+  // here we'd bring in a model to get data from db
+  res.status(200).json('hello node')
+}
+
 exports.createTest = (req, res, next) => {
   const title = req.body.title // body-parser takes care of the '.body.'
   const content = req.body.content
