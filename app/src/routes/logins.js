@@ -8,6 +8,6 @@ const router = express.Router()
 router.post('/logins', loginsController.login)
 
 // DELETE => /api/logins (for logging out)
-// router.get('/users', loginsController.logout)
+router.delete('/logins', loginsController.logout)
 
 module.exports = router

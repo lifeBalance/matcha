@@ -1,9 +1,17 @@
+// Models to verify credentials (username and pwd) and store Refresh Tokens
 const UserModel = require('../models/User')
+const RefreshTokenModel = require('../models/RefreshToken')
+
+// To compare the encrypted passwords
 const bcrypt = require('bcrypt')
+// To create JSON Web Tokens
 const jwt = require("jsonwebtoken")
+// To hash the Refresh Tokens before writing them to DB (later to locate them)
+const { createHash } = require('crypto')
+// To import our "secrets"
 const path = require('path')
 const dotenv = require('dotenv')
-const unixTimeInSeconds = () => Math.floor(Date.now() / 1000)
+
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') })
 
@@ -20,33 +28,52 @@ exports.login = async (req, res, next) => {
     bcrypt.compare(req.body.password, user[0].pwd_hash, function(err, result) {
       if (result == true) {
         // Generate the access_token
-        const access_token = jwt.sign({
+        const accessToken = jwt.sign({
           sub:    user[0].id,
           email:  user[0].email,
-          exp:    unixTimeInSeconds() + eval(process.env.ACCESS_TOKEN_EXP)
-        }, process.env.SECRET_JWT_KEY)
+        }, process.env.SECRET_JWT_KEY, { expiresIn: process.env.ACCESS_TOKEN_EXP})
 
         // Generate the refresh_token
-        const refresh_token = jwt.sign({
+        const refreshToken = jwt.sign({
           sub:    user[0].id,
-          exp:    unixTimeInSeconds() + eval(process.env.REFRESH_TOKEN_EXP),
-        }, process.env.SECRET_JWT_KEY)
+        }, process.env.SECRET_JWT_KEY, { expiresIn: process.env.REFRESH_TOKEN_EXP})
+
+        // Let's extract the expiry time of the Refresh token from the claim ;-)
+        const expiryRefreshToken = jwt.verify(refreshToken, process.env.SECRET_JWT_KEY).exp
 
         // Set hardened cookie
-        res.cookie('refreshToken', refresh_token, {
+        res.cookie('refreshToken', refreshToken, {
           path:     '/api',
           secure:   true,
-          expires:  new Date(Date.now() + (eval(process.env.REFRESH_TOKEN_EXP) * 1000)),
+          maxAge: expiryRefreshToken,
           httpOnly: true,
-          samesite: 'None'
+          sameSite: 'None'
         })
+
+        // Hash the Refresh Token
+        const refreshTokenHash = createHash('sha256').update(refreshToken).digest('hex')
+
+        // Instantiate the RefreshToken model
+        const RefreshToken = new RefreshTokenModel({
+          uid:        user[0].id,
+          token_hash: refreshTokenHash,
+          // If I change MySQL to TIMESTAMP, use format = 'YYYY-MM-DD HH:MM:SS'
+          expires_at: expiryRefreshToken // already in seconds ;-)
+        })
+        // Store the Refresh Token in DB, by invoking the create method on the instance
+        const ret = RefreshToken.create()
 
         // Send the access_token in the response body
         res.status(200).json({
-          access_token: access_token,
+          access_token: accessToken,
           uid:          user[0].id,
-          // exp: new Date(Date.now() + (eval(process.env.REFRESH_TOKEN_EXP) * 1000)), // testing
-          // now: new Date(Date.now()) // testing
+          // delete from here down!!!
+          payload: jwt.verify(refreshToken, process.env.SECRET_JWT_KEY),
+          refreshTokenHash: refreshTokenHash,
+          lenHash: refreshTokenHash.length,
+          ret: ret, // testing
+          refreshExp: new Date(expiryRefreshToken).toLocaleString,
+          expiryRefreshToken: expiryRefreshToken,
         })
       } else {
         res.status(401).json('wrong pwd')
@@ -58,14 +85,29 @@ exports.login = async (req, res, next) => {
   }
 }
 
-// Return ...
-// exports.logout = async (req, res, next) => {
-//   try {
-//     // The fields (metadata about results) are assigned to the '_'
-//     const [user, _] = await UserModel.readOne(req.params.id)
-//     res.status(200).json(user)
-//   } catch (error) {
-//     console.log(error)
-//     next(error)
-//   }
-// }
+exports.logout = async (req, res, next) => {
+  try {
+    // console.log('cookie: ' + req.cookies.refreshToken) // testing
+
+    // Let's hash the Refresh Token (in order to locate it in the DB)
+    const refreshTokenHash = createHash('sha256').update(req.cookies.refreshToken).digest('hex')
+    // console.log('hash: ' + refreshTokenHash) // testing
+
+    // Let's delete the Refresh Token in the database using the hash
+    const [_, ret] = await RefreshTokenModel.delete(refreshTokenHash)
+    // console.log('ret ' + JSON.stringify(ret)) // test
+
+    // Let's delete the hardened cookie on the client. Options must be
+    // identical to those given to res.cookie(), excluding expires and maxAge.
+    res.clearCookie('refreshToken', {
+        path:     '/api',
+        secure:   true,
+        httpOnly: true,
+        sameSite: 'None'
+    })
+    res.status(200).json('successfully logged out')
+  } catch (error) {
+    console.log(error)
+    next(error)
+  }
+}

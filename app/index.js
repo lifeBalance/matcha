@@ -5,9 +5,11 @@ const app = express()
 **  Middleware
 */
 const bodyParser = require('body-parser') // middleware to parse incoming data
+const cookieParser = require('cookie-parser')
 
 // middleware to serve static files (our React bundle)
 app.use(express.static('public'))
+app.use(cookieParser())
 
 // middleware to avoid CROSS errors (no package needed)
 app.use((req, res, next) => {

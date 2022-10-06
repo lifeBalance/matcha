@@ -13,7 +13,7 @@ const initialState = {
 
 const logout = createAsyncThunk('auth/logout', async function(args, thunkAPI) {
   try {
-    const response = await axios.post('/api/logout', {
+    const response = await axios.delete('/api/logins', {
       withCredentials: true
     })
 
@@ -31,7 +31,7 @@ const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
   const { username, password, openModal } = args // invoke it with an Object!
 
   try {
-    const response = await axios.post('/api/login', {
+    const response = await axios.post('/api/logins', {
       username: username,
       password: password
     }, {
