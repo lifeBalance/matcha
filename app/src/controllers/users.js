@@ -17,7 +17,7 @@ exports.readAllUsers = async (req, res, next) => {
 exports.readOneUser = async (req, res, next) => {
   try {
     // The fields (metadata about results) are assigned to the '_'
-    const [user, _] = await UserModel.readOne(req.params.id)
+    const [user, _] = await UserModel.readOne({ id: req.params.id })
     res.status(200).json(user)
   } catch (error) {
     console.log(error)
@@ -49,9 +49,9 @@ exports.createUser = async (req, res, next) => {
       pwd_hash
     })
 
-    user = await user.create()
+    const [dbResp, _] = await user.create()
 
-    res.status(200).json(user)
+    res.status(200).json(dbResp)
   } catch (error) {
     console.log(error)
     next(error)

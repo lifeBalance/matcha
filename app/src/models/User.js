@@ -29,9 +29,21 @@ module.exports = class User {
     return pool.execute(sql)
   }
 
-  static readOne(id) {
-    const sql = 'SELECT * FROM users WHERE id = ?'
+  static readOne(object) {
+    let val
+    let sql
 
-    return pool.execute(sql, [id])
+    if (object.hasOwnProperty('id')) {
+      val = object.id
+      sql = 'SELECT * FROM users WHERE id = ?'
+    } else if (object.hasOwnProperty('email')) {
+      val = object.email
+      sql = 'SELECT * FROM users WHERE email = ?'
+    } else if (object.hasOwnProperty('username')) {
+      val = object.username
+      sql = 'SELECT * FROM users WHERE username = ?'
+    }
+
+    return pool.execute(sql, [val]) // returns empty array or [ { username: ...} ]
   }
 }

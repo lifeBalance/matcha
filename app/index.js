@@ -24,8 +24,10 @@ app.use(bodyParser.json()) // Content-Type: application-json
 **  Routes
 */
 const usersRoutes = require('./src/routes/users')
+const loginsRoutes = require('./src/routes/logins')
 
 app.use('/api', usersRoutes)
+app.use('/api', loginsRoutes)
 
 app.listen(3000, () => {
   console.log('App running on port 3000');
