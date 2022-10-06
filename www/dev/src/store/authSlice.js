@@ -113,6 +113,7 @@ const authSlice = createSlice({
       state.isLoggedIn = false
       state.errorLoggingIn = false
       state.accessToken = ''
+      localStorage.removeItem('accessToken')
       // if (action) console.log(action)
     },
     [logout.rejected]: (state, action) => {
