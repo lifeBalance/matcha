@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `refresh_tokens` (
 
 CREATE TABLE IF NOT EXISTS `email_tokens` (
     `email` VARCHAR(255) UNIQUE NOT NULL,
-    `email_token` VARCHAR(32) NOT NULL,
+    `token_hash` VARCHAR(32) NOT NULL,
     `expires_at` INT UNSIGNED NOT NULL
 );
 

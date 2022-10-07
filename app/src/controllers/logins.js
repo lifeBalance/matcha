@@ -1,14 +1,17 @@
-// Models to verify credentials (username and pwd) and store Refresh Tokens
+// Models to verify user's credentials with DB, and store Refresh Tokens.
 const AccountModel = require('../models/Account')
 const RefreshTokenModel = require('../models/RefreshToken')
 
-// To compare the encrypted passwords
+// To compare with the stored encrypted passwords
 const bcrypt = require('bcrypt')
+
 // To create JSON Web Tokens
 const jwt = require("jsonwebtoken")
+
 // To hash the Refresh Tokens before writing them to DB (later to locate them)
 const { createHash } = require('crypto')
-// To import our "secrets"
+
+// Import our "secrets"
 const path = require('path')
 const dotenv = require('dotenv')
 
@@ -20,7 +23,8 @@ exports.login = async (req, res, next) => {
   try {
     const [account, _] = await AccountModel.readOne({ username: req.body.username })
 
-    if (!Array.isArray(account)) {
+    // If the DB returns an empty array, it means the username doesn't exist
+    if (!Array.isArray(account) || !account.length) {
       res.status(401).json({ message: 'wrong username' })
       return
     }
@@ -50,14 +54,14 @@ exports.login = async (req, res, next) => {
           sameSite: 'None'
         })
 
-        // Hash the Refresh Token
+        // Hash the Refresh Token before storing it in the DB
         const refreshTokenHash = createHash('sha256').update(refreshToken).digest('hex')
 
         // Instantiate the RefreshToken model
         const RefreshToken = new RefreshTokenModel({
           uid:        account[0].id,
           token_hash: refreshTokenHash,
-          // If I change MySQL to TIMESTAMP, use format = 'YYYY-MM-DD HH:MM:SS'
+          // (If I change MySQL to TIMESTAMP, use format = 'YYYY-MM-DD HH:MM:SS')
           expires_at: expiryRefreshToken // already in seconds ;-)
         })
         // Store the Refresh Token in DB, by invoking the create method on the instance
@@ -67,13 +71,6 @@ exports.login = async (req, res, next) => {
         res.status(200).json({
           access_token: accessToken,
           uid:          account[0].id,
-          // delete from here down!!!
-          payload: jwt.verify(refreshToken, process.env.SECRET_JWT_KEY),
-          refreshTokenHash: refreshTokenHash,
-          lenHash: refreshTokenHash.length,
-          ret: ret, // testing
-          refreshExp: new Date(expiryRefreshToken).toLocaleString,
-          expiryRefreshToken: expiryRefreshToken,
         })
       } else {
         res.status(401).json({ message: 'wrong password' })

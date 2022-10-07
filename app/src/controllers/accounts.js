@@ -57,38 +57,43 @@ exports.create = async (req, res, next) => {
     const [dbResp, _] = await account.create()
     if (dbResp.affectedRows === 1) // It means we updated the row in 'accounts'
     {
+      // console.log('uid: ' + dbResp.insertId)  // testing
       // Generate Email Token Hash
       const emailTokenHash = crypto.randomBytes(16).toString('hex')
 
       // Delete old Email token from DB (if any). Can only be one per email!
-      // await EmailTokenModel.delete(email)
-/* 
-      // Write new Email token from DB
+      await EmailTokenModel.delete(email)
+
+      const unixtimeInSeconds = Math.floor(Date.now() / 1000)
+      // console.log(unixtimeInSeconds + eval(process.env.EMAIL_TOKEN_EXP)) // test
+
+      // Write new Email token to DB
       const emailToken = new EmailTokenModel({
         email,
         emailTokenHash,
-        // expires_at: ... come up with a date (check the PHP code)
+        expires_at: unixtimeInSeconds + eval(process.env.EMAIL_TOKEN_EXP)
       })
-      // emailToken.create()
- */
-      // Send Account Confirmation Email
+      // Invoke method to write the Email Token to DB
+      emailToken.create()
+
+      // Set Email options
       const mailOptions = {
         from: process.env.WEBADMIN_EMAIL_ADDRESS,
         to: email,
         subject: 'Confirm your Matcha account',
-        text: `<h1>Welcome to Matcha</h1>
+        html: `<h1>Welcome to Matcha</h1>
         <p>
-          Please, click <a href="https://localhost/confirm/${email}/${emailTokenHash}" >here</a> to get the party started!
+        Please, click <a href="http://localhost/confirm/${email}/${emailTokenHash}" >here</a> to confirm your account!
         </p>`
       }
-
+      // Send Account Confirmation Email
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) console.log(error)
         else console.log('Email sent: ' + info.response)
       })
 
       // console.log('account id: ' + dbResp.insertId) // testing
-      res.status(200).json(dbResp)
+      res.status(200).json({ message: `created user with id=${dbResp.insertId}` })
     } else {
       res.status(400).json({ message: 'bad request' })
     }

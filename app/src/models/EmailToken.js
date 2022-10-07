@@ -3,30 +3,30 @@ const pool = require('../db/dbPool')
 module.exports = class EmailToken {
   constructor(data) {
     this.email        = data.email
-    this.email_token  = data.email_token
+    this.token_hash   = data.emailTokenHash
     this.expires_at   = data.expires_at
   }
 
   create() {
-    const sql = `INSERT INTO email_tokens (email, email_token, expires_at)
+    const sql = `INSERT INTO email_tokens (email, token_hash, expires_at)
     VALUES (?, ?, ?)`
 
     return pool.execute(sql, [
       this.email,
-      this.email_token,
+      this.token_hash,
       this.expires_at
     ])
   }
 
-  static read(token) {
-    const sql = `SELECT * FROM email_tokens WHERE token_hash = ?`
+  static read(email) {
+    const sql = `SELECT * FROM email_tokens WHERE email = ?`
 
-    return pool.execute(sql, [token]) // returns...
+    return pool.execute(sql, [email]) // returns array
   }
 
   static delete(email) {
     const sql = `DELETE FROM email_tokens WHERE email = ?`
 
-    return pool.execute(sql, [token]) // returns...
+    return pool.execute(sql, [email]) // returns array
   }
 }
