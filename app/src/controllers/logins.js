@@ -21,7 +21,7 @@ exports.login = async (req, res, next) => {
     const [user, _] = await UserModel.readOne({ username: req.body.username })
 
     if (!Array.isArray(user) || !user.length) {
-      res.status(401).json('wrong username')
+      res.status(401).json({ message: 'wrong username' })
       return
     }
 
@@ -76,7 +76,7 @@ exports.login = async (req, res, next) => {
           expiryRefreshToken: expiryRefreshToken,
         })
       } else {
-        res.status(401).json('wrong pwd')
+        res.status(401).json({ message: 'wrong password' })
       }
     })
   } catch(error) {
