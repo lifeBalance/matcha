@@ -1,4 +1,4 @@
-const UserModel = require('../models/User')
+const AccountModel = require('../models/Account')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
@@ -17,7 +17,7 @@ exports.readAllUsers = async (req, res, next) => {
 exports.readOneUser = async (req, res, next) => {
   try {
     // The fields (metadata about results) are assigned to the '_'
-    const [user, _] = await UserModel.readOne({ id: req.params.id })
+    const [user, _] = await AccountModel.readOne({ id: req.params.id })
     res.status(200).json(user)
   } catch (error) {
     console.log(error)

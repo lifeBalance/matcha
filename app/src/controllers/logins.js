@@ -1,5 +1,5 @@
 // Models to verify credentials (username and pwd) and store Refresh Tokens
-const UserModel = require('../models/User')
+const AccountModel = require('../models/Account')
 const RefreshTokenModel = require('../models/RefreshToken')
 
 // To compare the encrypted passwords
@@ -12,30 +12,30 @@ const { createHash } = require('crypto')
 const path = require('path')
 const dotenv = require('dotenv')
 
-
+// Invoke dotenv, setting path to the secrets file
 dotenv.config({ path: path.resolve(__dirname, '../../.env') })
 
 // Log in the user, send tokens if credentials match, else...
 exports.login = async (req, res, next) => {
   try {
-    const [user, _] = await UserModel.readOne({ username: req.body.username })
+    const [account, _] = await AccountModel.readOne({ username: req.body.username })
 
-    if (!Array.isArray(user) || !user.length) {
+    if (!Array.isArray(account)) {
       res.status(401).json({ message: 'wrong username' })
       return
     }
 
-    bcrypt.compare(req.body.password, user[0].pwd_hash, function(err, result) {
+    bcrypt.compare(req.body.password, account[0].pwd_hash, function(err, result) {
       if (result == true) {
         // Generate the access_token
         const accessToken = jwt.sign({
-          sub:    user[0].id,
-          email:  user[0].email,
+          sub:    account[0].id,
+          email:  account[0].email,
         }, process.env.SECRET_JWT_KEY, { expiresIn: process.env.ACCESS_TOKEN_EXP})
 
         // Generate the refresh_token
         const refreshToken = jwt.sign({
-          sub:    user[0].id,
+          sub:    account[0].id,
         }, process.env.SECRET_JWT_KEY, { expiresIn: process.env.REFRESH_TOKEN_EXP})
 
         // Let's extract the expiry time of the Refresh token from the claim ;-)
@@ -45,7 +45,7 @@ exports.login = async (req, res, next) => {
         res.cookie('refreshToken', refreshToken, {
           path:     '/api',
           secure:   true,
-          maxAge: expiryRefreshToken,
+          maxAge:   expiryRefreshToken,
           httpOnly: true,
           sameSite: 'None'
         })
@@ -55,7 +55,7 @@ exports.login = async (req, res, next) => {
 
         // Instantiate the RefreshToken model
         const RefreshToken = new RefreshTokenModel({
-          uid:        user[0].id,
+          uid:        account[0].id,
           token_hash: refreshTokenHash,
           // If I change MySQL to TIMESTAMP, use format = 'YYYY-MM-DD HH:MM:SS'
           expires_at: expiryRefreshToken // already in seconds ;-)
@@ -66,7 +66,7 @@ exports.login = async (req, res, next) => {
         // Send the access_token in the response body
         res.status(200).json({
           access_token: accessToken,
-          uid:          user[0].id,
+          uid:          account[0].id,
           // delete from here down!!!
           payload: jwt.verify(refreshToken, process.env.SECRET_JWT_KEY),
           refreshTokenHash: refreshTokenHash,
@@ -105,7 +105,7 @@ exports.logout = async (req, res, next) => {
         httpOnly: true,
         sameSite: 'None'
     })
-    res.status(200).json('successfully logged out')
+    res.status(200).json({ message: 'successfully logged out' })
   } catch (error) {
     console.log(error)
     next(error)

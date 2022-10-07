@@ -33,13 +33,18 @@ app.use(function (err, req, res, next) {
 /**
 **  Routes
 */
-const usersRoutes = require('./src/routes/users')
+// const usersRoutes = require('./src/routes/users')
 const loginsRoutes = require('./src/routes/logins')
+const accountsRoutes = require('./src/routes/accounts')
 const testsRoutes = require('./src/routes/tests')
+const profilesRoutes = require('./src/routes/profiles')
 
-app.use('/api', usersRoutes)
-app.use('/api', loginsRoutes)
-app.use('/api', testsRoutes)
+app.use('/api', loginsRoutes)     // logging in and out
+app.use('/api', accountsRoutes)   // create/update Accounts
+app.use('/api', profilesRoutes)   // create/update Profiles
+// app.use('/api', usersRoutes)   // check own and other users profiles
+
+app.use('/api', testsRoutes) // testing stuff
 
 app.listen(3000, () => {
   console.log('App running on port 3000');

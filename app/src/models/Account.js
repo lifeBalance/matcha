@@ -1,12 +1,12 @@
 const pool = require('../db/dbPool')
 
-module.exports = class User {
-  constructor(user) {
-    this.username  = user.username
-    this.firstname  = user.firstname
-    this.lastname   = user.lastname
-    this.email      = user.email
-    this.pwd_hash   = user.pwd_hash
+module.exports = class Account {
+  constructor(data = null) {
+    this.username   = data.username
+    this.firstname  = data.firstname
+    this.lastname   = data.lastname
+    this.email      = data.email
+    this.pwd_hash   = data.pwd_hash
   }
 
   create() {
@@ -21,12 +21,6 @@ module.exports = class User {
       this.email,
       this.pwd_hash
     ])
-  }
-
-  static readAll() {
-    const sql = 'SELECT * FROM users'
-
-    return pool.execute(sql)
   }
 
   static readOne(object) {

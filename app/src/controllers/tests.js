@@ -1,4 +1,4 @@
-const UserModel = require('../models/User')
+const UserModel = require('../models/Account')
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 

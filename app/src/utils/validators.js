@@ -10,3 +10,15 @@ exports.validatePassword = (str) => {
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{5,10}$/
   return str.match(regex)
 }
+
+exports.validateEmail = (str) => {
+  const regex = 
+  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  return str.match(regex)
+}
+
+exports.validateName = (str) => {
+  // Between 2-30 characters, uppercase or lowercase (including accents and shit)
+  const regex = /^[A-ZÀ-ÚÄ-Ü\s]{2,30}$/
+  return str.toUpperCase().trim().match(regex)
+}
