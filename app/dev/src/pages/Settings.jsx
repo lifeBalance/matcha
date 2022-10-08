@@ -228,7 +228,7 @@ function Settings(props) {
 
   function onCancelButtonHandler(e) {
     e.preventDefault()
-    navigate('/profile', { replace: true })
+    navigate(-1, { replace: true })
   }
 
   let submitButtonStyles

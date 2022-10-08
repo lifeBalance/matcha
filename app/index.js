@@ -33,16 +33,19 @@ app.use(function (err, req, res, next) {
 /**
 **  Routes
 */
-const loginsRoutes = require('./src/routes/logins')
 const accountsRoutes = require('./src/routes/accounts')
-const testsRoutes = require('./src/routes/tests')
-const settingsRoutes = require('./src/routes/settings')
+const loginsRoutes = require('./src/routes/logins')
 const profilesRoutes = require('./src/routes/profiles')
+const settingsRoutes = require('./src/routes/settings')
+// const usernamesRoutes = require('./src/routes/usernames')
 
-app.use('/api', loginsRoutes)     // logging in and out
+const testsRoutes = require('./src/routes/tests')
+
 app.use('/api', accountsRoutes)   // create/update Accounts (Signup, new email/password)
-app.use('/api', settingsRoutes)   // create/update OWN Profile
+app.use('/api', loginsRoutes)     // logging in and out
 app.use('/api', profilesRoutes)   // check own and other users profiles
+app.use('/api', settingsRoutes)   // create/update OWN Profile
+// app.use('/api', usernamesRoutes)  // check if a username exists (at Signup)
 
 app.use('/api', testsRoutes) // testing stuff
 

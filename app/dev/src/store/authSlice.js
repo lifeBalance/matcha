@@ -4,6 +4,7 @@ import axios from 'axios'
 const initialState = {
   uid: false,
   isLoggedIn: false,
+  isProfiled: false,
   accessToken: '',
   isLoggingIn: false,
   isLoggingOut: false,
@@ -78,6 +79,9 @@ const authSlice = createSlice({
     },
     resetLoggingInErrors: (state) => {
       state.errorLoggingIn = false
+    },
+    setIsProfiled: (state) => {
+      state.isProfiled = true
     }
   },
 

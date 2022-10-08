@@ -93,12 +93,23 @@ exports.create = async (req, res, next) => {
       })
 
       // console.log('account id: ' + dbResp.insertId) // testing
-      res.status(200).json({ message: `created user with id=${dbResp.insertId}` })
+      res.status(200).json({ message: 'Account successfully created. Check your email for confirmation!'})
     } else {
       res.status(400).json({ message: 'bad request' })
     }
   } catch(error) {
     console.log(error)
     next(error)
+  }
+}
+
+exports.readUsername = async (req, res, next) => {
+  const [username, _] = await AccountModel.readUsername(req.query.username)
+  if (username.length === 0) {
+    res.status(200).json({ available: true })
+    // console.log(username + ' available') // testing
+  } else {
+    res.status(200).json({ available: false })
+    // console.log(username + ' not available') // testing
   }
 }

@@ -3,8 +3,8 @@ import React from 'react'
 // hooks
 import { useNavigate } from 'react-router-dom'
 import useInput from '../hooks/useInput'
-import useSubmitForm from '../hooks/useSubmitForm'
-import useCheckIfExists from '../hooks/useCheckIfExists'
+import useSignupForm from '../hooks/useSignupForm'
+import useCheckAvailable from '../hooks/useCheckAvailable'
 
 // components
 import Input from '../components/UI/Input'
@@ -48,7 +48,7 @@ function SignUp() {
   // Redux
   const { isLoggedIn } = useSelector(slices => slices.auth)
 
-  const { submitError, isSubmitting, submitForm } = useSubmitForm()
+  const { submitError, isSubmitting, submitForm } = useSignupForm()
   const navigate = useNavigate()
 
   if (isLoggedIn)
@@ -62,14 +62,14 @@ function SignUp() {
   } = useInput(validateUsername)
 
   const {
-    value: firstName,
+    value: firstname,
     inputHasError: firstNameHasError,
     inputChangeHandler: firstNameChangeHandler,
     inputBlurHandler: firstNameBlurHandler,
   } = useInput(validateName)
 
   const {
-    value: lastName,
+    value: lastname,
     inputHasError: lastNameHasError,
     inputChangeHandler: lastNameChangeHandler,
     inputBlurHandler: lastNameBlurHandler,
@@ -80,7 +80,6 @@ function SignUp() {
     inputHasError: emailHasError,
     inputChangeHandler: emailChangeHandler,
     inputBlurHandler: emailBlurHandler,
-    resetInput: resetEmailInput,
   } = useInput(validateEmail)
 
   const {
@@ -90,9 +89,7 @@ function SignUp() {
     inputBlurHandler: passwordBlurHandler,
   } = useInput(validatePwd)
 
-  function stringsAreEqual(str) {
-    return str === password
-  }
+  function stringsAreEqual(str) { return str === password }
 
   const {
     value: passwordConf,
@@ -102,55 +99,38 @@ function SignUp() {
   } = useInput(stringsAreEqual.bind(password))
 
   const {
-    exists: usernameExistence,
-    setExists: setUsernameExistence,
-    checkIfExists: checkIfUsernameExists,
-    error: usernameCheckError
-  } = useCheckIfExists()
+    available: usernameAvailable,
+    checkIfAvailable: checkIfUsernameAvailable,
+  } = useCheckAvailable()
 
   // Debounce username existence check in DB
   React.useEffect(() => {
     const timerId = setTimeout(() => {
-      if (!usernameHasError) {
-        checkIfUsernameExists('/api/usernames', { username })
-      } else {
-        setUsernameExistence(null)
+      if (!usernameHasError && username.length >= 2) {
+        checkIfUsernameAvailable('/api/accounts', { username })
       }
     }, 1000);
 
     return () => clearTimeout(timerId)
   }, [usernameHasError, username])
 
-  const {
-    exists: emailExistence,
-    setExists: setEmailExistence,
-    checkIfExists: checkIfEmailExists,
-    error: emailCheckError
-  } = useCheckIfExists()
-
-  // Debounce email existence check in DB
-  React.useEffect(() => {
-    const timerId = setTimeout(() => {
-      if (!emailHasError) {
-        checkIfEmailExists('/api/emails', { email })
-      } else {
-        setEmailExistence(null)
-      }
-    }, 1000);
-
-    return () => clearTimeout(timerId)
-  }, [emailHasError, email])
-
   // Derived state
   let formIsValid = (
-    !usernameHasError && username.length > 0 &&
-    !firstNameHasError && firstName.length > 0 &&
-    !lastNameHasError && lastName.length > 0 &&
-    !emailHasError && email.length > 0 &&
-    !passwordHasError && password.length > 0 &&
+    !usernameHasError     && username.length > 0 &&
+    !firstNameHasError    && firstname.length > 0 &&
+    !lastNameHasError     && lastname.length > 0 &&
+    !emailHasError        && email.length > 0 &&
+    !passwordHasError     && password.length > 0 &&
     !passwordConfHasError && passwordConf.length == password.length &&
-    !usernameCheckError && !emailCheckError
+    usernameAvailable
   )
+  // console.log(usernameHasError,
+  //   firstNameHasError,
+  //   lastNameHasError,
+  //   emailHasError,
+  //   passwordHasError,
+  //   passwordConfHasError,
+  //   usernameAvailable);
 
   async function submitHandler(e) {
     e.preventDefault()
@@ -158,13 +138,12 @@ function SignUp() {
     if (!formIsValid) return
 
     // console.log(`Submitted: ${username} ${password}`)
-    await submitForm('/api/users', {
+    await submitForm('/api/accounts', {
       username,
-      firstName,
-      lastName,
+      firstname,
+      lastname,
       email,
-      password,
-      passwordConf,
+      password
     })
 
     // console.log('success?', !isSubmitting, !submitError);
@@ -172,27 +151,26 @@ function SignUp() {
     if (!isSubmitting && !submitError) navigate('/', {replace: true})
   }
 
-
   let usernameErrorContent 
   if (username.length > 0 && usernameHasError) {
     usernameErrorContent = (<>
       <HandRaisedIcon styles='w-5 text-yellow-300' /> Between 2 and 10 characters. No spaces. Can use _ and -.
     </>)
-  } else if (username.length > 0 && !usernameHasError && usernameExistence !== null) {
-    usernameErrorContent = usernameExistence ?
-    (<><HandRaisedIcon styles='w-5 text-yellow-300' /> Sorry, that username is already taken</>)
-    :
+  } else if (username.length > 0 && !usernameHasError) {
+    usernameErrorContent = usernameAvailable ?
     (<><CheckCircle styles='w-5 text-green-300' /> Username is available!</>)
+    :
+    (<><HandRaisedIcon styles='w-5 text-yellow-300' /> Sorry, that username is already taken</>)
   }
 
   let firstNameErrorContent 
-  if (firstName.length > 0 && firstNameHasError)
-    firstNameErrorContent = (<>
+  if (firstname.length > 0 && firstNameHasError)
+    firstNameErrorContent = (<>passpwwordConf
       <HandRaisedIcon styles='w-5 text-yellow-300' /> Only letters (from 2 to 30)
     </>)
 
   let lastNameErrorContent 
-  if (lastName.length > 0 && lastNameHasError)
+  if (lastname.length > 0 && lastNameHasError)
     lastNameErrorContent = (<>
       <HandRaisedIcon styles='w-5 text-yellow-300' /> Only letters (from 2 to 30)
     </>)
@@ -202,11 +180,6 @@ function SignUp() {
     emailErrorContent = (<>
       <HandRaisedIcon styles='w-5 text-yellow-300' /> Must be a valid email address
     </>) 
-  } else if (email.length > 0 && !emailHasError && emailExistence !== null) {
-    emailErrorContent = emailExistence ?
-    (<><HandRaisedIcon styles='w-5 text-yellow-300' /> Sorry, that email is already taken</>)
-    :
-    (<><CheckCircle styles='w-5 text-green-300' /> Email is available!</>)
   }
 
   let passwordErrorContent 
@@ -244,7 +217,7 @@ let passwordConfErrorContent
         <Input 
           type='text'
           label='first name'
-          value={firstName}
+          value={firstname}
           onChange={firstNameChangeHandler}
           onBlur={firstNameBlurHandler}
           errorContent={firstNameErrorContent}
@@ -253,7 +226,7 @@ let passwordConfErrorContent
         <Input 
           type='text'
           label='last name'
-          value={lastName}
+          value={lastname}
           onChange={lastNameChangeHandler}
           onBlur={lastNameBlurHandler}
           errorContent={lastNameErrorContent}

@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 // hooks
 import useUsers from '../hooks/useUsers'
@@ -11,18 +12,26 @@ import UserMiniCard from '../components/UserMiniCard'
 import { useSelector } from 'react-redux'
 
 function ProfileList() {
-  return (<p> user profiles will go here</p>) // MAINTENANCE WORK BEING DONE!!
-
-  const [page, setPage] = React.useState(1)
-  React.useEffect(() => {
-    if (!isLoggedIn) return
-    getProfilePic(accessToken, setProfilePic)
-  }, [profilePic, isLoggedIn, accessToken])
+  // return (<p> user profiles will go here</p>) // MAINTENANCE WORK BEING DONE!!
+  const navigate = useNavigate()
 
   const {
     isLoggedIn,
+    isProfiled,
     accessToken
   } = useSelector((slices) => slices.auth)
+
+  React.useEffect(() => {
+    if (!isLoggedIn) return
+    if (!isProfiled) navigate('settings', { replace: true })
+    // getProfilePic(accessToken, setProfilePic) // why are we getting profile pic here???
+    // }, [profilePic, isLoggedIn, accessToken])
+  }, [isProfiled, isLoggedIn, accessToken])
+
+  // For paginated results
+  const [page, setPage] = React.useState(1)
+
+  // Users in the list state
   const {
     users,
     getUsers,
@@ -35,6 +44,7 @@ function ProfileList() {
     if (isLoggedIn) getUsers({ accessToken, page })
   }, [isLoggedIn, page])
 
+  // If the user is not logged in, we just return the Hero content
   if (!isLoggedIn) return (<Hero />)
 
   let content // a variable to take logic out from the JSX

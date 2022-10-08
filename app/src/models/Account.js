@@ -40,4 +40,10 @@ module.exports = class Account {
 
     return pool.execute(sql, [val]) // returns empty array or [ { username: ...} ]
   }
+  
+  static readUsername(username) {
+    const sql = 'SELECT username FROM users WHERE username = ?'
+
+    return pool.execute(sql, [username]) // returns empty array or [ { username: ...} ]
+  }
 }

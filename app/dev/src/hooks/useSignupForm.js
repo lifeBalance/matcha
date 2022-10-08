@@ -1,7 +1,7 @@
 import React from 'react'
 import axios from 'axios'
 
-function useSubmitForm() {
+function useSignupForm() {
   const [submitError, setSubmitError] = React.useState(false)
   const [isSubmitting, setIsSubmitting] = React.useState(false)
 
@@ -27,4 +27,4 @@ function useSubmitForm() {
   }
 }
 
-export default useSubmitForm
+export default useSignupForm

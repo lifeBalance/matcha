@@ -65,6 +65,11 @@ function App() {
           />
 
           <Route
+            path='/profiles/:id'
+            element={<Profile />}
+          />
+
+          <Route
             path='test'
             element={<Test />}
           />
@@ -85,17 +90,13 @@ function App() {
           />
 
           <Route
-            path='/profiles/:id'
-            element={<Profile />}
-          />
-
-          <Route
             path='/forgot'
             element={<RequestPassword />}
           />
           <Route path='reset/:email/:token' element={<ResetPassword />} />
 
           <Route path='confirm' element={<Confirm />} />
+
           <Route path='confirm/:useremail/:usertoken' element={<Confirm />} />
 
           <Route

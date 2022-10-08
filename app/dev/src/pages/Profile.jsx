@@ -24,29 +24,30 @@ import { useSelector } from 'react-redux'
 
 function Profile() {
   const [user, setUser] = React.useState(false)
-  const { isLoggedIn, accessToken } = useSelector((slices) => slices.auth)
+  const { isLoggedIn, accessToken, uid } = useSelector((slices) => slices.auth)
   const navigate = useNavigate()
-  const { id } = useParams()
+  const { id: idParams } = useParams()
   const { gettingProfile, errorGettingProfile, getProfile } = useGetProfile()
 
   function setUserState(data) {
     setUser({
       // id: data.profile.id,
-      userName: data.profiles[0].username,
-      firstName: data.profiles[0].firstname,
-      lastName: data.profiles[0].lastname,
-      age: parseInt(data.profiles[0].age),
-      gender: parseInt(data.profiles[0].gender),
-      preferences: parseInt(data.profiles[0].prefers),
-      bio: unescape(data.profiles[0].bio),
-      pics: data.profiles[0].pics ?? [],
+      userName:     data.profiles[0].username,
+      firstName:    data.profiles[0].firstname,
+      lastName:     data.profiles[0].lastname,
+      email:        data.profiles[0].email,
+      age:          parseInt(data.profiles[0].age),
+      gender:       parseInt(data.profiles[0].gender),
+      preferences:  parseInt(data.profiles[0].prefers),
+      bio:          unescape(data.profiles[0].bio),
+      pics:         data.profiles[0].pics ?? [],
     })
   }
   // console.log(id);
   // Redirect if the user is NOT logged in
   React.useEffect(() => {
     if (!isLoggedIn) navigate('/', { replace: true })
-    else getProfile(id, accessToken, null, (data) => setUserState(data))
+    else getProfile(idParams, accessToken, null, (data) => setUserState(data))
   }, [isLoggedIn])
 
   let gender
@@ -98,6 +99,13 @@ function Profile() {
               <span className='font-semibold'>Full name:</span> {user.firstName}{' '}
               {user.lastName}
             </p>
+            {/* If the uid (state id) matches the id in the URL params,
+                render the user's email */}
+            {idParams == uid &&
+            <p>
+              <span className='font-semibold'>Email: </span>
+              {user.email}
+            </p>}
             <p>
               <span className='font-semibold'>Gender:</span>
               {gender}
