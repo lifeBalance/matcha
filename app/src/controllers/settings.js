@@ -1,11 +1,8 @@
-// We need the Account model for some fields (first & last name, email)
-const AccountModel = require('../models/Account')
+// To create/update Profile Settings (one model could deal with several tables).
+const SettingsModel = require('../models/Settings')
 
-// We need the Email Token model too! (same reason above)
+// We need the Email Token model too! (email updates require Confirmation)
 // const EmailTokenModel = require('../models/EmailToken')
-
-// To create/update Profiles.
-const ProfileModel = require('../models/Profile')
 
 // To hash the Email Token before writing them to DB (if email was modified)
 // const { createHash } = require('crypto')
@@ -20,20 +17,25 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') })
 
 // Returns Email field and UID after authenticating user's Access Token
 exports.get = async (req, res, next) => {
-  // In our 'mwAuthorize' middleware, we attached the uid to the request object
-  const [account, _] = await AccountModel.readOne({ id: req.uid })
+  // In our 'authorize' middleware, we attached the uid to the Request object
+  const [user, _] = await SettingsModel.readOne({ id: req.uid })
 
-  // send Account information to prepopulate some fields in the Profile form
+  // Send Account information to prepopulate fields in the Profile form.
   res.status(200).json({
-    uid: req.uid, // send it just in case...
-    firstname: account[0].firstname,
-    lastname: account[0].lastname,
-    email: account[0].email
+    uid:          req.uid, // send it just in case...
+    firstname:    user[0].firstname,
+    lastname:     user[0].lastname,
+    email:        user[0].email,
+    age:          user[0].age,
+    gender:       user[0].gender,
+    prefers:      user[0].prefers,
+    bio:          user[0].bio,
+    profile_pic:  user[0].profile_pic
   })
 }
 
 // Creates a Single Resource (a user Profile)
-exports.create = async (req, res, next) => {
+exports.update = async (req, res, next) => {
   try {
     const uid = req.uid
     const {
