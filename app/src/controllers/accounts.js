@@ -40,6 +40,21 @@ exports.create = async (req, res, next) => {
       password
     } = req.body
 
+    // Check if username exists in DB (shenanigans, bc we check for that in UI)
+    const [rowArr, fieldsArr] = await AccountModel.readOne({ email })
+    // console.log(rowArr.length > 0) // testing
+    if (rowArr.length > 0) {
+      res.status(409).json({ message: `${rowArr[0].email} already exists in our Database.` })
+      return
+    }
+
+    // Check if username exists in DB (shenanigans, bc we check for that in UI)
+    const [rowArr2, fieldsArr2] = await AccountModel.readOne({ username })
+    if (rowArr2.length > 0) {
+      res.status(400).json({ message: 'bad request' })
+      return
+    }
+
     // Let's hash the password before writing it to the DB
     const salt = await bcrypt.genSalt(10)       // add a bit of salt
     const pwd_hash = await bcrypt.hash(password, salt)
@@ -104,7 +119,10 @@ exports.create = async (req, res, next) => {
 }
 
 exports.readUsername = async (req, res, next) => {
-  const [username, _] = await AccountModel.readUsername(req.query.username)
+  const [username, _] = await AccountModel.readOne({
+    username: req.query.username
+  })
+  // username is an array, which could be empty or contain a user object
   if (username.length === 0) {
     res.status(200).json({ available: true })
     // console.log(username + ' available') // testing

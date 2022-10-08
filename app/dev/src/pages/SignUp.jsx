@@ -8,9 +8,13 @@ import useCheckAvailable from '../hooks/useCheckAvailable'
 
 // components
 import Input from '../components/UI/Input'
+import Modal from '../components/UI/Modal'
 
 //icons
-import { HandRaisedIcon, CheckCircle } from '../components/Icons/icons'
+import {
+  CheckCircleIcon,
+  HandRaisedIcon
+} from '@heroicons/react/24/outline'
 
 // redux
 import { useSelector } from 'react-redux'
@@ -53,6 +57,23 @@ function SignUp() {
 
   if (isLoggedIn)
     navigate('/', {replace: true})
+
+  // Modal
+  const [modalIsOpen, setModalIsOpen] = React.useState(false)
+  const [modalContent, setModalContent] = React.useState('')
+
+  function openModalHandler(msg) {
+    setModalIsOpen(true)
+    setModalContent(msg)
+    // setSubmitError(false)
+    // navigate('/', { replace: true })
+  }
+  function closeModalHandler() {
+    setModalIsOpen(false)
+    // setSubmitError(false)
+    if (!submitError)
+      navigate('/', { replace: true })
+  }
 
   const {
     value: username,
@@ -144,54 +165,54 @@ function SignUp() {
       lastname,
       email,
       password
-    })
+    }, openModalHandler)
 
     // console.log('success?', !isSubmitting, !submitError);
     // if there was no error
-    if (!isSubmitting && !submitError) navigate('/', {replace: true})
+    // if (!isSubmitting && !submitError) navigate('/', {replace: true})
   }
 
   let usernameErrorContent 
   if (username.length > 0 && usernameHasError) {
     usernameErrorContent = (<>
-      <HandRaisedIcon styles='w-5 text-yellow-300' /> Between 2 and 10 characters. No spaces. Can use _ and -.
+      <HandRaisedIcon className='inline w-5 text-yellow-300' /> Between 2 and 10 characters. No spaces. Can use _ and -.
     </>)
   } else if (username.length > 0 && !usernameHasError) {
     usernameErrorContent = usernameAvailable ?
-    (<><CheckCircle styles='w-5 text-green-300' /> Username is available!</>)
+    (<><CheckCircleIcon className='inline w-5 text-green-300' /> Username is available!</>)
     :
-    (<><HandRaisedIcon styles='w-5 text-yellow-300' /> Sorry, that username is already taken</>)
+    (<><HandRaisedIcon className='inline w-5 text-yellow-300' /> Sorry, that username is already taken</>)
   }
 
   let firstNameErrorContent 
   if (firstname.length > 0 && firstNameHasError)
     firstNameErrorContent = (<>passpwwordConf
-      <HandRaisedIcon styles='w-5 text-yellow-300' /> Only letters (from 2 to 30)
+      <HandRaisedIcon className='inline w-5 text-yellow-300' /> Only letters (from 2 to 30)
     </>)
 
   let lastNameErrorContent 
   if (lastname.length > 0 && lastNameHasError)
     lastNameErrorContent = (<>
-      <HandRaisedIcon styles='w-5 text-yellow-300' /> Only letters (from 2 to 30)
+      <HandRaisedIcon className='inline w-5 text-yellow-300' /> Only letters (from 2 to 30)
     </>)
 
   let emailErrorContent 
   if (email.length > 0 && emailHasError) {
     emailErrorContent = (<>
-      <HandRaisedIcon styles='w-5 text-yellow-300' /> Must be a valid email address
+      <HandRaisedIcon className='inline w-5 text-yellow-300' /> Must be a valid email address
     </>) 
   }
 
   let passwordErrorContent 
   if (password.length > 0 && passwordHasError)
     passwordErrorContent = (<>
-      <HandRaisedIcon styles='w-5 text-yellow-300' /> At least 5 characters, including uppercase, lowercase, digit and symbol
+      <HandRaisedIcon className='inline w-5 text-yellow-300' /> At least 5 characters, including uppercase, lowercase, digit and symbol
     </>)
 
 let passwordConfErrorContent 
   if (passwordConf.length > 0 && passwordConfHasError)
     passwordConfErrorContent = (<>
-      <HandRaisedIcon styles='w-5 text-yellow-300' /> Passwords don't match!
+      <HandRaisedIcon className='inline w-5 text-yellow-300' /> Passwords don't match!
     </>)
 
   let submitButtonContent = 'Please, fill the form'
@@ -202,6 +223,22 @@ let passwordConfErrorContent
 
   return (
     <div className="py-8">
+      {modalIsOpen && submitError &&
+        (<Modal closeModal={closeModalHandler}>
+          <p>
+            <HandRaisedIcon className='inline w-5 text-red-500 -mt-1 mr-2' />
+            Sorry, {modalContent}
+          </p>
+        </Modal>)
+      }
+      {modalIsOpen && !submitError &&
+        (<Modal closeModal={closeModalHandler}>
+          <p>
+            <CheckCircleIcon className='inline w-5 text-green-500 -mt-1 mr-1' />
+            {modalContent}
+          </p>
+        </Modal>)
+      }
       <h1 className='text-white text-3xl text-center font-bold my-6 pb-4'>Sign Up</h1>
 
       <form onSubmit={submitHandler} className='flex flex-col items-center w-full'>
@@ -243,7 +280,7 @@ let passwordConfErrorContent
         />
 
         <Input 
-          type='text'
+          type='password'
           label='password'
           value={password}
           onChange={passwordChangeHandler}
@@ -252,7 +289,7 @@ let passwordConfErrorContent
         />
 
         <Input 
-          type='text'
+          type='password'
           label='password confirmation'
           value={passwordConf}
           onChange={passwordConfChangeHandler}

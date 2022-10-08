@@ -5,16 +5,23 @@ function useSignupForm() {
   const [submitError, setSubmitError] = React.useState(false)
   const [isSubmitting, setIsSubmitting] = React.useState(false)
 
-  const submitForm = React.useCallback(async function (url, formRawData) {
+  const submitForm = React.useCallback(async function (url, formRawData, callbackModal) {
     setIsSubmitting(true)
 
     try {
       const resp = await axios.post(url, formRawData)
 
-      // console.log(resp.data) // testing
+      setSubmitError(false)
+      if (resp.data && resp.data.message) {
+        // console.log(resp.data) // testing
+        callbackModal(resp.data.message)
+      }
     } catch (error) {
       setSubmitError(true)
-      console.log(error)
+      if (error.response && error.response.data) {
+        // console.log(error.response.data.message) // testing
+        callbackModal(error.response.data.message)
+      }
     } finally {
       setIsSubmitting(false)
     }
