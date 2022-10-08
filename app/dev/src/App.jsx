@@ -8,8 +8,8 @@ import Test from './pages/Test' // for testing!
 
 import Settings from './pages/Settings'
 import Profile from './pages/Profile'
-import Users from './pages/Users'
-import User from './pages/User'
+import ProfileList from './pages/ProfileList'
+import User from './pages/User'     // marked for deletion
 import Login from './pages/Login'
 import SignUp from './pages/SignUp'
 import RequestPassword from './pages/RequestPassword'
@@ -41,12 +41,12 @@ function App() {
     errorGettingPic,
     getProfilePic
   } = useGetProfilePic() // small hook to get the user's profile picture.
-
+/* 
   React.useEffect(() => {
     if (!isLoggedIn) return
     getProfilePic(accessToken, setProfilePic)
   }, [profilePic, isLoggedIn, accessToken])
-
+ */
   /* Retrieve the Access Token from Local Storage and set the proper isLoggedIn
     state in the UI. Useful for when the user refreshes the page, or closes
     the browser/tab without loggin out (hence, there's a token in local 
@@ -61,7 +61,7 @@ function App() {
         <Routes>
           <Route
             path='/'
-            element={<Users />}
+            element={<ProfileList />}
           />
 
           <Route
@@ -85,7 +85,7 @@ function App() {
           />
 
           <Route
-            path='/profile'
+            path='/profiles/:id'
             element={<Profile />}
           />
 

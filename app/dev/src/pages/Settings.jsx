@@ -52,7 +52,7 @@ function Settings(props) {
   const navigate = useNavigate()
 
   // redux
-  const { accessToken, isLoggedIn } = useSelector((slices) => slices.auth)
+  const { accessToken, isLoggedIn, uid } = useSelector((slices) => slices.auth)
   const dispatch = useDispatch()
 
   const {
@@ -132,20 +132,20 @@ function Settings(props) {
   } = useFilePicker(5)
 
   function setProfile(data) {
-    setUserName(data.userName)
-    setFirstName(data.firstName)
-    setLastName(data.lastName)
-    setEmail(data.email)
-    setAge(data.age)
-    setGenderValue(data.genderValue)
-    setPreferencesValue(data.preferencesValue)
-    setBioValue(unescape(data.bioValue))
-    setFilesLeft(data.filesLeft)
+    setUserName(data.profiles[0].username)
+    setFirstName(data.profiles[0].firstname)
+    setLastName(data.profiles[0].lastname)
+    setEmail(data.profiles[0].email)
+    setAge(data.profiles[0].age ?? '')
+    setGenderValue(data.profiles[0].gender ?? '')
+    setPreferencesValue(data.profiles[0].prefers ?? '')
+    setBioValue(unescape(data.profiles[0].bio ?? ''))
+    setFilesLeft(data.profiles[0].filesLeft)
   }
 
   React.useEffect(() => {
     if (!isLoggedIn) navigate('/', { replace: true })
-    else getProfile('get', accessToken, null, (data) => setProfile(data))
+    else getProfile(uid, accessToken, null, (data) => setProfile(data))
   }, [isLoggedIn])
 
   let firstNameErrorContent

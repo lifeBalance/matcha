@@ -34,18 +34,19 @@ function useGetProfile() {
   const [isGetting, setIsGetting] = React.useState(false)
   const dispatch = useDispatch()
 
-  const getProfile = React.useCallback(async function (method, accessToken, formRawData = null, callback = null) {
+  const getProfile = React.useCallback(async function (id, accessToken, formRawData = null, callback = null) {
     setIsGetting(true)
 
     try {
       const resp = await sendRequest({
         url: '/profiles',
-        method: method,
+        method: 'get',
+        id: id,
         headers: { 'Authorization': `Bearer ${accessToken}` },
         refreshTokens: () => dispatch(refresh()),
         data: formRawData
       })
-      // console.log(resp.data) // testing
+      console.log(resp.data) // testing
       if (callback)
         callback(resp.data)
       // return resp.data

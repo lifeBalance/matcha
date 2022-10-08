@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNavigate, Link } from 'react-router-dom'
+import { useNavigate, Link, useParams } from 'react-router-dom'
 
 // lodash is available thanks to the 'vite-plugin-imp' (a Vite's plugin)
 import { unescape } from 'lodash'
@@ -26,27 +26,27 @@ function Profile() {
   const [user, setUser] = React.useState(false)
   const { isLoggedIn, accessToken } = useSelector((slices) => slices.auth)
   const navigate = useNavigate()
-
+  const { id } = useParams()
   const { gettingProfile, errorGettingProfile, getProfile } = useGetProfile()
 
   function setUserState(data) {
     setUser({
-      id: data.id,
-      userName: data.userName,
-      firstName: data.firstName,
-      lastName: data.lastName,
-      age: parseInt(data.age),
-      gender: parseInt(data.genderValue),
-      preferences: parseInt(data.preferencesValue),
-      bio: unescape(data.bioValue),
-      pics: data.pics,
+      // id: data.profile.id,
+      userName: data.profiles[0].username,
+      firstName: data.profiles[0].firstname,
+      lastName: data.profiles[0].lastname,
+      age: parseInt(data.profiles[0].age),
+      gender: parseInt(data.profiles[0].gender),
+      preferences: parseInt(data.profiles[0].prefers),
+      bio: unescape(data.profiles[0].bio),
+      pics: data.profiles[0].pics ?? [],
     })
   }
-
+  // console.log(id);
   // Redirect if the user is NOT logged in
   React.useEffect(() => {
     if (!isLoggedIn) navigate('/', { replace: true })
-    else getProfile('get', accessToken, null, (data) => setUserState(data))
+    else getProfile(id, accessToken, null, (data) => setUserState(data))
   }, [isLoggedIn])
 
   let gender

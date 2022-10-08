@@ -10,8 +10,15 @@ import UserMiniCard from '../components/UserMiniCard'
 // redux
 import { useSelector } from 'react-redux'
 
-function Users() {
+function ProfileList() {
+  return (<p> user profiles will go here</p>) // MAINTENANCE WORK BEING DONE!!
+
   const [page, setPage] = React.useState(1)
+  React.useEffect(() => {
+    if (!isLoggedIn) return
+    getProfilePic(accessToken, setProfilePic)
+  }, [profilePic, isLoggedIn, accessToken])
+
   const {
     isLoggedIn,
     accessToken
@@ -61,4 +68,4 @@ function Users() {
   )
 }
 
-export default Users
+export default ProfileList

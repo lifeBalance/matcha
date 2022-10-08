@@ -26,6 +26,7 @@ function Navbar(props) {
   const isOpen = useSelector(slices => slices.burger.burgerIsOpen)
   const {
     isLoggedIn,
+    uid,
     accessToken
   } = useSelector(slices => slices.auth)
 
@@ -43,7 +44,7 @@ function Navbar(props) {
           <MenuItem title='test' route='test' />
           {isLoggedIn ? 
             (<>
-              <NavLink to='profile'>
+              <NavLink to={`profiles/${uid}`}>
                 {imgElem}
               </NavLink>
 
