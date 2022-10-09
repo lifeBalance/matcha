@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+const path = require('path')
 
 /**
 **  Middleware
@@ -37,7 +38,7 @@ const accountsRoutes = require('./src/routes/accounts')
 const loginsRoutes = require('./src/routes/logins')
 const profilesRoutes = require('./src/routes/profiles')
 const settingsRoutes = require('./src/routes/settings')
-// const usernamesRoutes = require('./src/routes/usernames')
+const confirmRoutes = require('./src/routes/confirm')
 
 const testsRoutes = require('./src/routes/tests')
 
@@ -45,9 +46,14 @@ app.use('/api', accountsRoutes)   // create/update Accounts (Signup, new email/p
 app.use('/api', loginsRoutes)     // logging in and out
 app.use('/api', profilesRoutes)   // check own and other users profiles
 app.use('/api', settingsRoutes)   // create/update OWN Profile
-// app.use('/api', usernamesRoutes)  // check if a username exists (at Signup)
+app.use('/api', confirmRoutes)    // for confirming account
 
 app.use('/api', testsRoutes) // testing stuff
+
+// To serve the React build
+app.get('/*', function (req, res) {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 app.listen(3000, () => {
   console.log('App running on port 3000');

@@ -18,15 +18,15 @@ module.exports = class EmailToken {
     ])
   }
 
-  static read(email) {
+  static read(data) {
     const sql = `SELECT * FROM email_tokens WHERE email = ?`
 
-    return pool.execute(sql, [email]) // returns array
+    return pool.execute(sql, [data.email]) // returns array
   }
 
-  static delete(email) {
+  static delete(data) {
     const sql = `DELETE FROM email_tokens WHERE email = ?`
 
-    return pool.execute(sql, [email]) // returns array
+    return pool.execute(sql, [data.email]) // returns array
   }
 }

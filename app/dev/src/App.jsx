@@ -95,8 +95,10 @@ function App() {
           />
           <Route path='reset/:email/:token' element={<ResetPassword />} />
 
+          {/* To Request an email with an  account confirmation link */}
           <Route path='confirm' element={<Confirm />} />
 
+          {/* To Confirm the account by clicking on the aforementioned link */}
           <Route path='confirm/:useremail/:usertoken' element={<Confirm />} />
 
           <Route

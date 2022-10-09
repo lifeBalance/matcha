@@ -40,4 +40,9 @@ module.exports = class Account {
 
     return pool.execute(sql, [val]) // returns empty array or [ { username: ...} ]
   }
+
+  static confirmAccount(data) {
+    const sql = 'UPDATE users SET confirmed = 1 WHERE email = ?'
+    return pool.execute(sql, [data.email])
+  }
 }

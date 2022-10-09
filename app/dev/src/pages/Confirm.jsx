@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from 'axios'
 
 import { useNavigate, useParams } from 'react-router-dom'
 
@@ -26,42 +25,65 @@ function validateEmail(str) {
   return str.match(regex)
 }
 
-/**
- * REACT COMPONENT
- */
+/*******************
+ * REACT COMPONENT *
+ *******************/
 function Confirm(props) {
-  // To control if the user is confirming her account
+  // Extract parameters from the URL (React Router thing, not a Query string)
+  const { useremail, usertoken } = useParams()
+  
+  // To control the MODE of the page:
+  // 1. User is clicking on the linke to confirm her account
+  // 2. Or filling the Email Form to request an Account confirmation email.
   const [confirmAccount, setConfirmAccount] = React.useState(false)
+  
+  // If there were an email and a token in the URL, set the mode to confirm.
+  React.useEffect(() => {
+    if (useremail && usertoken) {
+      setConfirmAccount(true)
+      console.log(useremail, usertoken)  // testing
+      confirm('/api/confirm', 'put', {
+        email: useremail,
+        token: usertoken
+      }, openModalHandler)
+    }
+  }, [])
 
-  // Confirm Account (Email Link)
+  // Modal
+  const [modalIsOpen, setModalIsOpen] = React.useState(false)
+  const [modalContent, setModalContent] = React.useState(null)
+
+  const navigate = useNavigate()
+  function closeModalHandler() {
+    setModalIsOpen(false)
+    navigate('/', { replace: true })
+  }
+
+  function openModalHandler(data) {
+    setModalContent(data)
+    setModalIsOpen(true)
+  }
+
+  // Invoke Hook for confirming Account when clicking on the Email Link.
   const {
     isConfirming,
     confirmError,
     confirm
   } = useConfirm()
 
-  // Request Confirmation Email
+  // Invoke hook for requesting Confirmation Email.
   const {
     isConfirming: isRequestingEmail,
     confirmError: emailRequestError,
     confirm: requestEmail
   } = useConfirm()
-  const { useremail, usertoken } = useParams()
-  const navigate = useNavigate()
 
-  // Modal
-  const [modalIsOpen, setModalIsOpen] = React.useState(false)
-  function closeModalHandler() {
-    setModalIsOpen(false)
-    navigate('/', { replace: true })
-  }
-
+  // Hook for controlling the input field.
   const {
     value: email,
     inputHasError: emailHasError,
     inputChangeHandler: emailChangeHandler,
-    inputBlurHandler: emailBlurHandler,
-    resetInput: resetEmailInput,
+    inputBlurHandler: emailBlurHandler
   } = useInput(validateEmail)
 
   let formIsValid = validateEmail(email)
@@ -71,63 +93,52 @@ function Confirm(props) {
 
     if (!formIsValid) return
 
-    requestEmail('/api/confirm', 'post', { email }, () => setModalIsOpen(true))
-    // console.log(`Submitted: ${email}`)
-
-    resetEmailInput()
+    requestEmail('/api/confirm', 'post', { email }, openModalHandler)
   }
 
-  // Extract the params from a properly formatted query string
-  // const queryString = window.location.search
-  // const urlParams = new URLSearchParams(queryString)
-  // const useremail = urlParams.get('email') // use the .has('email') first!
+  /* The standard way in JS of extracting the parameters from a properly
+  formatted query string using the browser API, would be:
 
-  React.useEffect(() => {
-    if (useremail && usertoken) {
-      setConfirmAccount(true)
-      // console.log(useremail, usertoken);
-      confirm('/api/confirm', 'put', {
-        email: useremail,
-        token: usertoken
-      }, () => setModalIsOpen(true))
-    }
-  }, [])
+    const queryString = window.location.search
+    const urlParams = new URLSearchParams(queryString)
+    const useremail = urlParams.get('email') // use the .has('email') first!
+  */
 
-  // React.useEffect(() => {
-  //   if (confirmAccount && !isConfirming)
-  //     setModalIsOpen(true)
-  // }, [confirmAccount, isConfirming])
-
-  // CONFIRMING ACCOUNT MODE
+  /**
+   *  CONFIRMING ACCOUNT MODE
+   */
   if (confirmAccount) {
-    let modalContent
+    let modalContentWrapper
 
     if (!isConfirming && confirmError) {
-      modalContent = (<>
-        <HandRaisedIcon className='inline w-6 text-red-500' />
-        Sorry, {confirmError.error}
+      modalContentWrapper = (<>
+        <HandRaisedIcon className='inline w-6 text-red-500 -mt-1' />
+        Sorry, {modalContent}
       </>)
     } else if (!isConfirming && !confirmError) {
-      modalContent = (<>
-        <HandThumbUpIcon className='inline w-5 text-green-500' />
-        Your account has been confirmed. You can now login.
+      modalContentWrapper = (<>
+        <HandThumbUpIcon className='inline w-5 text-green-500 -mt-1' />
+        Congratulations, {modalContent}.
       </>)
     }
 
+    // we RETURN here. Whatever's below, we don't care.
     return (
       <div className="max-w-3xl mx-auto">
       {isConfirming &&
         <ArrowPathIcon className='my-20 w-40 animate-spin'/>}
 
       {!isConfirming && modalIsOpen &&
-        <Modal closeModal={closeModalHandler}>
-          <p>{modalContent}</p>
-        </Modal>}
+        (<Modal closeModal={closeModalHandler}>
+          {modalContentWrapper}
+        </Modal>)}
       </div>
     )
-  }
+  } // end of IF
 
-  // REQUESTING EMAIL MODE
+  /**
+   *  REQUESTING EMAIL MODE (note we're outside the IF)
+   */
   let emailErrorContent 
   if (emailHasError) {
     emailErrorContent = (<>
@@ -136,22 +147,22 @@ function Confirm(props) {
     </>)
   }
 
-  let modalContent
+  let modalContentWrapper
   if (!isRequestingEmail && emailRequestError) {
-    modalContent = (<>
+    modalContentWrapper = (<>
       <HandRaisedIcon className='inline w-6 text-red-500 -mt-1 mr-2' />
-      Sorry, {emailRequestError.error}
+      Sorry, {modalContent}
     </>)
   } else if (!isRequestingEmail && !emailRequestError) {
-    modalContent = (<>
+    modalContentWrapper = (<>
       <HandThumbUpIcon className='inline w-5 text-green-500 -mt-1 mr-2' />
-      Your confirmation email is on the way.
+      {modalContent}.
     </>)
   }
 
   let buttonContent
   if (formIsValid && !isRequestingEmail)
-      buttonContent = 'Submit'
+    buttonContent = 'Submit'
   else if (!formIsValid)
     buttonContent = 'Enter a valid email'
   else if (formIsValid && isRequestingEmail)
@@ -160,9 +171,9 @@ function Confirm(props) {
   return (
     <div className="max-w-3xl mx-auto py-10">
       {!isRequestingEmail && modalIsOpen &&
-        <Modal closeModal={closeModalHandler}>
-          <p>{modalContent}</p>
-        </Modal>}
+        (<Modal closeModal={closeModalHandler}>
+          {modalContentWrapper}
+        </Modal>)}
       <h1 className='text-white text-3xl text-center font-bold my-6 pb-4 capitalize'>confirmation email</h1>
 
       <form onSubmit={submitHandler} >

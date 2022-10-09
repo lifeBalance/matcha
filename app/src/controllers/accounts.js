@@ -77,7 +77,7 @@ exports.create = async (req, res, next) => {
       const emailTokenHash = crypto.randomBytes(16).toString('hex')
 
       // Delete old Email token from DB (if any). Can only be one per email!
-      await EmailTokenModel.delete(email)
+      await EmailTokenModel.delete({ email })
 
       const unixtimeInSeconds = Math.floor(Date.now() / 1000)
       // console.log(unixtimeInSeconds + eval(process.env.EMAIL_TOKEN_EXP)) // test
