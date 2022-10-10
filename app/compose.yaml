@@ -27,6 +27,7 @@ services:
       TZ: Europe/Helsinki
     volumes:
       - ./docker/mysql:/docker-entrypoint-initdb.d
+      - ./db-data:/var/lib/mysql
   phpmyadmin:
     depends_on:
       - mysql
