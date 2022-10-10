@@ -21,7 +21,9 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') })
 // Log in the user, send tokens if credentials match, else...
 exports.login = async (req, res, next) => {
   try {
-    const [account, _] = await AccountModel.readOne({ username: req.body.username })
+    const [account, _] = await AccountModel.readOne({
+      username: req.body.username
+    })
 
     // If the DB returns an empty array, it means the username doesn't exist
     if (!Array.isArray(account) || !account.length) {
@@ -31,6 +33,14 @@ exports.login = async (req, res, next) => {
 
     bcrypt.compare(req.body.password, account[0].pwd_hash, function(err, result) {
       if (result == true) {
+        // If the user's account is NOT confirmed
+        if (!account[0].confirmed) {
+          res.status(401).json({
+            message: 'Please, confirm your account before logging in.'
+          })
+          return
+        }
+
         // Generate the access_token
         const accessToken = jwt.sign({
           sub:    account[0].id,
@@ -69,8 +79,10 @@ exports.login = async (req, res, next) => {
 
         // Send the access_token in the response body
         res.status(200).json({
+          message: 'Successfully logged in!',
           access_token: accessToken,
-          uid:          account[0].id,
+          profiled:    account[0].profiled,
+          uid:          account[0].id
         })
       } else {
         res.status(401).json({ message: 'wrong password' })

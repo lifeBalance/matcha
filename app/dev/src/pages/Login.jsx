@@ -13,7 +13,10 @@ import { HandRaisedIcon, QuestionMarkCircle } from '../components/Icons/icons'
 
 // redux
 import { useSelector, useDispatch } from 'react-redux'
-import { login, resetLoggingInErrors } from '../store/authSlice'
+import {
+  login,
+  resetLoggingInErrors
+} from '../store/authSlice'
 
 // helper functions
 function validateUsername(str) {
@@ -40,6 +43,8 @@ function Login() {
 
   // Modal
   const [modalIsOpen, setModalIsOpen] = React.useState(false)
+  const [modalContent, setModalContent] = React.useState(null)
+
   function closeModalHandler() {
     setModalIsOpen(false)
     dispatch(resetLoggingInErrors())
@@ -55,22 +60,21 @@ function Login() {
     value: username,
     inputHasError: usernameHasError,
     inputChangeHandler: usernameChangeHandler,
-    inputBlurHandler: usernameBlurHandler,
-    resetInput: resetUsernameInput,
+    inputBlurHandler: usernameBlurHandler
   } = useInput(validateUsername)
 
   const {
     value: password,
     inputHasError: passwordHasError,
     inputChangeHandler: passwordChangeHandler,
-    inputBlurHandler: passwordBlurHandler,
-    resetInput: resetPasswordInput,
+    inputBlurHandler: passwordBlurHandler
   } = useInput(validatePwd)
 
   let formIsValid = !usernameHasError && !passwordHasError
 
   // pass this function to the reducer to open the modal ;-)
-  function openModal() {
+  function openModal(msg) {
+    setModalContent(msg)
     setModalIsOpen(true)
   }
 
@@ -103,40 +107,24 @@ function Login() {
   else if (isLoggingIn)
     submitButtonContent = 'Logging in...'
 
-  let modalContent
-  switch (errorLoggingIn) {
-    case false:
-      modalContent = (<>
-        <HandRaisedIcon styles='w-5 text-green-500 -mt-1 mr-1' />
-        Successfully logged in!
-      </>)
-      break;
-    case 'incorrect password':
-      modalContent = (
-        <>
-          <HandRaisedIcon styles='w-5 text-red-500 -mt-1 mr-1' />
-          Did you forgot your password?
-        </>
-      )
-      break;
-    case 'account not confirmed':
-      modalContent = (<>
-        <HandRaisedIcon styles='w-5 text-red-500 -mt-1 mr-1' />
-        It seems you didn't <span className='font-bold'>confirm your account</span>. Check your email, or request a new <span className='font-bold'>Account Confirmation email</span>.
-      </>)
-      break;
-    default:
-      modalContent = (<>
-        <QuestionMarkCircle styles='w-5 text-red-500 -mt-1 mr-1' />
-        We don't know that dude here! 🤔
-      </>)
+  let modalContentWrapper
+  if (errorLoggingIn) {
+    modalContentWrapper = (<>
+      <HandRaisedIcon styles='w-5 text-red-500 -mt-1 mr-1' />
+      {modalContent}
+    </>)
+  } else {
+    modalContentWrapper = (<>
+      <HandRaisedIcon styles='w-5 text-green-500 -mt-1 mr-1' />
+      {modalContent}
+    </>)
   }
 
   return (
       <div className="px-4 py-10">
         {modalIsOpen &&
           (<Modal closeModal={closeModalHandler}>
-            <p>{modalContent}</p>
+            {modalContentWrapper}
           </Modal>)
         }
         <h1 className='text-white text-3xl text-center font-bold my-6 pb-4'>Log In</h1>

@@ -29,7 +29,8 @@ const logout = createAsyncThunk('auth/logout', async function(args, thunkAPI) {
 })
 
 const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
-  const { username, password, openModal } = args // invoke it with an Object!
+  // 'args' is an OBJECT, so invoke the extraReducer with an Object!!!
+  const { username, password, openModal } = args
 
   try {
     const response = await axios.post('/api/logins', {
@@ -39,12 +40,15 @@ const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
       withCredentials: true
     })
 
-    // console.log(response.data);
-    return response.data
+    // console.log(response.data) // testing
+    // console.log(args) // testing
+    // console.log(thunkAPI) // testing
+    return response.data // Important!
   } catch (error) {
-     // Server responses sent in an JSON object { "message": "value"}
-    // console.log(error.response.data.message);
-    return thunkAPI.rejectWithValue(error.response.data.message)
+    // console.log(args) // testing
+    // console.log(thunkAPI) // testing
+    // console.log(error.response.data);
+    return thunkAPI.rejectWithValue(error.response.data) // Important!
   } finally {
     openModal() // setModalIsOpen
   }
@@ -80,7 +84,8 @@ const authSlice = createSlice({
     resetLoggingInErrors: (state) => {
       state.errorLoggingIn = false
     },
-    setIsProfiled: (state) => {
+    setIsProfiled: (state, action) => {
+      // console.log(action);
       state.isProfiled = true
     }
   },
@@ -94,18 +99,23 @@ const authSlice = createSlice({
       state.isLoggedIn = true
       state.errorLoggingIn = false
 
-      console.log(action.payload); // testing
+      // console.log(action) // testing
+      // console.log(action.payload); // testing
       if (action.payload && action.payload.access_token) {
         localStorage.setItem('accessToken', action.payload.access_token)
         state.accessToken = action.payload.access_token
         state.uid = action.payload.uid
+        state.isProfiled = action.payload.profiled
+        // The callback we passed to the extraReducer is under action.meta.arg!
+        action.meta.arg.openModal(action.payload.message)
       }
     },
     [login.rejected]: (state, action) => {
       state.isLoggingIn = false
       state.errorLoggingIn = action.payload
-      // console.log(action.payload)
-      // console.log(state.errorLoggingIn)
+      // console.log(action) // testing
+      // The callback we passed to the extraReducer is under action.meta.arg!
+      action.meta.arg.openModal(action.payload.message)
     },
 
     // LOGOUT
@@ -153,6 +163,6 @@ const authSlice = createSlice({
   },
 })
 
-export const { loginAfterReload, resetLoggingInErrors } = authSlice.actions
+export const { loginAfterReload, resetLoggingInErrors, setIsProfiled } = authSlice.actions
 export { login, logout, refresh } // async actions
 export default authSlice.reducer
