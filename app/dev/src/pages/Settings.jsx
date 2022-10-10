@@ -38,6 +38,7 @@ function validateEmail(str) {
 }
 
 function validateAge(str) {
+  if (!str) return false
   const num = parseInt(str)
   return num >= 18
 }
@@ -183,14 +184,14 @@ function Settings(props) {
         <HandRaisedIcon className='inline w-5 -mt-1 text-orange-200' />
         Must be at least 18 (age of consent)
       </>)
-  }
+  } else if (!ageHasError && !age) ageErrorContent = '*required'
 
   React.useEffect(() => {
     if (
       !firstNameHasError &&
       !lastNameHasError &&
       !emailHasError &&
-      !ageHasError &&
+      !ageHasError && age &&
       firstName.length > 0 &&
       lastName.length > 0
     ) {
