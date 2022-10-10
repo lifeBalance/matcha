@@ -12,6 +12,6 @@ RUN npm install --global knex && npm install
 
 EXPOSE 3000
 
-CMD [ "npm", "run", "dev" ]
+# CMD [ 'npm', 'run', 'dev' ]
 # CMD [ "npm", "run", "start" ]
 # CMD [ "node", "./index.js" ]

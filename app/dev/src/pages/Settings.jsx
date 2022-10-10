@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 
 // redux
 import { useSelector, useDispatch } from 'react-redux'
-import { logout } from '../store/authSlice'
+import { logout, setIsProfiled } from '../store/authSlice'
 
 // hooks
 import useInput from '../hooks/useInput'
@@ -132,20 +132,20 @@ function Settings(props) {
   } = useFilePicker(5)
 
   function setProfile(data) {
-    setUserName(data.profiles[0].username)
-    setFirstName(data.profiles[0].firstname)
-    setLastName(data.profiles[0].lastname)
-    setEmail(data.profiles[0].email)
-    setAge(data.profiles[0].age ?? '')
-    setGenderValue(data.profiles[0].gender ?? '')
-    setPreferencesValue(data.profiles[0].prefers ?? '')
-    setBioValue(unescape(data.profiles[0].bio ?? ''))
-    setFilesLeft(data.profiles[0].filesLeft)
+    setUserName(data.username)
+    setFirstName(data.firstname)
+    setLastName(data.lastname)
+    setEmail(data.email)
+    setAge(data.age ?? '')
+    setGenderValue(data.gender ?? '')
+    setPreferencesValue(data.prefers ?? '')
+    setBioValue(unescape(data.bio ?? ''))
+    setFilesLeft(data.filesLeft)
   }
 
   React.useEffect(() => {
     if (!isLoggedIn) navigate('/', { replace: true })
-    else getProfile(uid, accessToken, null, (data) => setProfile(data))
+    else getProfile('/settings', uid, accessToken, (data) => setProfile(data))
   }, [isLoggedIn])
 
   let firstNameErrorContent
@@ -244,35 +244,29 @@ function Settings(props) {
   const { isSubmitting, submitError, submitProfile } = useSubmitProfile()
 
   function getModalFeedback(data) {
-    if (data.message === 'success') {
+    if (!submitError) {
       setModalContent(
         <>
           <CheckCircleIcon className='inline w-5 text-green-500' />
-          Profile Successfully updated.
+          {data.message}
         </>
       )
-      // SET THE PROFILE PICTURE (If the user added one)
-      if (data.profilePic) props.setProfilePic(data.profilePic)
-      setModalIsOpen(true)
-    } else if (data.message === 'confirm') {
+      dispatch(setIsProfiled()) // Set the proper state to be able to leave form
+    } else {
       setModalContent(
         <>
           <CheckCircleIcon className='inline w-5 text-green-500' />
-          Profile Successfully updated. Confirm your new email before logging
-          in!
+          {data.message}
         </>
       )
-      setModalIsOpen(true)
-      dispatch(logout())
-    } else if (data.message === 'email exists') {
-      setModalContent(
-        <>
-          <HandRaisedIcon className='inline w-5 text-orange-500' />
-          Sorry, it seems there's already a user using that email address!
-        </>
-      )
-      setModalIsOpen(true)
     }
+    // SET THE PROFILE PICTURE (If the user added one)
+    if (data.profilePic) props.setProfilePic(data.profilePic)
+
+    setModalIsOpen(true)
+
+    // Log out the user if she's not confirmed
+    if (!data.confirmed) dispatch(logout())
   }
 
   function closeFilePickerModalHandler() {

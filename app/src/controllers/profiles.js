@@ -10,6 +10,7 @@ exports.readOneProfile = async (req, res, next) => {
      * means the user is trying to check her own profile, so we send them more
      * information than to a user checking OTHER USER profile.
      */
+    console.log(req)
     if (req.uid == req.params.id) { // dont' use strict equality: integer !== string
       try {
         const [profile, _] = await ProfileModel.readOwn({ id: req.uid })

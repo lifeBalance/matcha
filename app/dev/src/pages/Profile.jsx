@@ -36,18 +36,20 @@ function Profile() {
       firstName:    data.profiles[0].firstname,
       lastName:     data.profiles[0].lastname,
       email:        data.profiles[0].email,
-      age:          parseInt(data.profiles[0].age),
-      gender:       parseInt(data.profiles[0].gender),
-      preferences:  parseInt(data.profiles[0].prefers),
+      age:          data.profiles[0].age,
+      rated:        69, // hardcode for now
+      gender:       data.profiles[0].gender,
+      preferences:  data.profiles[0].prefers,
       bio:          unescape(data.profiles[0].bio),
       pics:         data.profiles[0].pics ?? [],
     })
   }
-  // console.log(id);
+  // console.log(idParams) // testing
+
   // Redirect if the user is NOT logged in
   React.useEffect(() => {
     if (!isLoggedIn) navigate('/', { replace: true })
-    else getProfile(idParams, accessToken, null, (data) => setUserState(data))
+    else getProfile('/profiles', idParams, accessToken, (data) => setUserState(data))
   }, [isLoggedIn])
 
   let gender
@@ -57,7 +59,7 @@ function Profile() {
 
   let preferences
   if (user.preferences === 0) preferences = '🍑 (Females)'
-  else if (user.gender === 1) preferences = '🍆 (Males)'
+  else if (user.preferences === 1) preferences = '🍆 (Males)'
   else preferences = '🍆 and 🍑 (Males and Females 😏)'
 
   return (
@@ -119,7 +121,7 @@ function Profile() {
               {user.age}
             </p>
             <p>
-              <span className='font-semibold'>Rated: </span>12 ⭐
+              <span className='font-semibold'>Rated: </span>{user.rated} ⭐
             </p>
             <p className='pb-8'>
               <span className='font-semibold'>Bio: </span>

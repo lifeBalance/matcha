@@ -37,23 +37,22 @@ function useSubmitProfile() {
     // console.log(data) // testing
 
     const formData = new FormData()
-    formData.append('firstName', data.firstName)
-    formData.append('lastName', data.lastName)
+    formData.append('firstname', data.firstName)
+    formData.append('lastname', data.lastName)
     formData.append('age', data.age)
     formData.append('email', data.email)
-    formData.append('genderValue', data.genderValue)
-    formData.append('preferencesValue', data.preferencesValue)
-    formData.append('bioValue', data.bioValue)
+    formData.append('gender', data.genderValue)
+    formData.append('prefers', data.preferencesValue)
+    formData.append('bio', data.bioValue)
     data.files.forEach((pic, idx) => {
       formData.append(`pic${idx}`, pic)
     })
-    // for(let pair of formData.entries()) {
-    //   console.log(`${pair[0]} ${pair[1].name}`) 
-    // } // testing
-
+    /* for(let pair of formData.entries()) {
+      console.log(`${pair[0]} ${pair[1].name}`) 
+    } // testing */
     try {
-      const resp = await sendRequest.post(
-        '/api/profiles',
+      const resp = await sendRequest.put(
+        '/api/settings',
         formData,
         {
           headers: {
@@ -61,13 +60,16 @@ function useSubmitProfile() {
           },
           refreshTokens: () => dispatch(refresh()),
         })
-      console.log(resp.data) // testing
-      if (callback)
-        callback(resp.data)
+      // console.log(resp.data) // testing
+      // return
+
+      setSubmitError(false) // we use this just to choose the proper Icon :-)
+      callback(resp.data)
       // return resp.data
     } catch (error) {
-      console.log(error)
+      console.log(error.response.data) // testing
       setSubmitError(true)
+      callback(error.response.data)
     } finally {
       setIsSubmitting(false)
     }

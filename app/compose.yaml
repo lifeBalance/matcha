@@ -18,7 +18,7 @@ services:
       - ./package.json:/app/package.json
       - ./package-lock.json:/app/package-lock.json
       - ./public:/app/public
-    # command: npm run dev
+    command: npm run dev
   mysql:
     image: mysql:8.0.29-debian
     restart: always

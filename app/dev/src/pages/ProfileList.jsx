@@ -23,7 +23,7 @@ function ProfileList() {
 
   React.useEffect(() => {
     if (!isLoggedIn) return
-    if (!isProfiled) navigate('settings', { replace: true })
+    if (!isProfiled) navigate('/settings', { replace: true })
     // getProfilePic(accessToken, setProfilePic) // why are we getting profile pic here???
     // }, [profilePic, isLoggedIn, accessToken])
   }, [isProfiled, isLoggedIn, accessToken])

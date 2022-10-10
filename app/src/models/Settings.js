@@ -14,20 +14,24 @@ module.exports = class Settings {
     this.gender       = data.gender
     this.prefers      = data.prefers
     this.bio          = data.bio
-    this.profile_pic  = data.profile_pic ?? ''  // Nullish Coalescing operator
+    this.profile_pic  = data.profile_pic ?? '',  // Nullish Coalescing operator
+    this.confirmed    = data.confirmed
   }
 
+  // If the user is creating her profile, she's profiled! (set it to 1 ;-)
   update() {
-    const sql = `UPDATE users SET (
-      firstname,
-      lastname,
-      email,
-      age,
-      gender,
-      prefers,
-      bio,
-      profile_pic
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`
+    const sql = `UPDATE users SET
+      firstname = ?,
+      lastname= ?,
+      email = ?,
+      age = ?,
+      gender= ?,
+      prefers = ?,
+      bio = ?,
+      profile_pic = ?,
+      profiled = 1,
+      confirmed = ?
+    WHERE id = ?`
 
     return pool.execute(sql, [
       this.firstname,
@@ -37,19 +41,9 @@ module.exports = class Settings {
       this.gender,
       this.prefers,
       this.bio,
-      this.profile_pic
+      this.profile_pic,
+      this.confirmed,
+      this.id
     ])
-  }
-
-  static readAll() {
-    const sql = 'SELECT * FROM users'
-
-    return pool.execute(sql)
-  }
-
-  static readOne({ id }) {
-    const sql = 'SELECT * FROM users WHERE id = ?'
-
-    return pool.execute(sql, [id]) // returns Empty Array or [ { id: ...} ]
   }
 }
