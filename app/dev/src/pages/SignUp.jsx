@@ -19,31 +19,13 @@ import {
 // redux
 import { useSelector } from 'react-redux'
 
-// helper functions
-function validateUsername(str) {
-  // Between 2-10 characters: uppercase, lowercase and digits
-  const regex = /^[A-Z\d\-_]{2,10}$/
-  return str.toUpperCase().trim().match(regex)
-}
-
-function validateName(str) {
-  // Between 2-30 characters, uppercase or lowercase (including accents and shit)
-  const regex = /^[A-ZÀ-ÚÄ-Ü\s]{2,30}$/
-  return str.toUpperCase().trim().match(regex)
-}
-
-function validateEmail(str) {
-  const regex = 
-  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  return str.match(regex)
-}
-
-function validatePwd(str) {
-  // Between 5-10 characters: 1 upper, 1 lower, 1 digit, 1 special
-  const regex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{5,10}$/
-  return str.match(regex)
-}
+// Validators
+import {
+  validateUsername,
+  validateName,
+  validateEmail,
+  validatePassword
+} from '../utils/validators'
 
 /**
  * REACT COMPONENT
@@ -108,7 +90,7 @@ function SignUp() {
     inputHasError: passwordHasError,
     inputChangeHandler: passwordChangeHandler,
     inputBlurHandler: passwordBlurHandler,
-  } = useInput(validatePwd)
+  } = useInput(validatePassword)
 
   function stringsAreEqual(str) { return str === password }
 

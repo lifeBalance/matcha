@@ -24,24 +24,12 @@ import FilePicker from '../components/UI/FilePicker'
 //icons
 import { HandRaisedIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
 
-// helper functions
-function validateName(str) {
-  // Between 2-10 characters: uppercase, lowercase and digits
-  const regex = /^[A-Z\-\s]{2,32}$/
-  return str.toUpperCase().trim().match(regex)
-}
-
-function validateEmail(str) {
-  const regex =
-    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-  return str.match(regex)
-}
-
-function validateAge(str) {
-  if (!str) return false
-  const num = parseInt(str)
-  return num >= 18 && num <= 100
-}
+// Validators
+import {
+  validateName,
+  validateEmail,
+  validateAge
+} from '../utils/validators'
 
 function Settings(props) {
   const [modalContent, setModalContent] = React.useState('')

@@ -18,12 +18,8 @@ import {
 import useInput from '../hooks/useInput'
 import useConfirm from '../hooks/useConfirm'
 
-// helper functions
-function validateEmail(str) {
-  const regex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-
-  return str.match(regex)
-}
+// Validators
+import { validateEmail } from '../utils/validators'
 
 /*******************
  * REACT COMPONENT *

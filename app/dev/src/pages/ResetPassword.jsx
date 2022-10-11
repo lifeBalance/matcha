@@ -16,13 +16,8 @@ import {
 import useInput from '../hooks/useInput'
 import useConfirm from '../hooks/useConfirm'
 
-// helper functions
-function validatePwd(str) {
-  // Between 5-10 characters: 1 upper, 1 lower, 1 digit, 1 special
-  const regex =
-  /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{5,10}$/
-  return str.match(regex)
-}
+// Validators
+import { validatePassword } from '../utils/validators'
 
 /**
  * REACT COMPONENT
@@ -39,7 +34,7 @@ function ResetPassword() {
     setInputHasError: setPasswordHasError,
     inputChangeHandler: passwordChangeHandler,
     inputBlurHandler: passwordBlurHandler,
-  } = useInput(validatePwd)
+  } = useInput(validatePassword)
 
   const {
     value: pwdConf,
@@ -59,7 +54,7 @@ function ResetPassword() {
     const timerId = setTimeout(() => {
       if (!passwordHasError && !pwdConfHasError)
         formIsValid = true
-      if (password.length > 0 && !validatePwd(password))
+      if (password.length > 0 && !validatePassword(password))
         setPasswordHasError(true)
       else
         setPasswordHasError(false)
