@@ -26,7 +26,7 @@ function ProfileList() {
     if (!isProfiled) navigate('/settings', { replace: true })
     // getProfilePic(accessToken, setProfilePic) // why are we getting profile pic here???
     // }, [profilePic, isLoggedIn, accessToken])
-  }, [isProfiled, isLoggedIn, accessToken])
+  }, [isProfiled, isLoggedIn])
 
   // For paginated results
   const [page, setPage] = React.useState(1)

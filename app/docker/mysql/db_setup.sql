@@ -14,8 +14,8 @@ CREATE TABLE IF NOT EXISTS `users` (
     `age` INT UNSIGNED DEFAULT NULL,
     `gender` INT UNSIGNED DEFAULT 2,
     `prefers` INT UNSIGNED DEFAULT 2,
-    `bio` VARCHAR(255) DEFAULT '',
-    `profile_pic` VARCHAR(255) DEFAULT ''
+    `bio` VARCHAR(255) DEFAULT NULL,
+    `profile_pic` VARCHAR(255) DEFAULT NULL
 );
 
 -- CREATE TABLE IF NOT EXISTS `users` (

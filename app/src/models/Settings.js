@@ -14,7 +14,7 @@ module.exports = class Settings {
     this.gender       = data.gender
     this.prefers      = data.prefers
     this.bio          = data.bio
-    this.profile_pic  = data.profile_pic ?? '',  // Nullish Coalescing operator
+    this.profile_pic  = data.profile_pic,
     this.confirmed    = data.confirmed
   }
 

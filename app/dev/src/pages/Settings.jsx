@@ -40,7 +40,7 @@ function validateEmail(str) {
 function validateAge(str) {
   if (!str) return false
   const num = parseInt(str)
-  return num >= 18
+  return num >= 18 && num <= 100
 }
 
 function Settings(props) {
@@ -117,7 +117,7 @@ function Settings(props) {
     setAreaValue: setBioValue,
     areaChangeHandler: bioChangeHandler,
     areaWasChanged: bioWasChanged,
-    charactersLeft: bioCharactersLeft,
+    // charactersLeft: bioCharactersLeft,
   } = useTextArea(255)
 
   const {
@@ -137,10 +137,10 @@ function Settings(props) {
     setFirstName(data.firstname)
     setLastName(data.lastname)
     setEmail(data.email)
-    setAge(data.age ?? '')
-    setGenderValue(data.gender ?? '')
-    setPreferencesValue(data.prefers ?? '')
-    setBioValue(unescape(data.bio ?? ''))
+    setAge(data.age)
+    setGenderValue(data.gender)
+    setPreferencesValue(data.prefers)
+    setBioValue(unescape(data.bio))
     setFilesLeft(data.filesLeft)
   }
 
@@ -151,39 +151,32 @@ function Settings(props) {
 
   let firstNameErrorContent
   if (firstNameHasError)
-    firstNameErrorContent = (
-      <>
-        <HandRaisedIcon className='inline w-5 -mt-1 text-orange-200' />
-        Between 2 and 20 letters (Can use - and space).
-      </>
-    )
+    firstNameErrorContent = (<>
+      <HandRaisedIcon className='inline w-5 -mt-1 text-orange-200' />
+      Between 2 and 20 letters (Can use - and space).
+    </>)
 
   let lastNameErrorContent
   if (lastNameHasError)
-    lastNameErrorContent = (
-      <>
-        <HandRaisedIcon className='inline w-5 -mt-1 text-orange-200' />
-        Between 2 and 20 letters (Can use - and space).
-      </>
-    )
+    lastNameErrorContent = (<>
+      <HandRaisedIcon className='inline w-5 -mt-1 text-orange-200' />
+      Between 2 and 20 letters (Can use - and space).
+    </>)
 
   let emailErrorContent
   if (email.length > 0 && emailHasError) {
-    emailErrorContent = (
-      <>
-        <HandRaisedIcon className='inline w-5 -mt-1 text-orange-200' /> Must be
-        a valid email address
-      </>
-    )
+    emailErrorContent = (<>
+      <HandRaisedIcon className='inline w-5 -mt-1 text-orange-200' /> Must be
+      a valid email address
+    </>)
   }
 
   let ageErrorContent
   if (ageHasError) {
-    ageErrorContent = (
-      <>
-        <HandRaisedIcon className='inline w-5 -mt-1 text-orange-200' />
-        Must be at least 18 (age of consent)
-      </>)
+    ageErrorContent = (<>
+      <HandRaisedIcon className='inline w-5 -mt-1 text-orange-200' />
+      Must be at least 18 and no more than 100
+    </>)
   } else if (!ageHasError && !age) ageErrorContent = '*required'
 
   React.useEffect(() => {
@@ -199,7 +192,7 @@ function Settings(props) {
     } else {
       setFormIsValid(false)
     }
-  }, [firstName, lastName, ageHasError, firstNameHasError, lastNameHasError, emailHasError])
+  }, [firstName, lastName, age, ageHasError, firstNameHasError, lastNameHasError, emailHasError])
 
   React.useEffect(() => {
     if (
@@ -246,20 +239,16 @@ function Settings(props) {
 
   function getModalFeedback(data) {
     if (!submitError) {
-      setModalContent(
-        <>
-          <CheckCircleIcon className='inline w-5 text-green-500' />
-          {data.message}
-        </>
-      )
+      setModalContent(<>
+        <CheckCircleIcon className='inline w-5 text-green-500' />
+        {data.message}
+      </>)
       dispatch(setIsProfiled()) // Set the proper state to be able to leave form
     } else {
-      setModalContent(
-        <>
-          <CheckCircleIcon className='inline w-5 text-green-500' />
-          {data.message}
-        </>
-      )
+      setModalContent(<>
+        <CheckCircleIcon className='inline w-5 text-green-500' />
+        {data.message}
+      </>)
     }
     // SET THE PROFILE PICTURE (If the user added one)
     if (data.profilePic) props.setProfilePic(data.profilePic)
@@ -389,7 +378,6 @@ function Settings(props) {
             { value: 0, label: 'only women 💃' },
           ]}
           for='preferences'
-          charactersLeft={bioCharactersLeft}
         />
 
         <TextArea
@@ -399,7 +387,7 @@ function Settings(props) {
           value={bioValue}
           rows='3'
           onChangeHandler={bioChangeHandler}
-          charactersLeft={bioCharactersLeft}
+          charactersLeft={255 - bioValue.length}
           maxLength={255}
         />
 

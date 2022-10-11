@@ -6,28 +6,17 @@ const AccountModel = require('../models/Account')
 // Utility for generate Email token and send Account Confirmation email
 const { tokenAndEmail } = require('../utils/tokenAndEmail')
 
-// We need the Email Token model too! (email updates require Confirmation)
-// const EmailTokenModel = require('../models/EmailToken')
-
-// To hash the Email Token before writing them to DB (if email was modified)
-// const { createHash } = require('crypto')
-
-// To import our "secrets"
-const dotenv = require('dotenv')
-const path = require('path')
-
-// Invoke dotenv, setting path to the secrets file
-dotenv.config({ path: path.resolve(__dirname, '../../.env') })
-// console.log(process.env) // testing
-
 // For doing filesystem stuff
 const fs = require('fs')
+const path = require('path')
+const { savePic } = require('../utils/savePic')
 
 // Returns Email field and UID after authenticating user's Access Token
 exports.getSettings = async (req, res, next) => {
   // In our 'authorize' middleware, we attached the uid to the Request object
   const [user, _] = await AccountModel.readOne({ id: req.uid })
 
+  const fakeBio = 'Some users prefer to keep an air of mistery about themselves...'
   // Send Account information to prepopulate fields in the Profile form.
   res.status(200).json({
     uid:          req.uid, // send it just in case...
@@ -38,31 +27,31 @@ exports.getSettings = async (req, res, next) => {
     age:          user[0].age,
     gender:       user[0].gender,
     prefers:      user[0].prefers,
-    bio:          user[0].bio,
+    bio:          user[0].bio || fakeBio,
     profile_pic:  user[0].profile_pic
   })
 }
 
 // Creates a Single Resource (a user Profile)
 exports.updateSettings = async (req, res, next) => {
-  const uploadsFolder = path.join(`${__dirname}/../../public/uploads/${req.uid}`)
-  // If the user modifies her email, set confirmed to 0
-  let confirmed = 1 // If the user's editing the profile, she's confirmed!
-
   try {
-    if (req.pics && req.pics.length > 0) {
-      if (!fs.existsSync(uploadsFolder)) fs.mkdirSync(uploadsFolder)
-      for (const pic of req.pics) {
-        fs.readFile(pic.filepath, (err, e) => {
-          if (err) console.log(err)
-          fs.writeFile(`${uploadsFolder}/${pic.newFilename}`, e, (err) => {
-            console.log(err)
-          })
-        })
-      }
-    }
-
+    /*  The Authorization middleware extracted the user's id from the token,
+       and hung it in the Request object! */
     const uid = req.uid
+
+    // Pull from DB the CURRENT USER (using the uid from the authorization mw)
+    const [rowArr, fieldsArr] = await AccountModel.readOne({ id: uid })
+
+     // Check if there's some user with that uid
+    if (rowArr.length === 0) {
+      res.status(400).json({ message: 'bad request' }) // shenanigans!!!
+      return
+    }
+    /* Assign to 'currentUser' the user we've just pulled from the DB using
+      the uid that we got from the authorization middleware */
+    const currentUser = rowArr[0]
+
+    /* Let's assign to variables the fields we got in the form. */
     const {
       firstname,
       lastname,
@@ -70,28 +59,27 @@ exports.updateSettings = async (req, res, next) => {
       age,
       gender,
       prefers,
-      bio,
-      profile_pic
+      bio
     } = req.fields
 
-    // Read email of the CURRENT USER (to compare with the one in the form)
-    const [rowArr, fieldsArr] = await AccountModel.readOne({ id: uid })
-
-    if (rowArr.length === 0) { // what, no email linked to the logged in user?
-      res.status(400).json({ message: 'bad request' }) // shenanigans!!!
-      return
-    }
-    /* Pull from the DB the email of the current user (using the uid from the
-      authorization middleware, from her Access token claim), to check if
-      it's different from the EMAIL provided in the FORM. */
-    const currentEmail = rowArr[0].email
+    /**
+     *  Let's initialize the variable 'confirmed` to 1 (true), meaning that
+     * if the user is creating/updating her profile, she's confirmed her 
+     * account already!
+     * 
+     *  Later we'll check if she's changed her email, in which case, we'll set 
+     * confirmed to 0 (false), and made her confirm her account.
+     */
+    let confirmed = 1 // We write a 'confirmed' value to DB no matter what.
 
     /* If the EMAIL provided in the form is not the same that the one in the 
       DB, we gotta check there's not another user with that new Email. */
-    if (currentEmail !== email) {
+    if (currentUser.email !== email) {
       // Check that the new Email does not belong to another user.
       const [rowArr2, fieldsArr2] = await AccountModel.readOne({ email })
-      console.log('Check new email: ' + JSON.stringify(rowArr2));
+
+      // console.log('Check new email: ' + JSON.stringify(rowArr2)) // testing
+
       // If there's another user (with another UID) that is using that email...
       if (rowArr2.length > 0) {
         res.status(409).json({
@@ -103,12 +91,59 @@ exports.updateSettings = async (req, res, next) => {
         // 2. Delete preexisting Email token (if any)
         // 3. Store new Email token in DB
         // 4. Send Account Confirmation Email with the token
-        await tokenAndEmail(email) // This fn does 4 steps above!!
+        await tokenAndEmail(email) // This fn call does 4 steps above!!
         // 5. Set Account to NOT CONFIRMED!
         confirmed = 0
       }
     }
 
+    /**
+     * Pics stuff.
+     */
+    // Let's set a folder for user pics.
+    const userFolder = path.join(`${__dirname}/../../public/uploads/${uid}`)
+
+    // console.log('username ' + currentUser.username) // testing
+    // console.log('Has profile pic? ' + currentUser.profile_pic) // testing
+    // console.log('typeof profile pic? ' + typeof(currentUser.profile_pic)) // testing
+
+    // Check if user has a Profile picture set in DB
+    let profile_pic_url = currentUser.profile_pic
+
+    // const filesLeft (derive from the amount of files in the user's folder)
+
+    // Let's set the first pic submitted as the Profile pic.
+    if (!profile_pic_url && req.pics && req.pics.length > 0) {
+      // console.log('Trying to write profile pic!!!') // testing
+
+      /* The next function call writes the first pic to the user's folder and
+        returns its URL (that's what we write to the DB */
+      profile_pic_url = await savePic(req.pics[0], userFolder)
+
+      /* Create a shallow copy of the req.pics array to iterate over it, to 
+        save up the rest of the submitted pictures (if any) */
+      if (req.pics.length > 1) req.pics = req.pics.slice(1)
+      // console.log('REMAINING PICS: ' + JSON.stringify(req.pics)) // testing
+    }
+
+    // If there are remaining pics in the submitted form, save them too!
+    if (req.pics && req.pics.length > 0) {
+      for (const pic of req.pics) {
+        // Read the file from the /temp folder
+        fs.readFile(pic.filepath, (err, e) => {
+          if (err) console.log(err)
+
+          // Extract the extension from the mimetipe
+          const ext = pic.mimetype.split('/')[1]
+
+          // Write the file to the user's folder
+          fs.writeFile(`${userFolder}/${pic.newFilename}.${ext}`, e, (err) => {
+            console.log(err)
+          })
+        })
+      }
+    }
+    // console.log('Profile pic: ' + profile_pic_url) // testing
     // Instantiate the Settings model class to update/create new Profile
     const settings = new SettingsModel({
       id: uid,
@@ -119,7 +154,7 @@ exports.updateSettings = async (req, res, next) => {
       gender: parseInt(gender),
       prefers: parseInt(prefers),
       bio,
-      profile_pic: profile_pic || '',
+      profile_pic: profile_pic_url,
       confirmed: confirmed
     })
 
@@ -139,18 +174,6 @@ exports.updateSettings = async (req, res, next) => {
     } else {
       res.status(400).json({ message: 'woops' })
     }
-    // res.status(200).json({
-    //   uid,
-    //   firstname,
-    //   lastname,
-    //   email,
-    //   age,
-    //   gender,
-    //   prefers,
-    //   bio,
-    //   profile_pic,
-    //   confirmed: confirmed
-    // }) // testing
   } catch(error) {
     console.log(error)
     next(error)

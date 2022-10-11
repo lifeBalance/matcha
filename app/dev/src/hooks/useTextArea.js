@@ -3,18 +3,18 @@ import React from 'react'
 function useTextArea(maxLength) {
   const [areaValue, setAreaValue] = React.useState('')
   const [areaWasChanged, setAreaWasChanged] = React.useState(false)
-  const [charactersLeft, setCharactersLeft] = React.useState(maxLength)
+  // const [charactersLeft, setCharactersLeft] = React.useState(maxLength)
 
   function areaChangeHandler(e) {
     setAreaValue(e.target.value)
-    setCharactersLeft(maxLength - e.target.value.length)
+    // setCharactersLeft(maxLength - e.target.value.length)
     setAreaWasChanged(true)
   }
 
   return {
     areaValue,
     setAreaValue,
-    charactersLeft,
+    // charactersLeft,
     areaWasChanged,
     areaChangeHandler,
   }
