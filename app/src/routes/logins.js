@@ -25,10 +25,13 @@ function mwValidateLogin(req, res, next) {
   next()
 }
 
+// Middlewares
+const { handleRefreshToken } = require('../middlewares/handleRefreshToken')
+
 // POST => /api/logins (for logging in)
 router.post('/logins', mwValidateLogin, loginsController.login)
 
 // DELETE => /api/logins (for logging out)
-router.delete('/logins', loginsController.logout)
+router.delete('/logins', handleRefreshToken, loginsController.logout)
 
 module.exports = router

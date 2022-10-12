@@ -31,62 +31,64 @@ exports.login = async (req, res, next) => {
       return
     }
 
-    bcrypt.compare(req.body.password, account[0].pwd_hash, function(err, result) {
-      if (result == true) {
-        // If the user's account is NOT confirmed
-        if (!account[0].confirmed) {
-          res.status(401).json({
-            message: 'Please, confirm your account before logging in.'
-          })
-          return
-        }
-
-        // Generate the access_token
-        const accessToken = jwt.sign({
-          sub:    account[0].id,
-          email:  account[0].email,
-        }, process.env.SECRET_JWT_KEY, { expiresIn: process.env.ACCESS_TOKEN_EXP})
-
-        // Generate the refresh_token
-        const refreshToken = jwt.sign({
-          sub:    account[0].id,
-        }, process.env.SECRET_JWT_KEY, { expiresIn: process.env.REFRESH_TOKEN_EXP})
-
-        // Let's extract the expiry time of the Refresh token from the claim ;-)
-        const expiryRefreshToken = jwt.verify(refreshToken, process.env.SECRET_JWT_KEY).exp
-
-        // Set hardened cookie
-        res.cookie('refreshToken', refreshToken, {
-          path:     '/api',
-          secure:   true,
-          maxAge:   expiryRefreshToken,
-          httpOnly: true,
-          sameSite: 'None'
-        })
-
-        // Hash the Refresh Token before storing it in the DB
-        const refreshTokenHash = createHash('sha256').update(refreshToken).digest('hex')
-
-        // Instantiate the RefreshToken model
-        const RefreshToken = new RefreshTokenModel({
-          uid:        account[0].id,
-          token_hash: refreshTokenHash,
-          // (If I change MySQL to TIMESTAMP, use format = 'YYYY-MM-DD HH:MM:SS')
-          expires_at: expiryRefreshToken // already in seconds ;-)
-        })
-        // Store the Refresh Token in DB, by invoking the create method on the instance
-        const ret = RefreshToken.create()
-
-        // Send the access_token in the response body
-        res.status(200).json({
-          message: 'Successfully logged in!',
-          access_token: accessToken,
-          profiled:    account[0].profiled,
-          uid:          account[0].id
-        })
-      } else {
+    bcrypt.compare(req.body.password, account[0].pwd_hash, (err, result) => {
+      if (result == false) {
         res.status(401).json({ message: 'wrong password' })
+        return
       }
+    })
+
+    // If the user's account is NOT confirmed
+    if (!account[0].confirmed) {
+      res.status(401).json({
+        message: 'Please, confirm your account before logging in.'
+      })
+      return
+    }
+
+    // Generate the access_token
+    const accessToken = jwt.sign({
+      sub:    account[0].id,
+      email:  account[0].email,
+    }, process.env.SECRET_JWT_KEY, { expiresIn: process.env.ACCESS_TOKEN_EXP})
+
+    // Generate the refresh_token
+    const refreshToken = jwt.sign({
+      sub:    account[0].id,
+    }, process.env.SECRET_JWT_KEY, { expiresIn: process.env.REFRESH_TOKEN_EXP})
+
+    // Let's extract the expiry time of the Refresh token from the claim ;-)
+    const expiryRefreshToken = jwt.verify(refreshToken, process.env.SECRET_JWT_KEY).exp
+
+    // Set hardened cookie
+    res.cookie('refreshToken', refreshToken, {
+      path:     '/api',
+      // secure:   true,
+      // Gotta divide by 10 to get 2 days. Otherwise expires in 20 days! 🤔
+      maxAge:   expiryRefreshToken / 10,
+      httpOnly: true,
+      // sameSite: 'None' // this must be used together with 'secure: true'
+    })
+
+    // Hash the Refresh Token before storing it in the DB
+    const refreshTokenHash = createHash('sha256').update(refreshToken).digest('hex')
+
+    // Instantiate the RefreshToken model
+    const RefreshToken = new RefreshTokenModel({
+      uid:        account[0].id,
+      token_hash: refreshTokenHash,
+      // (If I change MySQL to TIMESTAMP, use format = 'YYYY-MM-DD HH:MM:SS')
+      expires_at: expiryRefreshToken // already in seconds ;-)
+    })
+    // Store the Refresh Token in DB, by invoking the create method on the instance
+    const ret = await RefreshToken.create()
+
+    // Send the access_token in the response body
+    res.status(200).json({
+      message: 'Successfully logged in!',
+      access_token: accessToken,
+      profiled:     account[0].profiled,
+      uid:          account[0].id
     })
   } catch(error) {
     console.log(error)
@@ -96,23 +98,14 @@ exports.login = async (req, res, next) => {
 
 exports.logout = async (req, res, next) => {
   try {
-    // console.log('cookie: ' + req.cookies.refreshToken) // testing
-
-    // Let's hash the Refresh Token (in order to locate it in the DB)
-    const refreshTokenHash = createHash('sha256').update(req.cookies.refreshToken).digest('hex')
-    // console.log('hash: ' + refreshTokenHash) // testing
-
-    // Let's delete the Refresh Token in the database using the hash
-    const [_, ret] = await RefreshTokenModel.delete(refreshTokenHash)
-    // console.log('ret ' + JSON.stringify(ret)) // test
-
-    // Let's delete the hardened cookie on the client. Options must be
-    // identical to those given to res.cookie(), excluding expires and maxAge.
+    // Let's delete the hardened cookie on the user's Browser. Options must be
+    // identical to those given to those used when sending the cookie,
+    // excluding the 'expires' and 'maxAge' options.
     res.clearCookie('refreshToken', {
         path:     '/api',
-        secure:   true,
+        // secure:   true,
         httpOnly: true,
-        sameSite: 'None'
+        // sameSite: 'None'
     })
     res.status(200).json({ message: 'successfully logged out' })
   } catch (error) {

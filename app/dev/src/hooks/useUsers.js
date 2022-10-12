@@ -8,14 +8,14 @@ import { refresh } from '../store/authSlice'
 const fetchUsers = axios.create({
   baseURL: '/api',
 })
-
+/*
 fetchUsers.interceptors.response.use(
   // If all goes smooth:
   response => response, // Returning the response is ESSENTIAL!!
 
-  /* If the interceptor fails, we check for a 401 (unauthorized) status,
-    in that case, we invoke the refresh reducer from the auth slice to
-    refresh our JWTs */
+  //    If the interceptor fails, we check for a 401 (unauthorized) status,
+  //  in that case, we invoke the refresh reducer from the auth slice to
+  //  refresh our JWTs
   error => {
     if (error.response.status === 401) {
       // console.log('JWTs were Silently Refreshed!');
@@ -32,7 +32,7 @@ fetchUsers.interceptors.response.use(
     return Promise.reject(error)
   }
 )
-
+*/
 function useUsers(params) {
   const [users, setUsers] = React.useState([])
   const [isLoadingUsers, setIsLoadingUsers] = React.useState(false)
@@ -44,19 +44,23 @@ function useUsers(params) {
 
     try {
       const response = await fetchUsers({
-        url: '/users',
+        url: '/profiles',
         method: 'get',
         params: { page: args.page },
         headers: {
           'Authorization': `Bearer ${args.accessToken}`
         },
-        refreshTokens: () => dispatch(refresh()),
+        // refreshTokens: () => dispatch(refresh()),
       })
-      // console.log(response.data); // testing
+      console.log('profiled? ' + JSON.stringify(response.data.profiled)); // testing
+      console.log('typeof ' + typeof(response.data.profiled)); // testing
+      args.setProfiledState(response.data.profiled)
       // setUsers(prevState => [...prevState, ...response.data])
-      setUsers(prevState => [...prevState, ...response.data].filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i))
+      if (response.data.profiled)
+        setUsers(prevState => [...prevState, ...response.data.profiles].filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i))
     } catch (error) {
-      return setErrorLoadingUsers(error.response.data.error.message)
+      return setErrorLoadingUsers(error.response.data)
+      // return setErrorLoadingUsers(error.response.data.error.message)
     } finally {
       setIsLoadingUsers(false)
     }

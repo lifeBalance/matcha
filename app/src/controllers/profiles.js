@@ -1,5 +1,6 @@
 const ProfileModel = require('../models/Profile')
 const bcrypt = require('bcrypt');
+const { restart } = require('nodemon');
 const saltRounds = 10;
 
 // Return a Single Resource(a profile identified by an ID)
@@ -13,10 +14,11 @@ exports.readOneProfile = async (req, res, next) => {
     console.log(req)
     if (req.uid == req.params.id) { // dont' use strict equality: integer !== string
       try {
-        const [profile, _] = await ProfileModel.readOwn({ id: req.uid })
-        console.log(profile);
+        const [profileArr, _] = await ProfileModel.readOwn({ id: req.uid })
+        // console.log(profile);
         res.status(200).json({
-          profile: profile[0]
+          profile: profileArr[0],
+          profiled: profileArr[0].profiled
         })
       } catch (error) {
         console.log(error)
@@ -29,8 +31,11 @@ exports.readOneProfile = async (req, res, next) => {
        */
       try {
         // The fields (metadata about results) are assigned to the '_'
-        const [profile, _] = await ProfileModel.readOne({ id: req.params.id })
-        res.status(200).json({ message: `profile ${req.params.id}`})
+        const [profileArr, _] = await ProfileModel.readOne({ id: req.params.id })
+        res.status(200).json({
+          message: `profile ${req.params.id}`,
+          profiled: profile[0].profiled
+        })
       } catch (error) {
         console.log(error)
         next(error)
@@ -41,8 +46,24 @@ exports.readOneProfile = async (req, res, next) => {
 // Return a Collection of Resources
 exports.readAllProfiles = async (req, res, next) => {
   try {
-    const [profiles, _] = await ProfileModel.readAll()
-    res.status(200).json({ profiles: profiles })
+    // Don't forget to check if the user requesting profiles is profiled!
+    const [ownProfileArr, fields] = await ProfileModel.readOwn({ id: req.uid })
+
+    console.log(JSON.stringify(ownProfileArr))
+    // If the user is not profiled, we don't send the Profile list in the 
+    // response. Instead we just send that is NOT PROFILED!
+    if (!ownProfileArr[0].profiled) {
+      console.log('is profiled? '+ownProfileArr[0].profiled)
+      res.status(200).json({ profiled: ownProfileArr[0].profiled })
+      return
+    }
+    
+    const [profiles, fields2] = await ProfileModel.readAll()
+    console.log('is profiled? '+ownProfileArr[0].profiled)
+    res.status(200).json({ 
+      profiles: profiles,
+      profiled: ownProfileArr[0].profiled // We need this in both cases
+    })
   } catch(error) {
     console.log(error)
     next(error)

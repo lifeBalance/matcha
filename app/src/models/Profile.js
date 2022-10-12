@@ -10,7 +10,7 @@ module.exports = class Profile {
   static readOwn({ id }) {
     const sql =`
     SELECT
-    username, firstname, lastname, email, age, gender, prefers, bio
+    username, firstname, lastname, email, age, gender, prefers, bio, profiled
     FROM users WHERE id = ?`
 
     return pool.execute(sql, [id]) // returns Empty Array or [ { id: ...} ]

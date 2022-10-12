@@ -8,7 +8,7 @@ const router = express.Router()
 const { authorize } = require('../middlewares/authorize')
 
 // GET /api/profiles     ==> read other users profiles.
-router.get('/profiles', profilesController.readAllProfiles)
+router.get('/profiles', authorize, profilesController.readAllProfiles)
 
 // GET /api/profiles/:id ==> read other users profiles and our own.
 router.get('/profiles/:id', authorize, profilesController.readOneProfile)

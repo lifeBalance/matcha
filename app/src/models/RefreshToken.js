@@ -18,15 +18,15 @@ module.exports = class RefreshToken {
     ])
   }
 
-  static read(token) {
+  static read(hash) {
     const sql = `SELECT * FROM refresh_tokens WHERE token_hash = ?`
 
-    return pool.execute(sql, [token]) // returns...
+    return pool.execute(sql, [hash]) // returns...
   }
 
-  static delete(token) {
+  static delete(hash) {
     const sql = `DELETE FROM refresh_tokens WHERE token_hash = ?`
 
-    return pool.execute(sql, [token]) // returns...
+    return pool.execute(sql, [hash]) // returns...
   }
 }
