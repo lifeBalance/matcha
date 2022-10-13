@@ -12,24 +12,29 @@ exports.authorize = (req, res, next) => {
   const authHeader = req.headers.authorization
 
   if (authHeader) {
-      const [key, accessToken] = authHeader.split(' ');
+    const [key, accessToken] = authHeader.split(' ')
 
-      if (key !== 'Bearer') {
-        res.status(400).json({ message: 'bad request' })
-        return
+    if (key !== 'Bearer') {
+      // console.log(JSON.stringify({ message: 'bad request' })) // testing
+      res.status(400).json({ message: 'bad request' })
+      return
+    }
+
+    try {
+      /*  At the same time we verify the Access Token, we hang the 'sub'
+        claim (which contains the user id) in the Request object. */
+      req.uid = jwt.verify(accessToken, process.env.SECRET_JWT_KEY).sub
+      next()
+    } catch (error) {
+      /* If the Access Token is just expired, we catch the error
+        and send a 401 status code, to trigger a "silent token refresh" 
+        in the front-end. */
+      if (error.name === 'TokenExpiredError') {
+        return res.status(401).json({ message: 'expired access token'})
       }
-      jwt.verify(accessToken, process.env.SECRET_JWT_KEY, (err, payload) => {
-          // jwt.verify checks both that the token is legit and not expired
-          if (err) return res.status(403).json({ message: 'invalid token'})
-          else {
-            // console.log(payload) // testing
-
-            // Attaching properties to the request object is the way to 
-            // pass data to next middleware or controller
-            req.uid = payload.sub // The 'sub' claim contains the uid
-            next()
-          }
-      })
+      // For any other token verification error, party stops here with 403.
+      else res.status(403).json({ message: error })
+    }
   } else {
     res.status(400).json({ message: 'bad request'})
   }

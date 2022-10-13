@@ -1,7 +1,4 @@
 const ProfileModel = require('../models/Profile')
-const bcrypt = require('bcrypt');
-const { restart } = require('nodemon');
-const saltRounds = 10;
 
 // Return a Single Resource(a profile identified by an ID)
 exports.readOneProfile = async (req, res, next) => {
@@ -49,17 +46,18 @@ exports.readAllProfiles = async (req, res, next) => {
     // Don't forget to check if the user requesting profiles is profiled!
     const [ownProfileArr, fields] = await ProfileModel.readOwn({ id: req.uid })
 
-    console.log(JSON.stringify(ownProfileArr))
+    // console.log(JSON.stringify(ownProfileArr)) // testing
+
     // If the user is not profiled, we don't send the Profile list in the 
     // response. Instead we just send that is NOT PROFILED!
     if (!ownProfileArr[0].profiled) {
-      console.log('is profiled? '+ownProfileArr[0].profiled)
+      // console.log('is profiled? '+ownProfileArr[0].profiled)
       res.status(200).json({ profiled: ownProfileArr[0].profiled })
       return
     }
-    
+
     const [profiles, fields2] = await ProfileModel.readAll()
-    console.log('is profiled? '+ownProfileArr[0].profiled)
+    // console.log('is profiled? '+ownProfileArr[0].profiled)
     res.status(200).json({ 
       profiles: profiles,
       profiled: ownProfileArr[0].profiled // We need this in both cases

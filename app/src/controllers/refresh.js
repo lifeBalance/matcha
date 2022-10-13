@@ -4,9 +4,6 @@ const RefreshTokenModel = require('../models/RefreshToken')
 // To check the user still has an Account in our site.
 const AccountModel = require('../models/Account')
 
-// To compare with the stored encrypted passwords
-const bcrypt = require('bcrypt')
-
 // To create both JWTs (Access and Refresh)
 const jwt = require("jsonwebtoken")
 
@@ -16,7 +13,6 @@ const { createHash } = require('crypto')
 // Import our "secrets": SECRET_JWT_KEY, ACCESS_TOKEN_EXP and REFRESH_TOKEN_EXP
 const path = require('path')
 const dotenv = require('dotenv')
-const { json } = require('body-parser')
 
 // Invoke dotenv, setting path to the secrets file
 dotenv.config({ path: path.resolve(__dirname, '../../.env') })

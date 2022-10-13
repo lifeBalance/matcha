@@ -20,7 +20,7 @@ const logout = createAsyncThunk('auth/logout', async function(args, thunkAPI) {
 
     localStorage.removeItem('accessToken')
 
-    console.log(response.data)
+    // console.log(response.data)
     return response.data
   } catch (error) {
     // console.log(error.response.data.message);
@@ -72,7 +72,7 @@ const refresh = createAsyncThunk('auth/refresh', async function (args, thunkAPI)
       headers: { 'Authorization': `Bearer ${args.accessToken}` },
     })
 
-    console.log( response.data) // testing
+    // console.log( response.data) // testing
     return response.data
   } catch (error) {
     console.log(error.response.data.message)  // testing
@@ -107,7 +107,7 @@ const authSlice = createSlice({
       state.errorLoggingIn = false
 
       // console.log(action) // testing
-      console.log(action.payload); // testing
+      // console.log(action.payload); // testing
       if (action.payload) {
         localStorage.setItem('accessToken', action.payload.access_token)
         state.accessToken = action.payload.access_token
@@ -149,7 +149,7 @@ const authSlice = createSlice({
     },
 
     [refresh.fulfilled]: (state, action) => {
-      console.log(action.payload) // testing
+      // console.log(action.payload) // testing
 
       state.isLoggingIn = false
       state.isLoggedIn = true
