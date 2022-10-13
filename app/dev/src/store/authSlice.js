@@ -40,17 +40,15 @@ const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
       withCredentials: true
     })
 
-    console.log(response.data) // testing
+    // console.log(response.data) // testing
     // console.log(args) // testing
     // console.log(thunkAPI) // testing
     return response.data // Important!
   } catch (error) {
     // console.log(args) // testing
     // console.log(thunkAPI) // testing
-    console.log(error.response.data) // testing
+    // console.log(error.response.data) // testing
     return thunkAPI.rejectWithValue(error.response.data) // Important!
-  } finally {
-    // openModal() // setModalIsOpen
   }
 })
 
@@ -75,7 +73,7 @@ const refresh = createAsyncThunk('auth/refresh', async function (args, thunkAPI)
     // console.log( response.data) // testing
     return response.data
   } catch (error) {
-    console.log(error.response.data.message)  // testing
+    // console.log(error?.response?.data?.message)  // testing
     return thunkAPI.rejectWithValue(error.response.data.message)
   }
 })
@@ -161,7 +159,7 @@ const authSlice = createSlice({
       }
     },
     [refresh.rejected]: (state, action) => {
-      console.log(action.payload) // testing
+      // console.log(action?.payload) // testing
 
       state.errorLoggingIn = action.payload
       state.isLoggingIn = false
