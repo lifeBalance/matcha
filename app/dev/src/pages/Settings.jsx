@@ -120,7 +120,7 @@ function Settings(props) {
     filePickerChangeHandler
   } = useFilePicker(5)
 
-  function setProfile(data) {
+  function setUserState(data) {
     setUserName(data.username)
     setFirstName(data.firstname)
     setLastName(data.lastname)
@@ -134,7 +134,12 @@ function Settings(props) {
 
   React.useEffect(() => {
     if (!isLoggedIn) navigate('/', { replace: true })
-    else getProfile('/settings', uid, accessToken, (data) => setProfile(data))
+    else getProfile({
+      url: '/settings', 
+      id: uid,
+      accessToken,
+      setUserState
+    })
   }, [isLoggedIn])
 
   let firstNameErrorContent

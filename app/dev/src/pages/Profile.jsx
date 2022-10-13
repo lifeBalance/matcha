@@ -5,14 +5,11 @@ import { useNavigate, Link, useParams } from 'react-router-dom'
 import { unescape } from 'lodash'
 
 // components
-import { Carousel, Tooltip } from 'flowbite-react'
+import UserProfileControls from '../components/UserProfileControls'
+import { Carousel } from 'flowbite-react'
 
 //icons
 import {
-  HeartIcon,
-  ChatBubbleLeftRightIcon,
-  HandThumbDownIcon,
-  NoSymbolIcon,
   UserCircleIcon,
 } from '@heroicons/react/24/solid'
 
@@ -23,7 +20,7 @@ import useGetProfile from '../hooks/useGetProfile'
 import { useSelector } from 'react-redux'
 
 function Profile() {
-  const [user, setUser] = React.useState(false)
+  const [user, setUser] = React.useState(null)
   const { isLoggedIn, accessToken, uid } = useSelector((slices) => slices.auth)
   const navigate = useNavigate()
   const { id: idParams } = useParams()
@@ -44,7 +41,8 @@ function Profile() {
       pics:         data.profiles[0].pics ?? [],
     })
   }
-  // console.log(idParams) // testing
+  // console.log(idParams, uid) // testing
+  // console.log(typeof(idParams), typeof(uid)) // testing
 
   // Redirect if the user is NOT logged in
   React.useEffect(() => {
@@ -59,13 +57,13 @@ function Profile() {
   }, [isLoggedIn])
 
   let gender
-  if (user.gender === 0) gender = '🍑 (Female)'
-  else if (user.gender === 1) gender = '🍆 (Male)'
+  if (user?.gender === 0) gender = '🍑 (Female)'
+  else if (user?.gender === 1) gender = '🍆 (Male)'
   else gender = ' 🙅 (Non-binary)'
 
   let preferences
-  if (user.preferences === 0) preferences = '🍑 (Females)'
-  else if (user.preferences === 1) preferences = '🍆 (Males)'
+  if (user?.preferences === 0) preferences = '🍑 (Females)'
+  else if (user?.preferences === 1) preferences = '🍆 (Males)'
   else preferences = '🍆 and 🍑 (Males and Females 😏)'
 
   return (
@@ -133,12 +131,18 @@ function Profile() {
               <span className='font-semibold'>Bio: </span>
               {user.bio}
             </p>
-            <Link
-              to='/settings'
-              className='block w-full px-3 py-2 rounded-md bg-black text-white text-center hover:opacity-80 mx-auto'
-            >
-              Profile Settings
-            </Link>
+            {idParams == uid ?
+              <Link
+                to='/settings'
+                className='block w-full px-3 py-2 rounded-md bg-black text-white text-center hover:opacity-80 mx-auto'
+              >
+                Profile Settings
+              </Link>
+            :
+              <UserProfileControls 
+                youLikeUser={true}
+                userLikesYou={true}
+              />}
           </div>
         </div>
       )}
