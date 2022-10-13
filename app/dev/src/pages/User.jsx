@@ -94,7 +94,7 @@ function User() {
           <h1 className='text-gray-700 text-2xl font-bold text-center pt-6 pb-8'>{user.userName}</h1>
 
           <div className="h-96 bg-gray-800 rounded-lg mx-auto">
-            {user.pics.length > 0 ?
+            {user.pics && user.pics.length > 0 ?
             (<Carousel slide={false}>
               {user.pics && user.pics.length > 0 && user.pics.map((pic, idx) => (
                 <img key={Math.random()} src={`/uploads/${user.id}/${pic}`} className=' object-cover h-96 sm:object-contain' />

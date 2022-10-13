@@ -10,7 +10,7 @@ function UserMiniCard(props) {
 
   return (
     <li className='bg-white p-8 rounded-lg'>
-      <Link to={`users/${id}`}>{id} {username} {email}</Link>
+      <Link to={`profiles/${id}`}>{id} {username} {email}</Link>
     </li>
   )
 }

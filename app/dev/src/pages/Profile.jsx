@@ -49,7 +49,13 @@ function Profile() {
   // Redirect if the user is NOT logged in
   React.useEffect(() => {
     if (!isLoggedIn) navigate('/', { replace: true })
-    else getProfile('/profiles', idParams, accessToken, (data) => setUserState(data))
+    else getProfile({
+      url: '/profiles',
+      id: idParams,
+      accessToken,
+      // (data) => setUserState(data)
+      setUserState
+    })
   }, [isLoggedIn])
 
   let gender
@@ -79,7 +85,7 @@ function Profile() {
           </h1>
 
           <div className='h-96 bg-gray-800 rounded-lg mx-auto'>
-            {user.pics.length > 0 ? (
+            {user.pics && user.pics.length > 0 ? (
               <Carousel slide={false}>
                 {user.pics &&
                   user.pics.length > 0 &&

@@ -31,7 +31,8 @@ exports.readOneProfile = async (req, res, next) => {
         const [profileArr, _] = await ProfileModel.readOne({ id: req.params.id })
         res.status(200).json({
           message: `profile ${req.params.id}`,
-          profiled: profile[0].profiled
+          profiled: profile[0].profiled,
+          pics: []
         })
       } catch (error) {
         console.log(error)

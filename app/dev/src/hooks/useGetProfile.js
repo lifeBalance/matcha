@@ -34,20 +34,19 @@ function useGetProfile() {
   const [isGetting, setIsGetting] = React.useState(false)
   const dispatch = useDispatch()
 
-  const getProfile = React.useCallback(async function (url, id = null, accessToken, callback = null) {
+  const getProfile = React.useCallback(async function (args) {
     setIsGetting(true)
 
     try {
       const resp = await sendRequest({
-        url: url,
+        url: args.url,
         method: 'get',
-        params: { id }, // will be null when getting SETTINGS (id is in token)
-        headers: { 'Authorization': `Bearer ${accessToken}` },
-        refreshTokens: () => dispatch(refresh()),
+        params: { id: args.id }, // will be null when getting SETTINGS (id is in token)
+        headers: { 'Authorization': `Bearer ${args.accessToken}` },
+        refreshTokens: () => dispatch(refresh({ accessToken: args.accessToken })),
       })
       // console.log(resp.data) // testing
-      if (callback)
-        callback(resp.data)
+      args.setUserState(resp.data)
       // return resp.data
     } catch (error) {
       console.log(error)
