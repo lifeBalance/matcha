@@ -67,7 +67,7 @@ function useSubmitProfile() {
       callback(resp.data)
       // return resp.data
     } catch (error) {
-      console.log(error.response.data) // testing
+      console.log(error.response?.data) // testing
       setSubmitError(true)
       callback(error.response.data)
     } finally {

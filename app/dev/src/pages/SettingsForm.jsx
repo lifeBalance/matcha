@@ -236,7 +236,10 @@ function SettingsForm(props) {
         <CheckCircleIcon className='inline w-5 text-green-500' />
         {data.message}
       </>)
-      dispatch(setIsProfiled()) // Set the proper state to be able to leave form
+       // Set the proper state to be able to leave form
+      dispatch(setIsProfiled())
+      // Invoke the Profile Pic state using Setter (passed down in the props object)
+      props.setProfilePic(data.profile_pic)
     } else {
       setModalContent(<>
         <CheckCircleIcon className='inline w-5 text-green-500' />

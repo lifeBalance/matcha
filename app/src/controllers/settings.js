@@ -101,7 +101,7 @@ exports.updateSettings = async (req, res, next) => {
      * Pics stuff.
      */
     // Let's set a folder for user pics.
-    const userFolder = path.join(`${__dirname}/../../public/uploads/${uid}`)
+    // const userFolder = path.join(`${__dirname}/../../public/uploads/${uid}`)
 
     // console.log('username ' + currentUser.username) // testing
     // console.log('Has profile pic? ' + currentUser.profile_pic) // testing
@@ -118,7 +118,7 @@ exports.updateSettings = async (req, res, next) => {
 
       /* The next function call writes the first pic to the user's folder and
         returns its URL (that's what we write to the DB */
-      profile_pic_url = await savePic(req.pics[0], userFolder)
+      profile_pic_url = await savePic(req.pics[0], currentUser.id)
 
       /* Create a shallow copy of the req.pics array to iterate over it, to 
         save up the rest of the submitted pictures (if any) */
@@ -128,6 +128,9 @@ exports.updateSettings = async (req, res, next) => {
 
     // If there are remaining pics in the submitted form, save them too!
     if (req.pics && req.pics.length > 0) {
+      // Let's set a folder for user pics.
+      const userFolder = path.join(`${__dirname}/../../public/uploads/${uid}`)
+
       for (const pic of req.pics) {
         // Read the file from the /temp folder
         fs.readFile(pic.filepath, (err, e) => {
@@ -169,7 +172,8 @@ exports.updateSettings = async (req, res, next) => {
       // console.log('affectedRows: ' + dbResp.affectedRows) // testing
       res.status(200).json({
         message: msg,
-        confirmed: confirmed
+        confirmed: confirmed,
+        profile_pic: profile_pic_url
       })
     } else {
       res.status(400).json({ message: 'woops' })
