@@ -1,414 +1,146 @@
 import React from 'react'
+import { useNavigate, Link, useParams } from 'react-router-dom'
+
+// lodash is available thanks to the 'vite-plugin-imp' (a Vite's plugin)
 import { unescape } from 'lodash'
-import { useNavigate } from 'react-router-dom'
-
-// redux
-import { useSelector, useDispatch } from 'react-redux'
-import { logout, setIsProfiled } from '../store/authSlice'
-
-// hooks
-import useInput from '../hooks/useInput'
-import useSelect from '../hooks/useSelect'
-import useTextArea from '../hooks/useTextArea'
-import useSubmitProfile from '../hooks/useSubmitProfile'
-import useGetProfile from '../hooks/useGetProfile'
-import useFilePicker from '../hooks/useFilePicker'
 
 // components
-import Input from '../components/UI/Input'
-import Select from '../components/UI/Select'
-import TextArea from '../components/UI/TextArea'
-import Modal from '../components/UI/Modal'
-import FilePicker from '../components/UI/FilePicker'
+import { Carousel } from 'flowbite-react'
 
 //icons
-import { HandRaisedIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
-
-// Validators
 import {
-  validateName,
-  validateEmail,
-  validateAge
-} from '../utils/validators'
+  UserCircleIcon,
+} from '@heroicons/react/24/solid'
 
-function Settings(props) {
-  const [modalContent, setModalContent] = React.useState('')
-  const [modalIsOpen, setModalIsOpen] = React.useState(false)
-  const [userName, setUserName] = React.useState('')
+// hooks
+import useGetProfile from '../hooks/useGetProfile'
 
-  const [formIsValid, setFormIsValid] = React.useState(false)
-  const [formWasChanged, setFormWasChanged] = React.useState(false)
+// redux
+import { useSelector } from 'react-redux'
+
+function Settings() {
+  const [user, setUser] = React.useState(null)
+  const { isLoggedIn, accessToken, uid } = useSelector((slices) => slices.auth)
   const navigate = useNavigate()
-
-  // redux
-  const { accessToken, isLoggedIn, uid } = useSelector((slices) => slices.auth)
-  const dispatch = useDispatch()
-
+  const { id: idParams } = useParams()
   const {
-    isGetting: gettingProfile,
-    getError: errorGettingProfile,
-    getProfile,
+    error,
+    isLoading,
+    getProfile
   } = useGetProfile()
 
-  const {
-    value: firstName,
-    setValue: setFirstName,
-    inputWasChanged: firstNameWasChanged,
-    inputHasError: firstNameHasError,
-    inputChangeHandler: firstNameChangeHandler,
-    inputBlurHandler: firstNameBlurHandler,
-  } = useInput(validateName)
-
-  const {
-    value: lastName,
-    setValue: setLastName,
-    inputWasChanged: lastNameWasChanged,
-    inputHasError: lastNameHasError,
-    inputChangeHandler: lastNameChangeHandler,
-    inputBlurHandler: lastNameBlurHandler,
-  } = useInput(validateName)
-
-  const {
-    value: email,
-    setValue: setEmail,
-    inputWasChanged: emailWasChanged,
-    inputHasError: emailHasError,
-    inputChangeHandler: emailChangeHandler,
-    inputBlurHandler: emailBlurHandler,
-  } = useInput(validateEmail)
-
-  const {
-    value: age,
-    setValue: setAge,
-    inputWasChanged: ageWasChanged,
-    inputHasError: ageHasError,
-    inputChangeHandler: ageChangeHandler,
-    inputBlurHandler: ageBlurHandler,
-  } = useInput(validateAge)
-
-  const {
-    selectValue: genderValue,
-    setSelectValue: setGenderValue,
-    selectChangeHandler: genderChangeHandler,
-    selectWasChanged: genderWasChanged,
-  } = useSelect()
-
-  const {
-    selectValue: preferencesValue,
-    setSelectValue: setPreferencesValue,
-    selectChangeHandler: preferencesChangeHandler,
-    selectWasChanged: preferencesWasChanged,
-  } = useSelect()
-
-  const {
-    areaValue: bioValue,
-    setAreaValue: setBioValue,
-    areaChangeHandler: bioChangeHandler,
-    areaWasChanged: bioWasChanged,
-    // charactersLeft: bioCharactersLeft,
-  } = useTextArea(255)
-
-  const {
-    files,
-    setFiles,
-    filesLeft,
-    setFilesLeft,
-    filePickerError,
-    setFilePickerError,
-    deletePic,
-    filePickerWasChanged,
-    filePickerChangeHandler
-  } = useFilePicker(5)
-
-  function setUserState(data) {
-    setUserName(data.username)
-    setFirstName(data.firstname)
-    setLastName(data.lastname)
-    setEmail(data.email)
-    setAge(data.age)
-    setGenderValue(data.gender)
-    setPreferencesValue(data.prefers)
-    setBioValue(unescape(data.bio))
-    setFilesLeft(data.filesLeft)
+  // console.log('idParams: '+ idParams);
+  function setSettings(data) {
+    setUser({
+      userName:     data.username,
+      firstName:    data.firstname,
+      lastName:     data.lastname,
+      email:        data.email,
+      age:          data.age,
+      rated:        69, // hardcode for now
+      gender:       data.gender,
+      preferences:  data.prefers,
+      bio:          unescape(data.bio),
+      pics:         data.pics ?? [],
+    })
   }
 
+  // Redirect if the user is NOT logged in
   React.useEffect(() => {
     if (!isLoggedIn) navigate('/', { replace: true })
     else getProfile({
-      url: '/settings', 
-      id: uid,
+      url: '/settings',
+      // The backend will extract the UID from the accessToken
       accessToken,
-      setUserState
+      setUserState: setSettings
     })
   }, [isLoggedIn])
 
-  let firstNameErrorContent
-  if (firstNameHasError)
-    firstNameErrorContent = (<>
-      <HandRaisedIcon className='inline w-5 -mt-1 text-orange-200' />
-      Between 2 and 20 letters (Can use - and space).
-    </>)
+  let gender
+  if (user?.gender === 0) gender = '🍑 (Female)'
+  else if (user?.gender === 1) gender = '🍆 (Male)'
+  else gender = ' 🙅 (Non-binary)'
 
-  let lastNameErrorContent
-  if (lastNameHasError)
-    lastNameErrorContent = (<>
-      <HandRaisedIcon className='inline w-5 -mt-1 text-orange-200' />
-      Between 2 and 20 letters (Can use - and space).
-    </>)
+  let preferences
+  if (user?.preferences === 0) preferences = '🍑 (Females)'
+  else if (user?.preferences === 1) preferences = '🍆 (Males)'
+  else preferences = '🍆 and 🍑 (Males and Females 😏)'
 
-  let emailErrorContent
-  if (email.length > 0 && emailHasError) {
-    emailErrorContent = (<>
-      <HandRaisedIcon className='inline w-5 -mt-1 text-orange-200' /> Must be
-      a valid email address
-    </>)
-  }
-
-  let ageErrorContent
-  if (ageHasError) {
-    ageErrorContent = (<>
-      <HandRaisedIcon className='inline w-5 -mt-1 text-orange-200' />
-      Must be at least 18 and no more than 100
-    </>)
-  } else if (!ageHasError && !age) ageErrorContent = '*required'
-
-  React.useEffect(() => {
-    if (
-      !firstNameHasError &&
-      !lastNameHasError &&
-      !emailHasError &&
-      !ageHasError && age &&
-      firstName.length > 0 &&
-      lastName.length > 0
-    ) {
-      setFormIsValid(true)
-    } else {
-      setFormIsValid(false)
-    }
-  }, [firstName, lastName, age, ageHasError, firstNameHasError, lastNameHasError, emailHasError])
-
-  React.useEffect(() => {
-    if (
-      firstNameWasChanged ||
-      lastNameWasChanged ||
-      emailWasChanged ||
-      ageWasChanged ||
-      genderWasChanged ||
-      preferencesWasChanged ||
-      bioWasChanged ||
-      filePickerWasChanged
-    ) {
-      setFormWasChanged(true)
-    } else {
-      setFormWasChanged(false)
-    }
-  }, [
-    firstNameWasChanged,
-    lastNameWasChanged,
-    emailWasChanged,
-    ageWasChanged,
-    genderWasChanged,
-    preferencesWasChanged,
-    bioWasChanged,
-    filePickerWasChanged
-  ])
-
-  function onCancelButtonHandler(e) {
-    e.preventDefault()
-    navigate(-1, { replace: true })
-  }
-
-  let submitButtonStyles
-  if (formWasChanged && formIsValid)
-    submitButtonStyles = 'bg-green-600 hover:bg-green-500 text-white'
-  else if (formWasChanged && !formIsValid)
-    submitButtonStyles = 'bg-red-600 hover:bg-red-500 text-white'
-  else submitButtonStyles = 'bg-gray-600 text-gray-500'
-
-  /**
-   * Submit the Profile form
-   */
-  const { isSubmitting, submitError, submitProfile } = useSubmitProfile()
-
-  function getModalFeedback(data) {
-    if (!submitError) {
-      setModalContent(<>
-        <CheckCircleIcon className='inline w-5 text-green-500' />
-        {data.message}
-      </>)
-      dispatch(setIsProfiled()) // Set the proper state to be able to leave form
-    } else {
-      setModalContent(<>
-        <CheckCircleIcon className='inline w-5 text-green-500' />
-        {data.message}
-      </>)
-    }
-    // SET THE PROFILE PICTURE (If the user added one)
-    if (data.profilePic) props.setProfilePic(data.profilePic)
-
-    setModalIsOpen(true)
-
-    // Log out the user if she's not confirmed
-    if (!data.confirmed) dispatch(logout())
-  }
-
-  function closeFilePickerModalHandler() {
-    setModalIsOpen(false)
-    setFilePickerError(false)
-  }
-
-  // Submit profile
-  function submitHandler(e) {
-    e.preventDefault()
-
-    submitProfile(
-      accessToken,
-      {
-        firstName,
-        lastName,
-        email,
-        age,
-        genderValue,
-        preferencesValue,
-        bioValue,
-        files
-      },
-      getModalFeedback
-    )
-  }
-
-  if (gettingProfile && !errorGettingProfile)
-    return (
-      <div className='py-10 px-4'>
-        <p>Loading...</p>
-      </div>
-    )
-  else if (!gettingProfile && errorGettingProfile)
-    return (
-      <div className='py-10 px-4'>
-        <p>{errorGettingProfile}</p>
-      </div>
-    )
-
-  function closeModalHandler() {
-    setModalIsOpen(false)
-    navigate('/', { replace: true })
-  }
-
+  // CONTENT
+  if (isLoading && !error)
+    return (<p>Loading...</p>)
+  else if (!isLoading && error)
+    return (<p className='text-4xl text-white pt-20'>{error}</p>)
+  else if (user)
   return (
-    <div className='py-10 px-4'>
-      {modalIsOpen && (
-        <Modal closeModal={closeModalHandler}>
-          <p>{modalContent}</p>
-        </Modal>
-      )}
-      {filePickerError && (
-        <Modal closeModal={closeFilePickerModalHandler}>
-          <p>{filePickerError}</p>
-        </Modal>
-      )}
-      <h1 className='text-4xl font-bold text-center mb-8 text-white'>
-        {userName}
+    <div
+      className='bg-white p-4 rounded-lg my-8 mx-4 max-w-2xl'
+      id={user.userName}
+    >
+      <h1 className='text-gray-700 text-2xl font-bold text-center pt-6 pb-8'>
+        {user.userName}
       </h1>
-      <form
-        className='flex flex-col items-center w-full'
-        onSubmit={submitHandler}
-      >
-        <Input
-          label='firstName'
-          value={firstName}
-          onChange={firstNameChangeHandler}
-          onBlur={firstNameBlurHandler}
-          errorContent={firstNameErrorContent}
-        />
 
-        <Input
-          label='lastName'
-          value={lastName}
-          onChange={lastNameChangeHandler}
-          onBlur={lastNameBlurHandler}
-          errorContent={lastNameErrorContent}
-        />
+      <div className='h-96 bg-gray-800 rounded-lg mx-auto'>
+        {user.pics && user.pics.length > 0 ? (
+          <Carousel slide={false}>
+            {user.pics &&
+              user.pics.length > 0 &&
+              user.pics.map((pic, idx) => (
+                <img
+                  key={Math.random()}
+                  src={`/uploads/${user.id}/${pic}`}
+                  className=' object-cover h-96 sm:object-contain'
+                />
+              ))}
+          </Carousel>
+        ) : (
+          <UserCircleIcon className='text-white w-[50%] justify-center mx-auto' />
+        )}
+      </div>
 
-        <Input
-          label='email'
-          value={email}
-          onChange={emailChangeHandler}
-          onBlur={emailBlurHandler}
-          errorContent={emailErrorContent}
-        />
+      <div className='p-8 text-xl text-gray-700 space-y-3 flex flex-col'>
+        <p>
+          <span className='font-semibold'>Full name:</span> {user.firstName}{' '}
+          {user.lastName}
+        </p>
 
-        <Input
-          label='age'
-          value={age}
-          type='number'
-          onChange={ageChangeHandler}
-          onBlur={ageBlurHandler}
-          errorContent={ageErrorContent}
-        />
+        <p>
+          <span className='font-semibold'>Email: </span>
+          {user.email}
+        </p>
 
-        <Select
-          value={genderValue}
-          onChangeHandler={genderChangeHandler}
-          label='gender'
-          id='gender'
-          options={[
-            { value: 2, label: 'non-binary 🙅' },
-            { value: 1, label: 'man 🍆' },
-            { value: 0, label: 'woman 🍑' },
-          ]}
-          for='gender'
-        />
+        <p>
+          <span className='font-semibold'>Gender:</span>
+          {gender}
+        </p>
 
-        <Select
-          value={preferencesValue}
-          onChangeHandler={preferencesChangeHandler}
-          label='preferences'
-          id='preferences'
-          options={[
-            { value: 2, label: 'men & women 😏' },
-            { value: 1, label: 'only men 🕺' },
-            { value: 0, label: 'only women 💃' },
-          ]}
-          for='preferences'
-        />
+        <p>
+          <span className='font-semibold'>Prefers: </span>
+          {preferences}
+        </p>
 
-        <TextArea
-          label='about you'
-          for='bio'
-          id='bio'
-          value={bioValue}
-          rows='3'
-          onChangeHandler={bioChangeHandler}
-          charactersLeft={255 - bioValue.length}
-          maxLength={255}
-        />
+        <p>
+          <span className='font-semibold'>Age: </span>
+          {user.age}
+        </p>
 
-        <FilePicker
-          label='upload some pics'
-          name='picker'
-          onChangeFilePicker={filePickerChangeHandler}
-          files={files}
-          filesLeft={filesLeft}
-          onClickHandler={deletePic}
-        />
+        <p>
+          <span className='font-semibold'>Rated: </span>{user.rated} ⭐
+        </p>
 
-        <div className='flex flex-col md:flex-row space-y-10 md:space-y-0 mt-10 md:items-start'>
-          <button
-            disabled={!formIsValid}
-            className={`${submitButtonStyles} font-bold rounded-lg text-2xl w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed focus:ring-transparent md:ml-4 md:mr-12 md:mb-6 min-w-[240px]`}
-          >
-            Save Changes
-          </button>
+        <p className='pb-8'>
+          <span className='font-semibold'>Bio: </span>
+          {user.bio}
+        </p>
 
-          <button
-            className='bg-black text-white hover:bg-gray-800 font-bold rounded-lg text-2xl w-full sm:w-auto px-5 py-2.5 text-center cursor-pointer disabled:cursor-not-allowed focus:ring-transparent md:ml-4 md:mr-12 md:mb-6 min-w-[240px]'
-            onClick={onCancelButtonHandler}
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
+        <Link
+          to='/edit'
+          className='block w-full px-3 py-2 rounded-md bg-black text-white text-center hover:opacity-80 mx-auto'
+        >
+          Edit Profile Settings
+        </Link>
+      </div>
     </div>
   )
 }

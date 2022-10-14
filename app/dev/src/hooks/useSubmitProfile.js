@@ -58,7 +58,7 @@ function useSubmitProfile() {
           headers: {
             'Authorization': `Bearer ${accessToken}`
           },
-          refreshTokens: () => dispatch(refresh()),
+          refreshTokens: () => dispatch(refresh({ accessToken: args.accessToken })),
         })
       // console.log(resp.data) // testing
       // return

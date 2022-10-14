@@ -44,7 +44,7 @@ function Navbar(props) {
           <MenuItem title='test' route='test' />
           {isLoggedIn ? 
             (<>
-              <NavLink to={`profiles/${uid}`}>
+              <NavLink to='/settings'>
                 {imgElem}
               </NavLink>
 

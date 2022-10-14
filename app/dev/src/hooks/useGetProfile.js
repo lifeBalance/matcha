@@ -30,35 +30,37 @@ sendRequest.interceptors.response.use(
 )
 
 function useGetProfile() {
-  const [getError, setGetError] = React.useState(false)
-  const [isGetting, setIsGetting] = React.useState(false)
+  const [error, setError] = React.useState(false)
+  const [isLoading, setIsLoading] = React.useState(false)
   const dispatch = useDispatch()
 
-  const getProfile = React.useCallback(async function (args) {
-    setIsGetting(true)
+  const getProfile = async function (args) {
+    setIsLoading(true)
 
     try {
       const resp = await sendRequest({
         url: args.url,
         method: 'get',
-        params: { id: args.id }, // will be null when getting SETTINGS (id is in token)
         headers: { 'Authorization': `Bearer ${args.accessToken}` },
-        refreshTokens: () => dispatch(refresh({ accessToken: args.accessToken })),
+        refreshTokens: () => dispatch(refresh({ accessToken: args.accessToken }))
       })
       // console.log(resp.data) // testing
-      args.setUserState(resp.data)
-      // return resp.data
+      if (resp.data.error) {
+        // console.log(resp.data.error) // testing
+        setError(resp.data.error)
+      } else
+        args.setUserState(resp.data)
+      // return resp.data // no need to return anything.
     } catch (error) {
       console.log(error)
-      setGetError(true)
     } finally {
-      setIsGetting(false)
+      setIsLoading(false)
     }
-  }, [])
+  }
 
   return {
-    isGetting,
-    getError,
+    error,
+    isLoading,
     getProfile
   }
 }

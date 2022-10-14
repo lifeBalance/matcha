@@ -6,15 +6,15 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 // pages
 import Test from './pages/Test' // for testing!
 
-import Settings from './pages/Settings'
-import Profile from './pages/Profile'
-import ProfileList from './pages/ProfileList'
-import User from './pages/User'     // marked for deletion
-import Login from './pages/Login'
 import SignUp from './pages/SignUp'
+import Login from './pages/Login'
+import Settings from './pages/Settings'
+import SettingsForm from './pages/SettingsForm'
 import RequestPassword from './pages/RequestPassword'
 import ResetPassword from './pages/ResetPassword'
 import Confirm from './pages/Confirm'
+import ProfileList from './pages/ProfileList'
+import Profile from './pages/Profile'
 import PageNotFound from './pages/PageNotFound'
 
 // redux
@@ -72,8 +72,13 @@ function App() {
           />
 
           <Route
-            path='test'
-            element={<Test />}
+            path='/settings'
+            element={<Settings />}
+          />
+
+          <Route
+            path='/edit'
+            element={<SettingsForm setProfilePic={setProfilePic} />}
           />
 
           <Route
@@ -87,14 +92,10 @@ function App() {
           />
 
           <Route
-            path='/settings'
-            element={<Settings setProfilePic={setProfilePic} />}
-          />
-
-          <Route
             path='/forgot'
             element={<RequestPassword />}
           />
+
           <Route path='reset/:email/:token' element={<ResetPassword />} />
 
           {/* To Request an email with an  account confirmation link */}
@@ -104,8 +105,8 @@ function App() {
           <Route path='confirm/:useremail/:usertoken' element={<Confirm />} />
 
           <Route
-            path='/users/:id'
-            element={<User />}
+            path='test'
+            element={<Test />}
           />
 
           <Route

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNavigate, Link, useParams } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 // lodash is available thanks to the 'vite-plugin-imp' (a Vite's plugin)
 import { unescape } from 'lodash'
@@ -23,36 +23,37 @@ function Profile() {
   const [user, setUser] = React.useState(null)
   const { isLoggedIn, accessToken, uid } = useSelector((slices) => slices.auth)
   const navigate = useNavigate()
-  const { id: idParams } = useParams()
-  const { gettingProfile, errorGettingProfile, getProfile } = useGetProfile()
+  const {
+    error,
+    isLoading,
+    getProfile
+  } = useGetProfile()
 
-  function setUserState(data) {
+  let location = useLocation()
+
+  function setProfile(data) {
     setUser({
-      // id: data.profile.id,
-      userName:     data.profiles[0].username,
-      firstName:    data.profiles[0].firstname,
-      lastName:     data.profiles[0].lastname,
-      email:        data.profiles[0].email,
-      age:          data.profiles[0].age,
+      userName:     data.profile.username,
+      firstName:    data.profile.firstname,
+      lastName:     data.profile.lastname,
+      age:          data.profile.age,
       rated:        69, // hardcode for now
-      gender:       data.profiles[0].gender,
-      preferences:  data.profiles[0].prefers,
-      bio:          unescape(data.profiles[0].bio),
-      pics:         data.profiles[0].pics ?? [],
+      gender:       data.profile.gender,
+      preferences:  data.profile.prefers,
+      bio:          unescape(data.profile.bio),
+      pics:         data.pics,
     })
   }
-  // console.log(idParams, uid) // testing
-  // console.log(typeof(idParams), typeof(uid)) // testing
 
   // Redirect if the user is NOT logged in
   React.useEffect(() => {
     if (!isLoggedIn) navigate('/', { replace: true })
     else getProfile({
-      url: '/profiles',
-      id: idParams,
+      /*  The URL of the request will depend on 'location.pathname', meaning the
+        URL in the browser's address bar, something like '/profiles/69' */
+      url: location.pathname,
       accessToken,
-      // (data) => setUserState(data)
-      setUserState
+      setUserState: setProfile
     })
   }, [isLoggedIn])
 
@@ -66,87 +67,75 @@ function Profile() {
   else if (user?.preferences === 1) preferences = '🍆 (Males)'
   else preferences = '🍆 and 🍑 (Males and Females 😏)'
 
+  // CONTENT
+  if (isLoading && !error)
+    return (<p>Loading...</p>)
+  else if (!isLoading && error)
+    return (<p className='text-4xl text-white pt-20'>{error}</p>)
+  else if (user)
   return (
-    <>
-      {gettingProfile && !errorGettingProfile && !user && <p>Loading...</p>}
+    <div
+      className='bg-white p-4 rounded-lg my-8 mx-4 max-w-2xl'
+      id={user.userName}
+    >
+      <h1 className='text-gray-700 text-2xl font-bold text-center pt-6 pb-8'>
+        {user.userName}
+      </h1>
 
-      {!gettingProfile && errorGettingProfile && !user && (
-        <p>{errorGettingProfile}</p>
-      )}
-      {!errorGettingProfile && !gettingProfile && user && (
-        <div
-          className='bg-white p-4 rounded-lg my-8 mx-4 max-w-2xl'
-          id={user.userName}
-        >
-          <h1 className='text-gray-700 text-2xl font-bold text-center pt-6 pb-8'>
-            {user.userName}
-          </h1>
+      <div className='h-96 bg-gray-800 rounded-lg mx-auto'>
+        {user.pics && user.pics.length > 0 ? (
+          <Carousel slide={false}>
+            {user.pics &&
+              user.pics.length > 0 &&
+              user.pics.map((pic, idx) => (
+                <img
+                  key={Math.random()}
+                  src={`/uploads/${user.id}/${pic}`}
+                  className=' object-cover h-96 sm:object-contain'
+                />
+              ))}
+          </Carousel>
+        ) : (
+          <UserCircleIcon className='text-white w-[50%] justify-center mx-auto' />
+        )}
+      </div>
 
-          <div className='h-96 bg-gray-800 rounded-lg mx-auto'>
-            {user.pics && user.pics.length > 0 ? (
-              <Carousel slide={false}>
-                {user.pics &&
-                  user.pics.length > 0 &&
-                  user.pics.map((pic, idx) => (
-                    <img
-                      key={Math.random()}
-                      src={`/uploads/${user.id}/${pic}`}
-                      className=' object-cover h-96 sm:object-contain'
-                    />
-                  ))}
-              </Carousel>
-            ) : (
-              <UserCircleIcon className='text-white w-[50%] justify-center mx-auto' />
-            )}
-          </div>
+      <div className='p-8 text-xl text-gray-700 space-y-3 flex flex-col'>
+        <p>
+          <span className='font-semibold'>Full name:</span> {user.firstName}{' '}
+          {user.lastName}
+        </p>
 
-          <div className='p-8 text-xl text-gray-700 space-y-3 flex flex-col'>
-            <p>
-              <span className='font-semibold'>Full name:</span> {user.firstName}{' '}
-              {user.lastName}
-            </p>
-            {/* If the uid (state id) matches the id in the URL params,
-                render the user's email */}
-            {idParams == uid &&
-            <p>
-              <span className='font-semibold'>Email: </span>
-              {user.email}
-            </p>}
-            <p>
-              <span className='font-semibold'>Gender:</span>
-              {gender}
-            </p>
-            <p>
-              <span className='font-semibold'>Prefers: </span>
-              {preferences}
-            </p>
-            <p>
-              <span className='font-semibold'>Age: </span>
-              {user.age}
-            </p>
-            <p>
-              <span className='font-semibold'>Rated: </span>{user.rated} ⭐
-            </p>
-            <p className='pb-8'>
-              <span className='font-semibold'>Bio: </span>
-              {user.bio}
-            </p>
-            {idParams == uid ?
-              <Link
-                to='/settings'
-                className='block w-full px-3 py-2 rounded-md bg-black text-white text-center hover:opacity-80 mx-auto'
-              >
-                Profile Settings
-              </Link>
-            :
-              <UserProfileControls 
-                youLikeUser={true}
-                userLikesYou={true}
-              />}
-          </div>
-        </div>
-      )}
-    </>
+        <p>
+          <span className='font-semibold'>Gender:</span>
+          {gender}
+        </p>
+
+        <p>
+          <span className='font-semibold'>Prefers: </span>
+          {preferences}
+        </p>
+
+        <p>
+          <span className='font-semibold'>Age: </span>
+          {user.age}
+        </p>
+
+        <p>
+          <span className='font-semibold'>Rated: </span>{user.rated} ⭐
+        </p>
+
+        <p className='pb-8'>
+          <span className='font-semibold'>Bio: </span>
+          {user.bio}
+        </p>
+
+        <UserProfileControls 
+          youLikeUser={true}
+          userLikesYou={true}
+        />
+      </div>
+    </div>
   )
 }
 
