@@ -14,8 +14,7 @@ CREATE TABLE IF NOT EXISTS `users` (
     `age` INT UNSIGNED DEFAULT NULL,
     `gender` INT UNSIGNED DEFAULT 2,
     `prefers` INT UNSIGNED DEFAULT 2,
-    `bio` VARCHAR(255) DEFAULT NULL,
-    `profile_pic` VARCHAR(255) DEFAULT NULL
+    `bio` VARCHAR(255) DEFAULT NULL
 );
 
 -- CREATE TABLE IF NOT EXISTS `users` (
@@ -28,6 +27,21 @@ CREATE TABLE IF NOT EXISTS `users` (
 --     `confirmed` BOOLEAN NOT NULL DEFAULT 0
 -- );
 
+-- CREATE TABLE IF NOT EXISTS `profiles` (
+--     `id` INT UNSIGNED PRIMARY KEY NOT NULL,
+--     `age` INT UNSIGNED DEFAULT 18,
+--     `gender` INT UNSIGNED DEFAULT 2,
+--     `prefers` INT UNSIGNED DEFAULT 2,
+--     `bio` VARCHAR(255) DEFAULT '',
+--     `profile_pic` VARCHAR(255) DEFAULT ''
+-- );
+
+CREATE TABLE IF NOT EXISTS `pic_urls` (
+    `user_id` INT UNSIGNED NOT NULL,
+    `url` VARCHAR(255) NOT NULL,
+    `profile_pic` BOOLEAN DEFAULT FALSE
+);
+
 CREATE TABLE IF NOT EXISTS `refresh_tokens` (
     `user_id` INT UNSIGNED,
     `token_hash` VARCHAR(64) PRIMARY KEY NOT NULL,
@@ -39,15 +53,6 @@ CREATE TABLE IF NOT EXISTS `email_tokens` (
     `token_hash` VARCHAR(32) NOT NULL,
     `expires_at` INT UNSIGNED NOT NULL
 );
-
--- CREATE TABLE IF NOT EXISTS `profiles` (
---     `id` INT UNSIGNED PRIMARY KEY NOT NULL,
---     `age` INT UNSIGNED DEFAULT 18,
---     `gender` INT UNSIGNED DEFAULT 2,
---     `prefers` INT UNSIGNED DEFAULT 2,
---     `bio` VARCHAR(255) DEFAULT '',
---     `profile_pic` VARCHAR(255) DEFAULT ''
--- );
 
 CREATE TABLE IF NOT EXISTS `checked_users` (
     `id` INT UNSIGNED PRIMARY KEY NOT NULL,

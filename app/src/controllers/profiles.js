@@ -1,4 +1,5 @@
 const ProfileModel = require('../models/Profile')
+const PicModel = require('../models/Pic')
 const url = require('url')
 
 // Return a Single Resource(a profile identified by an ID)
@@ -35,9 +36,33 @@ exports.readOneProfile = async (req, res, next) => {
       return
     }
 
+    const [pics_arr, fieldsr] = await PicModel.readAll({
+      id: req.uid
+    })
+  
+    const pics = []
+    if (pics_arr.length > 0) for (const pic of pics_arr) pics.push(pic.url)
+  
+    console.log(profileArr[0]);
+    // Check if user has a Profile picture set in DB
+    const [prof_pic_arr, fields3] = await PicModel.readProfilePic({
+      id: req.params.id
+    })
+    console.log(prof_pic_arr[0].url);
+
+
     res.status(200).json({
-      profile: profileArr[0],
-      pics: [] // gotta read filesystem and send the urls...
+      profile: {
+        username: profileArr[0].usertname,
+        firstname: profileArr[0].firstname,
+        lastname: profileArr[0].lastname,
+        age: profileArr[0].age,
+        gender: profileArr[0].gender,
+        prefers: profileArr[0].prefers,
+        bio: profileArr[0].bio,
+        profile_pic_url: prof_pic_arr[0].url
+      },
+      pics: pics // gotta read filesystem and send the urls...
     })
   } catch (error) {
     console.log(error)

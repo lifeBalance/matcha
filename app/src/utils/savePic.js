@@ -1,19 +1,28 @@
 const fs = require('fs/promises')
 const path = require('path')
 
+const PicModel = require('../models/Pic')
+
 /**
- *  This function writes to the filesystem the image file received as argument.
+ *  This function does two things:
+ *
+ * 1. Writes to the filesystem the image file received as argument.
+ * 2. Writes to the Database the URL of the image file above.
+ * 
  *   - Args:
- *        - Image file (created by 'formidable' in /temp folder)
- *        - An absolute path where to write a copy of the file above (user's folder)
+ *        - pic: Image file (created by 'formidable' in /temp folder)
+ *        - uid: So we can build the absolute path to the user's Uploads folder.
+ *        - profile_pic: A boolean that indicates if the pic is the profile pic.
+ *
  *   - Returns: The URL (relative path) of the pic in the user's folder.
  */
-exports.savePic = async (pic, uid) => {
+exports.savePic = async (pic, uid, is_profile_pic) => {
   const userFolder = path.join(`${__dirname}/../../public/uploads/${uid}`)
 
-  // Probably add here a check for directory existence (fn would be more flexible)
-  // Create the directory for the user pics
-  await fs.mkdir(userFolder)
+  /*  If the picture is a Profile pic, it means the user still doesn't 
+    have a folder in /public/uploads, so let's create one. */
+  if (is_profile_pic)
+    await fs.mkdir(userFolder)
 
   // Read the first pic (the server placed it in a /temp folder)
   const content = await fs.readFile(pic.filepath, (err, e) => {
@@ -26,6 +35,13 @@ exports.savePic = async (pic, uid) => {
   // Write the pic to the user's folder
   await fs.writeFile(`${userFolder}/${pic.newFilename}.${ext}`, content)
 
-  // We return the relative URL; that's what written to the DB
+  // Write the URL to the DB.
+  await PicModel.writeOne({
+    uid,
+    url: `/uploads/${uid}/${pic.newFilename}.${ext}`,
+    profile_pic: is_profile_pic
+  })
+
+  // We return the relative URL, in case we want to send it in the response.
   return `/uploads/${uid}/${pic.newFilename}.${ext}`
 }

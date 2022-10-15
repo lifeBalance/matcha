@@ -53,13 +53,20 @@ exports.refresh = async (req, res, next) => {
     been revoked (she may have not logged in in a long time, so her Refresh
     token may still be valid, but she doesn't have an account in our 
     DB anymore. */
-    const [userArr, fields] = await AccountModel.readOne({ id: payload.sub })
+    const currentUser = await AccountModel.readOne({ id: payload.sub })
 
-    // If the DB returns an empty array, it means the username doesn't exist
-    if (!Array.isArray(userArr) || !userArr.length) {
-      res.status(401).json({ message: 'user does not exist' })
-      return
+    if (!currentUser) {
+      return res.status(204).json({
+        message: 'Sorry, requested user does not exist'
+      })
     }
+    // const [userArr, fields] = await AccountModel.readOne({ id: payload.sub })
+
+    // // If the DB returns an empty array, it means the username doesn't exist
+    // if (!Array.isArray(userArr) || !userArr.length) {
+    //   res.status(401).json({ message: 'user does not exist' })
+    //   return
+    // }
 
     // console.log(createHash('sha256').update(oldRefreshToken).digest('hex'))
     /* If the token is legit and the user exists, let's check the token is in
@@ -83,13 +90,13 @@ exports.refresh = async (req, res, next) => {
     /* If all is good:
       1. Generate a NEW Access Token: */
     const accessToken = jwt.sign({
-      sub:    userArr[0].id,
-      email:  userArr[0].email,
+      sub:    currentUser.id,
+      email:  currentUser.email,
     }, process.env.SECRET_JWT_KEY, { expiresIn: process.env.ACCESS_TOKEN_EXP})
 
     // 2. Generate a NEW Refresh Token
     const refreshToken = jwt.sign({
-      sub:    userArr[0].id,
+      sub:    currentUser.id,
     }, process.env.SECRET_JWT_KEY, { expiresIn: process.env.REFRESH_TOKEN_EXP})
 
     /* Let's extract the expiry time of the Refresh token from the claim,
@@ -110,7 +117,7 @@ exports.refresh = async (req, res, next) => {
     
     // Instantiate the RefreshToken model
     const RefreshToken = new RefreshTokenModel({
-      uid:        userArr[0].id,
+      uid:        currentUser.id,
       token_hash: refreshTokenHash,
       // (If I change MySQL to TIMESTAMP, use format = 'YYYY-MM-DD HH:MM:SS')
       expires_at: expiryRefreshToken // already in seconds ;-)
@@ -126,8 +133,8 @@ exports.refresh = async (req, res, next) => {
       res.status(200).json({
         message:      'tokens have been refreshed!',
         access_token: accessToken,
-        profiled:     userArr[0].profiled,
-        uid:          userArr[0].id
+        profiled:     currentUser.profiled,
+        uid:          currentUser.id
       })
       console.log('tokens have been refreshed!');
     } else {

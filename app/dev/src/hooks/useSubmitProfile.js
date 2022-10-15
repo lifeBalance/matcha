@@ -32,19 +32,19 @@ function useSubmitProfile() {
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const dispatch = useDispatch()
 
-  const submitProfile = React.useCallback(async function (accessToken, data = null, callback = null) {
+  const submitProfile = React.useCallback(async function (args) {
     setIsSubmitting(true)
     // console.log(data) // testing
 
     const formData = new FormData()
-    formData.append('firstname', data.firstName)
-    formData.append('lastname', data.lastName)
-    formData.append('age', data.age)
-    formData.append('email', data.email)
-    formData.append('gender', data.genderValue)
-    formData.append('prefers', data.preferencesValue)
-    formData.append('bio', data.bioValue)
-    data.files.forEach((pic, idx) => {
+    formData.append('firstname', args.firstName)
+    formData.append('lastname', args.lastName)
+    formData.append('age', args.age ?? '')
+    formData.append('email', args.email)
+    formData.append('gender', args.genderValue)
+    formData.append('prefers', args.preferencesValue)
+    formData.append('bio', args.bioValue ?? '')
+    args.files.forEach((pic, idx) => {
       formData.append(`pic${idx}`, pic)
     })
     /* for(let pair of formData.entries()) {
@@ -56,20 +56,22 @@ function useSubmitProfile() {
         formData,
         {
           headers: {
-            'Authorization': `Bearer ${accessToken}`
+            'Authorization': `Bearer ${args.accessToken}`
           },
-          refreshTokens: () => dispatch(refresh({ accessToken: args.accessToken })),
+          refreshTokens: () => dispatch(refresh({
+            accessToken: args.accessToken
+          }))
         })
       // console.log(resp.data) // testing
-      // return
 
       setSubmitError(false) // we use this just to choose the proper Icon :-)
-      callback(resp.data)
+      args.callback(resp.data)
       // return resp.data
     } catch (error) {
-      console.log(error.response?.data) // testing
+      console.log(error.response) // testing
+      // console.log(error.response?.data) // testing
       setSubmitError(true)
-      callback(error.response.data)
+      args.callback(error.response?.data)
     } finally {
       setIsSubmitting(false)
     }

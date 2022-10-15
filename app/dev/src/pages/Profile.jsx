@@ -90,7 +90,7 @@ function Profile() {
               user.pics.map((pic, idx) => (
                 <img
                   key={Math.random()}
-                  src={`/uploads/${user.id}/${pic}`}
+                  src={pic}
                   className=' object-cover h-96 sm:object-contain'
                 />
               ))}

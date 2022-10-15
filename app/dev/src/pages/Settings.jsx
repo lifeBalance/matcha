@@ -22,7 +22,6 @@ function Settings() {
   const [user, setUser] = React.useState(null)
   const { isLoggedIn, accessToken, uid } = useSelector((slices) => slices.auth)
   const navigate = useNavigate()
-  const { id: idParams } = useParams()
   const {
     error,
     isLoading,
@@ -41,7 +40,7 @@ function Settings() {
       gender:       data.gender,
       preferences:  data.prefers,
       bio:          unescape(data.bio),
-      pics:         data.pics ?? [],
+      pics:         data.pics,
     })
   }
 
@@ -89,7 +88,7 @@ function Settings() {
               user.pics.map((pic, idx) => (
                 <img
                   key={Math.random()}
-                  src={`/uploads/${user.id}/${pic}`}
+                  src={pic}
                   className=' object-cover h-96 sm:object-contain'
                 />
               ))}

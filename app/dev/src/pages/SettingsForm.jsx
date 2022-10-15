@@ -125,11 +125,12 @@ function SettingsForm(props) {
     setFirstName(data.firstname)
     setLastName(data.lastname)
     setEmail(data.email)
-    setAge(data.age)
+    data.age ? setAge(data.age) : setAge('')
     setGenderValue(data.gender)
     setPreferencesValue(data.prefers)
     setBioValue(unescape(data.bio))
-    setFilesLeft(data.filesLeft)
+    // data.bio ? setBioValue(unescape(data.bio)) : setBioValue()
+    setFilesLeft(5 - data.pics.length)
   }
 
   React.useEffect(() => {
@@ -264,20 +265,18 @@ function SettingsForm(props) {
   function submitHandler(e) {
     e.preventDefault()
 
-    submitProfile(
+    submitProfile({
       accessToken,
-      {
-        firstName,
-        lastName,
-        email,
-        age,
-        genderValue,
-        preferencesValue,
-        bioValue,
-        files
-      },
-      getModalFeedback
-    )
+      firstName,
+      lastName,
+      email,
+      age,
+      genderValue,
+      preferencesValue,
+      bioValue,
+      files,
+      callback: getModalFeedback
+    })
   }
 
   if (gettingProfile && !errorGettingProfile)

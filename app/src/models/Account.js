@@ -23,7 +23,7 @@ module.exports = class Account {
     ])
   }
 
-  static readOne(object) {
+  static async readOne(object) {
     let val
     let sql
 
@@ -38,7 +38,10 @@ module.exports = class Account {
       sql = 'SELECT * FROM users WHERE username = ?'
     }
 
-    return pool.execute(sql, [val]) // returns empty array or [ { username: ...} ]
+    // The execute method returns two Arrays: one with the results and 'fields'.
+    const [arr, fields] = await pool.execute(sql, [val]) // returns empty array or [ { username: ...} ]
+    // console.log('USER: ' + JSON.stringify(arr)) // testing
+    return (arr.length === 0) ? null : arr[0]
   }
 
   static confirmAccount(data) {
