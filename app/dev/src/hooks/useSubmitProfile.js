@@ -8,23 +8,25 @@ import { refresh } from '../store/authSlice'
 const sendRequest = axios.create()
 
 sendRequest.interceptors.response.use(
-  response => response, // Returning the response is ESSENTIAL!!
-
-  error => {
-    if (error.response.status === 401) {
-      // console.log('JWTs were Silently Refreshed!');
-      return error.response.config.refreshTokens()
+  response => {
+    if (response.data.type === 'ERROR' &&
+        response.data.message === 'jwt expired')
+    {
+      // console.log('JWTs were Silently Refreshed!') // testing
+      // console.log(response) // testing
+      return response.config.refreshTokens()
         .then(resp => {
-          error.response.config.headers = {
+          response.config.headers = {
             'Authorization': `Bearer ${resp.payload.access_token}`
           }
-
-          return axios.request(error.response.config)
+          return axios.request(response.config)
         })
         .catch(e => console.log(e))
     }
-    return Promise.reject(error)
-  }
+    // If all goes smooth, the interceptor just returns the response.
+    return response
+  },
+  error => Promise.reject(error)
 )
 
 function useSubmitProfile() {

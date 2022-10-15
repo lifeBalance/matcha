@@ -10,28 +10,25 @@ const fetchProfiles = axios.create({
 })
 
 fetchProfiles.interceptors.response.use(
-  // If all goes smooth, the interceptor just returns the response.
-  response => response, // Returning the response is ESSENTIAL!!
-
-  /*   If the ininital request errors with a 401, the interceptor sends
-    a new request to the /api/refresh endpoint to get a new pair of tokens.
-    Then it resends the original request for user profiles with the
-    new refreshed tokens. */
-  error => {
-    if (error.response.status === 401) {
-      // console.log('JWTs were Silently Refreshed!')  // testing
-      return error.response.config.refreshTokens()
+  response => {
+    if (response.data.type === 'ERROR' &&
+        response.data.message === 'jwt expired')
+    {
+      // console.log('JWTs were Silently Refreshed!') // testing
+      // console.log(response) // testing
+      return response.config.refreshTokens()
         .then(resp => {
-          error.response.config.headers = {
+          response.config.headers = {
             'Authorization': `Bearer ${resp.payload.access_token}`
           }
-
-          return axios.request(error.response.config)
+          return axios.request(response.config)
         })
         .catch(e => console.log(e))
     }
-    return Promise.reject(error)
-  }
+    // If all goes smooth, the interceptor just returns the response.
+    return response
+  },
+  error => Promise.reject(error)
 )
 
 function useGetProfileList(params) {
