@@ -2,7 +2,7 @@ import React from 'react'
 import { useNavigate } from 'react-router-dom'
 
 // hooks
-import useUsers from '../hooks/useUsers'
+import useGetProfileList from '../hooks/useGetProfileList'
 
 // components
 import Hero from '../components/Hero'
@@ -30,13 +30,13 @@ function ProfileList() {
   // For paginated results
   const [page, setPage] = React.useState(1)
 
-  // Users in the list state
+  // Profile list state
   const {
-    users,
-    getUsers,
-    isLoadingUsers,
-    errorLoadingUsers
-  } = useUsers()
+    profiles,
+    getProfileList,
+    isLoadingProfiles,
+    errorLoadingProfiles
+  } = useGetProfileList()
 
   function setProfiledState(data) {
     setIsProfiled(data)
@@ -44,7 +44,7 @@ function ProfileList() {
 
   /* When the page loads (or when the user logs out), we run the hook */
   React.useEffect(() => {
-    if (isLoggedIn) getUsers({ accessToken, page, setProfiledState })
+    if (isLoggedIn) getProfileList({ accessToken, page, setProfiledState })
   }, [isLoggedIn, page])
 
   // If the user is not logged in, we just return the Hero content
@@ -52,23 +52,22 @@ function ProfileList() {
 
   let content // a variable to take logic out from the JSX
 
-  if (isLoadingUsers) content = <p>Loading...</p>
-  else if (users && users.length > 0 && !errorLoadingUsers && !isLoadingUsers)
+  if (isLoadingProfiles) content = <p>Loading...</p>
+  else if (profiles && profiles.length > 0 && !errorLoadingProfiles && !isLoadingProfiles)
     content = (
-      <ul className='space-y-2'>
-        {users.map((user) => (
-          <UserMiniCard
-            user={user}
-            key={user.id}
-          />
-        ))}
-      </ul>
-    )
-  else if (!users && errorLoadingUsers) content = <p>{errorLoadingUsers}</p>
+    <ul className='space-y-6'>
+      {profiles.map((user) => (
+        <UserMiniCard
+          user={user}
+          key={user.id}
+        />
+      ))}
+    </ul>)
+  else if (!profiles && errorLoadingProfiles)
+    content = <p>{errorLoadingProfiles}</p>
 
   return (
-    <div className='flex flex-col'>
-      <h1 className='text-2xl font-bold text-center'>Users</h1>
+    <div className='flex flex-col pt-6'>
       {content}
 
       <button

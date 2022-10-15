@@ -30,7 +30,9 @@ exports.authorize = (req, res, next) => {
         and send a 401 status code, to trigger a "silent token refresh" 
         in the front-end. */
       if (error.name === 'TokenExpiredError') {
-        return res.status(401).json({ message: 'expired access token'})
+        return res.status(401).json({
+          type: 'ERROR',
+          message: 'expired access token'})
       }
       // For any other token verification error, party stops here with 403.
       else res.status(403).json({ message: error })

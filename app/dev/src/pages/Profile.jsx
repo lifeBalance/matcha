@@ -41,7 +41,7 @@ function Profile() {
       gender:       data.profile.gender,
       preferences:  data.profile.prefers,
       bio:          unescape(data.profile.bio),
-      pics:         data.pics,
+      pics:         data.profile.pics,
     })
   }
 

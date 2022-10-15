@@ -5,11 +5,11 @@ import axios from 'axios'
 import { useDispatch } from 'react-redux'
 import { refresh } from '../store/authSlice'
 
-const fetchUsers = axios.create({
+const fetchProfiles = axios.create({
   baseURL: '/api',
 })
 
-fetchUsers.interceptors.response.use(
+fetchProfiles.interceptors.response.use(
   // If all goes smooth, the interceptor just returns the response.
   response => response, // Returning the response is ESSENTIAL!!
 
@@ -34,17 +34,17 @@ fetchUsers.interceptors.response.use(
   }
 )
 
-function useUsers(params) {
-  const [users, setUsers] = React.useState([])
-  const [isLoadingUsers, setIsLoadingUsers] = React.useState(false)
-  const [errorLoadingUsers, setErrorLoadingUsers] = React.useState(false)
+function useGetProfileList(params) {
+  const [profiles, setProfiles] = React.useState([])
+  const [isLoadingProfiles, setIsLoadingProfiles] = React.useState(false)
+  const [errorLoadingProfiles, setErrorLoadingProfiles] = React.useState(false)
   const dispatch = useDispatch()
 
-  async function getUsers(args) {
-    setIsLoadingUsers(true)
+  async function getProfileList(args) {
+    setIsLoadingProfiles(true)
 
     try {
-      const response = await fetchUsers({
+      const response = await fetchProfiles({
         url: '/profiles',
         method: 'get',
         params: { page: args.page },
@@ -61,21 +61,21 @@ function useUsers(params) {
       args.setProfiledState(response.data.profiled)
       // setUsers(prevState => [...prevState, ...response.data])
       if (response.data.profiled)
-        setUsers(prevState => [...prevState, ...response.data.profiles].filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i))
+        setProfiles(prevState => [...prevState, ...response.data.profiles].filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i))
     } catch (error) {
-      return setErrorLoadingUsers(error.response.data)
-      // return setErrorLoadingUsers(error.response.data.error.message)
+      return setErrorLoadingProfiles(error.response.data)
+      // return setErrorLoadingProfiles(error.response.data.error.message)
     } finally {
-      setIsLoadingUsers(false)
+      setIsLoadingProfiles(false)
     }
   }
 
   return {
-    users,
-    getUsers,
-    isLoadingUsers,
-    errorLoadingUsers,
+    profiles,
+    getProfileList,
+    isLoadingProfiles,
+    errorLoadingProfiles,
   }
 }
 
-export default useUsers
+export default useGetProfileList

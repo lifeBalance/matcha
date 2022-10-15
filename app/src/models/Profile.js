@@ -16,13 +16,14 @@ module.exports = class Profile {
     return pool.execute(sql, [id]) // returns Empty Array or [ { id: ...} ]
   }
 
-  static readOne({ id }) {
+  static async readOne({ id }) {
     const sql =`
     SELECT
     username, firstname, lastname, age, gender, prefers, bio
     FROM users WHERE id = ?`
 
-    return pool.execute(sql, [id]) // returns Empty Array or [ { id: ...} ]
+    const [arr, fields] = await pool.execute(sql, [id])
+    return (arr.length > 0) ? arr[0] : null
   }
 
   static readAll() {

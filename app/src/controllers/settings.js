@@ -7,9 +7,7 @@ const PicModel = require('../models/Pic')
 // Utility for generate Email token and send Account Confirmation email
 const { tokenAndEmail } = require('../utils/tokenAndEmail')
 
-// For doing filesystem stuff
-const fs = require('fs')
-const path = require('path')
+// For saving pics to DB and filesystem
 const { savePic } = require('../utils/savePic')
 
 // Returns Email field and UID after authenticating user's Access Token
@@ -29,21 +27,7 @@ exports.getSettings = async (req, res, next) => {
 
   // Pull from the DB ALL of the pic URLs (including the one for the Profile)
   const pics = await PicModel.readAll({ id: currentUser.id })
-  // const profile_pic_url = (prof_pic_arr.length > 0) ?
-  //   prof_pic_arr[0].url : null
 
-  // Pull from the DB ALL of the pic URLs (including the one for the Profile)
-  // const [pics_arr, fieldsr] = await PicModel.readAll({
-  //   id: req.uid
-  // })
-  // We initialize 'pics' to an empty array.
-  // const pics = []
-  /* If there are any pics in the DB, we write their URLs to 'pics'; 
-  otherwise stays empty.*/
-  // if (pics_arr.length > 0) for (const pic of pics_arr) pics.push(pic.url)
-
-  // console.log('PROFILE PIC: '+ profile_pic_url)
-  // console.log(pics)
   const fakeBio = 'Some users prefer to keep an air of mistery about themselves...'
   // Send Account information to prepopulate fields in the Profile form.
   res.status(200).json({
