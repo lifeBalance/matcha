@@ -60,5 +60,6 @@ module.exports = class Pic {
 
     const [arr, fields] = await pool.execute(sql, [uid, url, profile_pic])
     console.log('FIELDS: ' + JSON.stringify(fields))
+    console.log('ARR: ' + JSON.stringify(arr))
   }
 }

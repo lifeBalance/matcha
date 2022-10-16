@@ -50,7 +50,10 @@ function SettingsForm(props) {
 
   React.useEffect(() => {
     if (isProfiled === 0) {
-      setModalContent('Please, fill your profile to get the party started!')
+      setModalContent(<>
+        <HandRaisedIcon className='inline w-5 -mt-1 text-orange-300' />
+        Please, fill your profile to get the party started!
+      </>)
       setModalIsOpen(true)
     }
   }, [])
@@ -142,7 +145,7 @@ function SettingsForm(props) {
     setGenderValue(data.gender)
     setPreferencesValue(data.prefers)
     setBioValue(unescape(data.bio))
-    setFilesLeft(5 - data.pics.length)
+    setFilesLeft(data.pics_left)
   }
 
   React.useEffect(() => {

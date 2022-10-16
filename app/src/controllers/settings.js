@@ -41,7 +41,8 @@ exports.getSettings = async (req, res, next) => {
     prefers:      currentUser.prefers,
     bio:          currentUser.bio || fakeBio,
     profile_pic:  profile_pic_url,
-    pics:         pics
+    pics:         pics,
+    pics_left:    5 - pics.length 
   })
 }
 

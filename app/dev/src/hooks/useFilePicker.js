@@ -1,9 +1,9 @@
 import React from 'react'
 
-function useFilePicker(maxFiles) {
+function useFilePicker() {
   const [files, setFiles] = React.useState([])
   const [filePickerWasChanged, setFilePickerWasChanged] = React.useState(false)
-  const [filesLeft, setFilesLeft] = React.useState(maxFiles)
+  const [filesLeft, setFilesLeft] = React.useState(5)
   const [filePickerError, setFilePickerError] = React.useState(false)
 
   function uniqueBy(filesArray, key = `name`) {
@@ -36,16 +36,14 @@ function useFilePicker(maxFiles) {
     })
 
     setFiles(prevState => uniqueBy(prevState.concat(cleanFiles)))
+    setFilesLeft(prev => prev - addedFiles.length)
     // setFiles(prevState => uniqueBy(prevState.concat(...e.target.files)))
     // setFilePickerError(false) // Do that from the UI (Closing the Modal)
   }
 
-  React.useEffect(() => {
-    setFilesLeft(maxFiles - files.length)
-  }, [files])
-
   function deletePic(toDelete) {
     setFiles((prevState) => prevState.filter(file =>file.name !== toDelete))
+    setFilesLeft(prev => prev + 1)
   }
 
   return {
