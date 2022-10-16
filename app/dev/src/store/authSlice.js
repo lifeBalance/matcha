@@ -105,7 +105,7 @@ const authSlice = createSlice({
 
       if (action.payload.type === 'ERROR') {
         state.errorLoggingIn = true
-        action.meta.arg.openModal(action.payload.message)
+        action.meta.arg.openModal(action.payload)
         return
       }
       state.isLoggedIn = true

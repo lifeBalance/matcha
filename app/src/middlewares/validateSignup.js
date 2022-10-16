@@ -19,7 +19,10 @@ exports.validateSignup = (req, res, next) => {
     !validateEmail(req.body.email) ||
     !validatePassword(req.body.password))
   {
-    res.status(400).json({ message: 'bad request' })
+    res.status(200).json({
+      type: 'ERROR',
+      message: 'bad request'
+    })
     return
   }
   next()

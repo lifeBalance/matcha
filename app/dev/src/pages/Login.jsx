@@ -69,6 +69,7 @@ function Login() {
 
   // pass this function to the reducer to open the modal ;-)
   function openModal(data) {
+    console.log(data.type);
     setModalContent(data.message)
     if (data.type === 'ERROR' || (data.type === 'SUCCESS' && isProfiled))
       setModalIsOpen(true)

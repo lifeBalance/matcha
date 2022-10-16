@@ -7,26 +7,32 @@ module.exports = class EmailToken {
     this.expires_at   = data.expires_at
   }
 
-  create() {
+  async create() {
     const sql = `INSERT INTO email_tokens (email, token_hash, expires_at)
     VALUES (?, ?, ?)`
 
-    return pool.execute(sql, [
+    const [ret, fields] = await pool.execute(sql, [
       this.email,
       this.token_hash,
       this.expires_at
     ])
+
+    return (ret.affectedRows === 1) ? true : false
   }
 
-  static read(data) {
+  static async read(data) {
     const sql = `SELECT * FROM email_tokens WHERE email = ?`
 
-    return pool.execute(sql, [data.email]) // returns array
+    const [ret, fields] =  pool.execute(sql, [data.email])
+
+    return (ret.affectedRows === 1) ? true : false
   }
 
-  static delete(data) {
+  static async delete(data) {
     const sql = `DELETE FROM email_tokens WHERE email = ?`
 
-    return pool.execute(sql, [data.email]) // returns array
+    const [ret, fields] = await pool.execute(sql, [data.email])
+
+    return (ret.affectedRows === 1) ? true : false
   }
 }

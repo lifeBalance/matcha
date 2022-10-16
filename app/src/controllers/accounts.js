@@ -29,7 +29,8 @@ const transporter = nodemailer.createTransport({
   }
 })
 
-// Creates a Single Resource (user account) and returns it in the response (if all went well).
+/*  Creates a Single Resource (user account) and returns
+  it as an object in the response (if all went well).*/
 exports.create = async (req, res, next) => {
   try {
     const {
@@ -40,19 +41,24 @@ exports.create = async (req, res, next) => {
       password
     } = req.body
 
-    // Check if username exists in DB (shenanigans, bc we check for that in UI)
-    const [rowArr, fieldsArr] = await AccountModel.readOne({ email })
-    // console.log(rowArr.length > 0) // testing
-    if (rowArr.length > 0) {
-      res.status(409).json({ message: `${rowArr[0].email} already exists in our Database.` })
-      return
+    /*  Check if username exists in DB. This is just in case the user 
+      used an email that already exists in our DB (we don't check for that 
+      in our UI. */
+    const emailExists = await AccountModel.readOne({ email })
+    if (emailExists) {
+      return res.status(200).json({
+        type: 'ERROR',
+        message: `${email} already exists in our Database.`
+      })
     }
 
-    // Check if username exists in DB (shenanigans, bc we check for that in UI)
-    const [rowArr2, fieldsArr2] = await AccountModel.readOne({ username })
-    if (rowArr2.length > 0) {
-      res.status(400).json({ message: 'bad request' })
-      return
+    // Check if username exists in DB (BS, we do check for that in the UI!)
+    const usernameExists = await AccountModel.readOne({ username })
+    if (usernameExists) {
+      return res.status(200).json({
+        type: 'ERROR',
+        message: 'bad request'
+      })
     }
 
     // Let's hash the password before writing it to the DB
@@ -68,16 +74,18 @@ exports.create = async (req, res, next) => {
       pwd_hash
     })
 
-    // We could use the DB response, to check affectedRows, insertId, etc...
-    const [dbResp, _] = await account.create()
-    if (dbResp.affectedRows === 1) // It means we updated the row in 'accounts'
+    // The create method returns true/false (success/failure creating account).
+    const accountCreated = await account.create()
+    if (accountCreated)
     {
-      // console.log('uid: ' + dbResp.insertId)  // testing
       // Generate Email Token Hash
       const emailTokenHash = crypto.randomBytes(16).toString('hex')
 
-      // Delete old Email token from DB (if any). Can only be one per email!
-      await EmailTokenModel.delete({ email })
+      /* Delete old Email token from DB (if any). This can only happen if some 
+        user generated a token for her email address, then changed her address, 
+        and for some reason the token was not deleted and remained in DB.
+        Can only be one per email! */
+      await EmailTokenModel.delete({ email }) // Really remote chance!
 
       const unixtimeInSeconds = Math.floor(Date.now() / 1000)
       // console.log(unixtimeInSeconds + eval(process.env.EMAIL_TOKEN_EXP)) // test
@@ -89,7 +97,13 @@ exports.create = async (req, res, next) => {
         expires_at: unixtimeInSeconds + eval(process.env.EMAIL_TOKEN_EXP)
       })
       // Invoke method to write the Email Token to DB
-      emailToken.create()
+      const emailTokenCreated = await emailToken.create()
+
+      if (!emailTokenCreated)
+        return res.status(200).json({
+          type: 'ERROR',
+          message: 'Sorry, there was some issue generating your confirmation link!',
+        })
 
       // Set Email options
       const mailOptions = {
@@ -101,6 +115,7 @@ exports.create = async (req, res, next) => {
         Please, click <a href="http://localhost/confirm/${email}/${emailTokenHash}" >here</a> to confirm your account!
         </p>`
       }
+
       // Send Account Confirmation Email
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) console.log(error)
@@ -108,9 +123,14 @@ exports.create = async (req, res, next) => {
       })
 
       // console.log('account id: ' + dbResp.insertId) // testing
-      res.status(200).json({ message: 'Account successfully created. Check your email for confirmation!'})
+      res.status(200).json({
+        type: 'SUCCESS',
+        message: 'Account successfully created. Check your email for confirmation!',
+      })
     } else {
-      res.status(400).json({ message: 'bad request' })
+      res.status(200).json({
+        type: 'ERROR',
+        message: 'Something went wrong.' })
     }
   } catch(error) {
     console.log(error)
@@ -119,12 +139,13 @@ exports.create = async (req, res, next) => {
 }
 
 exports.readUsername = async (req, res, next) => {
-  const [username, _] = await AccountModel.readOne({
+  const username = await AccountModel.readOne({
     username: req.query.username
   })
-  // username is an array, which could be empty or contain a user object
-  if (username.length === 0) {
-    res.status(200).json({ available: true })
+
+  // If the username doesn't exist in the DB, 'username' will be null.
+  if (!username) {
+    return res.status(200).json({ available: true })
     // console.log(username + ' available') // testing
   } else {
     res.status(200).json({ available: false })

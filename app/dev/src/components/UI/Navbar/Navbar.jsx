@@ -15,7 +15,10 @@ import { logout } from '../../../store/authSlice'
 
 //icons
 import { UserCircleIcon } from '@heroicons/react/24/solid'
-import { ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline'
+import {
+  ArrowRightOnRectangleIcon,
+  ArrowLeftOnRectangleIcon
+} from '@heroicons/react/24/outline'
 
 // hooks
 // import useGetProfilePic from '../../../hooks/useGetProfilePic'
@@ -53,7 +56,7 @@ function Navbar(props) {
             :
             (<>
               {location.pathname !== '/login' && <NavLink to='login'>
-                <ArrowRightOnRectangleIcon className='text-gray-400 hover:text-green-400 hover:cursor-pointer w-10' />
+                <ArrowLeftOnRectangleIcon className='text-gray-400 hover:text-green-400 hover:cursor-pointer w-10' />
               </NavLink>}
             </>)
           }

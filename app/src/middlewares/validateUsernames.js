@@ -5,7 +5,10 @@ exports.validateUsernames = (req, res, next) => {
   if (!req.query.hasOwnProperty('username') ||
       !validateUsername(req.query.username))
   {
-    res.status(400).json({ message: 'bad request' })
+    res.status(200).json({
+      type: 'ERROR',
+      message: 'bad request'
+    })
     return
   }
   next()

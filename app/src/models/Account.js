@@ -9,18 +9,20 @@ module.exports = class Account {
     this.pwd_hash   = data.pwd_hash
   }
 
-  create() {
+  async create() {
     const sql = `INSERT INTO users (
       username, firstname, lastname, email, pwd_hash
     ) VALUES (?, ?, ?, ?, ?)`
 
-    return pool.execute(sql, [
+    const [ret, fields] = await pool.execute(sql, [
       this.username,
       this.firstname,
       this.lastname,
       this.email,
       this.pwd_hash
     ])
+
+    return (ret.affectedRows === 1) ? true : false
   }
 
   static async readOne(object) {
@@ -44,8 +46,10 @@ module.exports = class Account {
     return (arr.length === 0) ? null : arr[0]
   }
 
-  static confirmAccount(data) {
+  static async confirmAccount(data) {
     const sql = 'UPDATE users SET confirmed = 1 WHERE email = ?'
-    return pool.execute(sql, [data.email])
+    const [ret, fields] = await pool.execute(sql, [data.email])
+    
+    return (ret.affectedRows === 1) ? true : false
   }
 }
