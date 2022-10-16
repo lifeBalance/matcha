@@ -1,6 +1,6 @@
 exports.validateUsername = (str) => {
-  // Between 2-10 characters: uppercase, lowercase and digits
-  const regex = /^[A-Z\d\-_]{2,10}$/
+  // Between 2-11 characters: uppercase, lowercase and digits
+  const regex = /^[A-Z\d\-_]{2,11}$/
   return str.toUpperCase().trim().match(regex)
 }
 

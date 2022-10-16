@@ -81,7 +81,7 @@ function Login() {
   if (usernameHasError)
     usernameErrorContent = (<>
       <HandRaisedIcon styles='w-5' />
-      Between 2 and 10 characters. No spaces (Can use _ and -).
+      Between 2 and 11 characters. No spaces (Can use _ and -).
     </>)
 
   let passwordErrorContent 

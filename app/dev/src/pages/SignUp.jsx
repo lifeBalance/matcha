@@ -157,7 +157,7 @@ function SignUp() {
   let usernameErrorContent 
   if (username.length > 0 && usernameHasError) {
     usernameErrorContent = (<>
-      <HandRaisedIcon className='inline w-5 text-yellow-300' /> Between 2 and 10 characters. No spaces. Can use _ and -.
+      <HandRaisedIcon className='inline w-5 text-yellow-300' /> Between 2 and 11 characters. No spaces. Can use _ and -.
     </>)
   } else if (username.length > 0 && !usernameHasError) {
     usernameErrorContent = usernameAvailable ?
