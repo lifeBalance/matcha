@@ -15,9 +15,14 @@ function useConfirm() {
         data: data
       })
 
-      // console.log(resp.data.message) // testing
-      setConfirmError(false)
-      callback(resp.data.message)
+      // console.log(resp.data) // testing
+      if (resp.data.type === 'ERROR') {
+        setConfirmError(true)
+        callback(resp.data.message)
+      } else {
+        setConfirmError(false)
+        callback(resp.data.message)
+      }
     } catch (error) {
       setConfirmError(true)
       if (error.response.data.message) {

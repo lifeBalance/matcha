@@ -11,14 +11,12 @@ function useSignupForm() {
     try {
       const resp = await axios.post(url, formRawData)
 
-      setSubmitError(false)
+      // console.log(resp.data) // testing
       if (resp.data.type === 'ERROR') {
         setSubmitError(true)
-        // console.log(resp.data) // testing
         callbackModal(resp.data.message)
       } else {
         setSubmitError(false)
-        // console.log(resp.data) // testing
         callbackModal(resp.data.message)
       }
     } catch (error) {

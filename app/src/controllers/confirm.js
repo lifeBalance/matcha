@@ -23,30 +23,59 @@ const transporter = nodemailer.createTransport({
 
 exports.confirm = async (req, res, next) => {
   try {
-    // Check if the Email token exists in the DB
-    const [rowArr, fields] = await EmailTokenModel.read({ email: req.body.email})
+    const account = await AccountModel.readOne({ email: req.body.email})
 
-    // If the DB returns an empty array, it means there's no token to that email.
-    if (!Array.isArray(rowArr) || !rowArr.length) {
-      res.status(400).json({ message: 'invalid token' })
+    if (account?.confirmed) {
+      return res.status(200).json({
+        type: 'ERROR',
+        message: 'Your account was already confirmed. You can log in!'
+      })
+    }
+
+    // Check if the Email token exists in the DB
+    const emailToken = await EmailTokenModel.read({ email: req.body.email})
+
+    /* If there's no token in the DB linked to that email, or if the token
+      received in the request parameters doesn't match the one in the DB */
+    if (!emailToken || emailToken.token_hash !== req.body.token) {
       // console.log({ message: 'invalid token' }) // testing
-      return
+      return res.status(200).json({
+        type: 'ERROR',
+        message: 'invalid token'
+      })
     }
 
     // Check if the token is expired.
-    if (rowArr[0].expires_at < Math.floor(Date.now() / 1000)) {
-      res.status(400).send({ message: 'expired token' })
+    if (emailToken.expires_at < Math.floor(Date.now() / 1000)) {
       // console.log({ message: 'expired token' }) // testing
-      return
+      return res.status(200).send({
+        type: 'ERROR',
+        message: 'expired token'
+      })
     }
 
     // If all's good, delete the used token,
     await EmailTokenModel.delete({ email: req.body.email })
+
     // confirm the user account,
-    const [rowArr2, fields2] = await AccountModel.confirmAccount({ email: req.body.email })
+    const accountConfirmed = await AccountModel.confirmAccount({
+      email: req.body.email
+    })
+
     // and send feedback in the response.
-    res.status(200).send({ message: 'account has been confirmed. You can log in.' })
-    // console.log(`Confirmed ${JSON.stringify(rowArr2.affectedRows)}`) // testing
+    if (accountConfirmed) {
+      // console.log(`ACCOUNT Confirmed `) // testing
+      return res.status(200).send({
+        type: 'SUCCESS',
+        message: 'account has been confirmed. You can log in.'
+      })
+    } else {
+      // console.log(`ACCOUNT NOT Confirmed `) // testing
+      return res.status(200).send({
+        type: 'ERROR',
+        message: 'sorry, our server is busy. Try a bit later ;-)'
+      })
+    }
   } catch(error) {
     console.log(error)
     next(error)
@@ -57,21 +86,23 @@ exports.requestEmail = async (req, res, next) => {
   try {
     const email = req.body.email
     // Check if the Email exists in the DB
-    const [rowArr, fields] = await AccountModel.readOne({ email })
+    const account = await AccountModel.readOne({ email })
 
-    // If the DB returns an empty array, it means there's no user to that email.
-    if (!Array.isArray(rowArr) || !rowArr.length) {
-      res.status(400).json({ message: 'invalid email' })
+    // If the DB returns false, it means there's no user to that email.
+    if (!account) {
       // console.log({ message: 'invalid email' }) // testing
-      return
+      return res.status(200).json({
+        type: 'ERROR',
+        message: 'invalid email'
+      })
     }
 
     // Check if the user's account is already confirmed!
-    if (rowArr[0].confirmed) {
-      res.status(200).json({
-        message: 'Your account was already confirmed. You can log in'
+    if (account.confirmed) {
+      return res.status(200).json({
+        type: 'ERROR',
+        message: 'Your account is already confirmed. You can log in'
       })
-      return
     }
 
     // If is not, delete any preexisting token,
@@ -79,6 +110,7 @@ exports.requestEmail = async (req, res, next) => {
 
     // Generate Email Token Hash
     const emailTokenHash = crypto.randomBytes(16).toString('hex')
+
     // Compute current Unix time
     const unixtimeInSeconds = Math.floor(Date.now() / 1000)
 
@@ -90,8 +122,14 @@ exports.requestEmail = async (req, res, next) => {
     })
 
     // Invoke method to write the Email Token to DB
-    emailToken.create()
-    
+    const emailTokenCreated = await emailToken.create()
+
+    if (!emailTokenCreated)
+      return res.status(200).json({
+        type: 'ERROR',
+        message: 'Sorry, there was some issue generating your confirmation link!',
+      })
+
     // Set the email options,
     const mailOptions = {
       from: process.env.WEBADMIN_EMAIL_ADDRESS,
@@ -109,8 +147,10 @@ exports.requestEmail = async (req, res, next) => {
     })
 
     // and send feedback in the response.
-    res.status(200).send({ message: "email's on its way. Sit tight!" })
-    console.log(`Email sent ${JSON.stringify(rowArr2)}`)
+    res.status(200).send({
+      type: 'SUCCESS',
+      message: "email's on its way. Sit tight!"
+    })
   } catch(error) {
     console.log(error)
     next(error)

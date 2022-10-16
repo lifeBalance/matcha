@@ -7,15 +7,15 @@ const confirmController = require('../controllers/confirm')
 
 // validator for email (same code as in React front-end)
 const {
-  validateConfirmation
-} = require('../middlewares/validateConfirmation')
+  validateConfirmationParams
+} = require('../middlewares/validateConfirmationParams')
 
 const {
   validateConfirmationRequest
 } = require('../middlewares/validateConfirmationRequest')
 
 // PUT => /api/confirm (for confirming account)
-router.put('/confirm', confirmController.confirm)
+router.put('/confirm', validateConfirmationParams, confirmController.confirm)
 
 // POST => /api/confirm (requests for an email with account confirmation link)
 router.post('/confirm', validateConfirmationRequest, confirmController.requestEmail)

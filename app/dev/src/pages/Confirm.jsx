@@ -37,7 +37,7 @@ function Confirm(props) {
   React.useEffect(() => {
     if (useremail && usertoken) {
       setConfirmAccount(true)
-      console.log(useremail, usertoken)  // testing
+      // console.log(useremail, usertoken)  // testing
       confirm('/api/confirm', 'put', {
         email: useremail,
         token: usertoken

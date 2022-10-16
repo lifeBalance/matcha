@@ -16,16 +16,22 @@ module.exports = class EmailToken {
       this.token_hash,
       this.expires_at
     ])
-
-    return (ret.affectedRows === 1) ? true : false
+    if (ret.affectedRows === 1) {
+      return { 
+        email: this.email,
+        token_hash: this.token_hash,
+        expires_at: this.expires_at
+      }
+    } else return false
   }
 
   static async read(data) {
     const sql = `SELECT * FROM email_tokens WHERE email = ?`
 
-    const [ret, fields] =  pool.execute(sql, [data.email])
+    const [arr, _] = await pool.execute(sql, [data.email])
 
-    return (ret.affectedRows === 1) ? true : false
+    console.log('arr' + JSON.stringify(arr));
+    return (arr.length > 0) ? arr[0] : false
   }
 
   static async delete(data) {
