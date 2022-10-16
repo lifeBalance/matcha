@@ -12,24 +12,27 @@ import UserMiniCard from '../components/UserMiniCard'
 import { useSelector } from 'react-redux'
 
 function ProfileList() {
-  // return (<p> user profiles will go here</p>) // MAINTENANCE WORK BEING DONE!!
-  const navigate = useNavigate()
-  const [isProfiled, setIsProfiled] = React.useState(null)
-
   const {
+    isProfiled,
     isLoggedIn,
     accessToken
   } = useSelector((slices) => slices.auth)
 
-  React.useEffect(() => {
-    if (isProfiled === 0) navigate('/settings', { replace: true })
-    // getProfilePic(accessToken, setProfilePic) // why are we getting profile pic here???
-    // }, [profilePic, isLoggedIn, accessToken])
-  }, [isProfiled])
-
   // For paginated results
   const [page, setPage] = React.useState(1)
+  
+  const navigate = useNavigate()
 
+  /* If the user is logged in but not profiled, we redirect to Settings form */
+  React.useEffect(() => {
+    if (isLoggedIn && isProfiled === 0) navigate('/edit', { replace: true })
+  }, [isProfiled, isLoggedIn])
+
+  /* When the page loads (or when the user logs out), we run the hook */
+  React.useEffect(() => {
+    if (isLoggedIn && accessToken) getProfileList({ accessToken, page })
+  }, [isLoggedIn, accessToken, page])
+  
   // Profile list state
   const {
     profiles,
@@ -37,15 +40,6 @@ function ProfileList() {
     isLoadingProfiles,
     errorLoadingProfiles
   } = useGetProfileList()
-
-  function setProfiledState(data) {
-    setIsProfiled(data)
-  }
-
-  /* When the page loads (or when the user logs out), we run the hook */
-  React.useEffect(() => {
-    if (isLoggedIn) getProfileList({ accessToken, page, setProfiledState })
-  }, [isLoggedIn, page])
 
   // If the user is not logged in, we just return the Hero content
   if (!isLoggedIn) return (<Hero />)

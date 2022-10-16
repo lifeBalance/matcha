@@ -27,6 +27,7 @@ import useGetProfile from './hooks/useGetProfile'
 
 function App() {
   const dispatch = useDispatch()
+
   const {
     isLoggingIn,
     isLoggedIn,

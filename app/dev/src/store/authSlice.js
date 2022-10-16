@@ -119,7 +119,7 @@ const authSlice = createSlice({
         state.uid = action.payload.uid
         state.isProfiled = action.payload.profiled
         // The callback we passed to the extraReducer is under action.meta.arg!
-        action.meta.arg.openModal(action.payload.message)
+        action.meta.arg.openModal(action.payload)
       }
     },
     [login.rejected]: (state, action) => {

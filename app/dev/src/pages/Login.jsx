@@ -27,7 +27,12 @@ import { validateUsername, validatePassword } from '../utils/validators'
 function Login() {
   // Redux
   const dispatch = useDispatch()
-  const { isLoggedIn, isLoggingIn, errorLoggingIn } = useSelector(slices => slices.auth)
+  const {
+    isLoggedIn,
+    isLoggingIn,
+    isProfiled,
+    errorLoggingIn
+  } = useSelector(slices => slices.auth)
 
   const navigate = useNavigate()
 
@@ -63,9 +68,12 @@ function Login() {
   let formIsValid = !usernameHasError && !passwordHasError
 
   // pass this function to the reducer to open the modal ;-)
-  function openModal(msg) {
-    setModalContent(msg)
-    setModalIsOpen(true)
+  function openModal(data) {
+    setModalContent(data.message)
+    if (data.type === 'ERROR' || (data.type === 'SUCCESS' && isProfiled))
+      setModalIsOpen(true)
+    else if (data.type === 'SUCCESS' && !isProfiled)
+      navigate('/', { replace: true })
   }
 
   function submitHandler(e) {

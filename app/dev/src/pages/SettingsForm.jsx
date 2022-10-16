@@ -32,6 +32,14 @@ import {
 } from '../utils/validators'
 
 function SettingsForm(props) {
+  // redux
+  const {
+    accessToken,
+    isLoggedIn,
+    isProfiled,
+    uid
+  } = useSelector((slices) => slices.auth)
+
   const [modalContent, setModalContent] = React.useState('')
   const [modalIsOpen, setModalIsOpen] = React.useState(false)
   const [userName, setUserName] = React.useState('')
@@ -40,8 +48,13 @@ function SettingsForm(props) {
   const [formWasChanged, setFormWasChanged] = React.useState(false)
   const navigate = useNavigate()
 
-  // redux
-  const { accessToken, isLoggedIn, uid } = useSelector((slices) => slices.auth)
+  React.useEffect(() => {
+    if (isProfiled === 0) {
+      setModalContent('Please, fill your profile to get the party started!')
+      setModalIsOpen(true)
+    }
+  }, [])
+
   const dispatch = useDispatch()
 
   const {
@@ -129,7 +142,6 @@ function SettingsForm(props) {
     setGenderValue(data.gender)
     setPreferencesValue(data.prefers)
     setBioValue(unescape(data.bio))
-    // data.bio ? setBioValue(unescape(data.bio)) : setBioValue()
     setFilesLeft(5 - data.pics.length)
   }
 
@@ -239,6 +251,7 @@ function SettingsForm(props) {
       </>)
        // Set the proper state to be able to leave form
       dispatch(setIsProfiled())
+
       // Invoke the Profile Pic state using Setter (passed down in the props object)
       props.setProfilePic(data.profile_pic)
     } else {
@@ -294,7 +307,7 @@ function SettingsForm(props) {
 
   function closeModalHandler() {
     setModalIsOpen(false)
-    navigate('/', { replace: true })
+    if (isProfiled) navigate('/', { replace: true })
   }
 
   return (

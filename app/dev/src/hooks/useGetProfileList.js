@@ -41,6 +41,10 @@ function useGetProfileList(params) {
     setIsLoadingProfiles(true)
 
     try {
+      /*  Next line is crucial to protect the App from 
+        errors caused by the user Reloading the Browser. */
+      if (!args.accessToken) return
+
       const response = await fetchProfiles({
         url: '/profiles',
         method: 'get',
@@ -55,12 +59,11 @@ function useGetProfileList(params) {
       // console.log('profiled? ' + JSON.stringify(response.data.profiled)); // testing
       // console.log('typeof ' + typeof(response.data.profiled)); // testing
       // console.log('data ' + JSON.stringify(response.data)); // testing
-      args.setProfiledState(response.data.profiled)
-      // setUsers(prevState => [...prevState, ...response.data])
+
       if (response.data.profiled)
         setProfiles(prevState => [...prevState, ...response.data.profiles].filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i))
     } catch (error) {
-      return setErrorLoadingProfiles(error.response.data)
+      return setErrorLoadingProfiles(error.response?.data)
       // return setErrorLoadingProfiles(error.response.data.error.message)
     } finally {
       setIsLoadingProfiles(false)
