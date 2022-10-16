@@ -26,33 +26,27 @@ exports.login = async (req, res, next) => {
     })
 
     if (!currentUser) {
-      return res.status(204).json({
+      return res.status(200).json({
+        type: 'ERROR',
         message: 'Sorry, requested user does not exist'
       })
     }
-    // const [account, _] = await AccountModel.readOne({
-    //   username: req.body.username
-    // })
-
-    // If the DB returns an empty array, it means the username doesn't exist
-    // if (!Array.isArray(account) || !account.length) {
-    //   res.status(401).json({ message: 'wrong username' })
-    //   return
-    // }
 
     bcrypt.compare(req.body.password, currentUser.pwd_hash, (err, result) => {
       if (result == false) {
-        res.status(401).json({ message: 'wrong password' })
-        return
+        return res.status(200).json({ 
+          type: 'ERROR',
+          message: 'Wrong password.'
+        })
       }
     })
 
     // If the user's account is NOT confirmed
     if (!currentUser.confirmed) {
-      res.status(401).json({
+      return res.status(200).json({
+        type: 'ERROR',
         message: 'Please, confirm your account before logging in.'
       })
-      return
     }
 
     // Generate the access_token
@@ -94,6 +88,7 @@ exports.login = async (req, res, next) => {
 
     // Send the access_token in the response body
     res.status(200).json({
+      type: 'SUCCESS',
       message: 'Successfully logged in!',
       access_token: accessToken,
       profiled:     currentUser.profiled,
