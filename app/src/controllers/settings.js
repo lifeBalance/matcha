@@ -1,7 +1,6 @@
 // To create/update Profile Settings (one model could deal with several tables).
 const SettingsModel = require('../models/Settings')
-// Let's pull also the account model to pull the user's email
-const AccountModel = require('../models/Account')
+// Let's pull also the Pic model for the profile pictures
 const PicModel = require('../models/Pic')
 
 // Utility for generate Email token and send Account Confirmation email
@@ -12,34 +11,37 @@ const { savePic } = require('../utils/savePic')
 
 // Returns Email field and UID after authenticating user's Access Token
 exports.getSettings = async (req, res, next) => {
-  const currentUser = await AccountModel.readOne({ id: req.uid })
+  const settings = await SettingsModel.readSettings({ id: req.uid })
 
-  if (!currentUser) {
-    return res.status(204).json({
+  if (!settings) {
+    return res.status(200).json({
+      type: 'ERROR',
       message: 'Sorry, requested user does not exist'
     })
   }
-  /* If the user has a Profile pic, we assign it to this variable;
-  otherwise we set is as null (falsey value) */
+  // console.log('SETTINGS: '+JSON.stringify(settings))  // testing
+
+  /* The 'readProfilePicUrl' method returns the URL of the user's profile pic
+  (If the user has a Profile pic) otherwise, null (falsey value) */
   const profile_pic_url = await PicModel.readProfilePicUrl({
-    id: currentUser.id
+    id: req.uid
   })
 
   // Pull from the DB ALL of the pic URLs (including the one for the Profile)
-  const pics = await PicModel.readAll({ id: currentUser.id })
+  const pics = await PicModel.readAll({ id: req.uid })
 
   const fakeBio = 'Some users prefer to keep an air of mistery about themselves...'
   // Send Account information to prepopulate fields in the Profile form.
   res.status(200).json({
-    uid:          currentUser.id, // send it just in case...
-    username:     currentUser.username,
-    firstname:    currentUser.firstname,
-    lastname:     currentUser.lastname,
-    email:        currentUser.email,
-    age:          currentUser.age,
-    gender:       currentUser.gender,
-    prefers:      currentUser.prefers,
-    bio:          currentUser.bio || fakeBio,
+    uid:          req.uid, // send it just in case...
+    username:     settings.username,
+    firstname:    settings.firstname,
+    lastname:     settings.lastname,
+    email:        settings.email,
+    age:          settings.age,
+    gender:       settings.gender,
+    prefers:      settings.prefers,
+    bio:          settings.bio || fakeBio,
     profile_pic:  profile_pic_url,
     pics:         pics,
     pics_left:    5 - pics.length 

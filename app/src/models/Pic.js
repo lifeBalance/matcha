@@ -45,7 +45,7 @@ module.exports = class Pic {
         0: An ARRAY with the rows (could be an empty array).
         1: A fields OBJECT (metadata about the query result). */
     const [arr, fields] = await pool.execute(sql, [id])
-    // console.log('ARR: '+ JSON.stringify(arr.length)) // testing
+    // console.log('PIC model, ARR: '+ JSON.stringify(arr.length)) // testing
     return arr.length // We return just the amount of pics in the array.
   }
 

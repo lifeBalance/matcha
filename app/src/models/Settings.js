@@ -17,6 +17,20 @@ module.exports = class Settings {
     this.confirmed    = data.confirmed
   }
 
+  static async readSettings({ id }) {
+    const sql =`
+    SELECT
+    username, firstname, lastname, email, age, gender, prefers, bio, confirmed, profiled
+    FROM users WHERE id = ?`
+
+    /* SELECT returns an ARRAY with two elements:
+        0: An ARRAY with the rows (could be an empty array).
+        1: A fields OBJECT (metadata about the query result). */
+    const [arr, fields] = await pool.execute(sql, [id])
+
+    return (arr.length > 0) ? arr[0] : false
+  }
+
   // If the user is creating her profile, she's profiled! (set it to 1 ;-)
   async update() {
     const sql = `UPDATE users SET

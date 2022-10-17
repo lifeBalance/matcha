@@ -1,6 +1,6 @@
 const ProfileModel = require('../models/Profile')
+const SettingsModel = require('../models/Settings')
 const PicModel = require('../models/Pic')
-const url = require('url')
 
 // Return a Single Resource(a profile identified by an ID)
 exports.readOneProfile = async (req, res, next) => {
@@ -11,7 +11,8 @@ exports.readOneProfile = async (req, res, next) => {
    */
   if (req.uid == req.params.id) {
     return res.status(200).json({
-      error: 'Sorry, user not found :-('
+      type: 'ERROR',
+      message: 'Sorry, user not found :-('
     })
   }
   // console.log('ID of user requesting profile: ' + req.uid) // testing
@@ -35,7 +36,7 @@ exports.readOneProfile = async (req, res, next) => {
 
 
     return res.status(200).json({
-      status: 'SUCCESS',
+      type: 'SUCCESS',
       message: 'there you go champ',
       profile: {
         username: profile.username,
@@ -59,23 +60,31 @@ exports.readOneProfile = async (req, res, next) => {
 exports.readAllProfiles = async (req, res, next) => {
   try {
     // Don't forget to check if the user requesting profiles is profiled!
-    const [ownProfileArr, fields] = await ProfileModel.readOwn({ id: req.uid })
-
+    const settings = await SettingsModel.readSettings({ id: req.uid })
     // console.log(JSON.stringify(ownProfileArr)) // testing
 
-    // If the user is not profiled, we don't send the Profile list in the 
-    // response. Instead we just send that is NOT PROFILED!
-    if (!ownProfileArr[0].profiled) {
-      // console.log('is profiled? '+ownProfileArr[0].profiled)
-      res.status(200).json({ profiled: ownProfileArr[0].profiled })
-      return
+    /* If the user requesting profiles is not profiled, we don't send her
+      the Profile list. */
+    if (!settings.profiled || !settings.confirmed) {
+      // console.log('is profiled? '+settings.profiled)
+      return res.status(200).json({
+        type:       'ERROR',
+        message:    'Sorry, you are not authorized to check other profiles',
+        profiled:   settings.profiled,
+        confirmed:  settings.confirmed,
+      })
     }
+    /* Here we have to add things such as pagination, filters, etc. */
+    // console.log('PAGE: '+JSON.stringify(req.params))
 
-    const [profiles, fields2] = await ProfileModel.readAll()
+    // Read all profiles, except the one of the user making the request!!!
+    const profileList = await ProfileModel.readAll({ id: req.uid})
     // console.log('is profiled? '+ownProfileArr[0].profiled)
-    res.status(200).json({ 
-      profiles: profiles,
-      profiled: ownProfileArr[0].profiled // We need this in both cases
+    res.status(200).json({
+      type: 'SUCCESS',
+      profiles: profileList,
+      profiled: settings.profiled, // We need this in both cases
+      confirmed: settings.confirmed
     })
   } catch(error) {
     console.log(error)

@@ -7,15 +7,6 @@ const pool = require('../db/dbPool')
 module.exports = class Profile {
   constructor(data) {}
 
-  static readOwn({ id }) {
-    const sql =`
-    SELECT
-    username, firstname, lastname, email, age, gender, prefers, bio, profiled
-    FROM users WHERE id = ?`
-
-    return pool.execute(sql, [id]) // returns Empty Array or [ { id: ...} ]
-  }
-
   static async readOne({ id }) {
     const sql =`
     SELECT
@@ -23,12 +14,15 @@ module.exports = class Profile {
     FROM users WHERE id = ?`
 
     const [arr, fields] = await pool.execute(sql, [id])
-    return (arr.length > 0) ? arr[0] : null
+    return (arr.length > 0) ? arr[0] : null // mb FALSE is better here?
   }
 
-  static readAll() {
-    const sql = 'SELECT * FROM users'
+  static async readAll(data) {
+    const { id } = data
+    const sql = 'SELECT * FROM users WHERE id != ?'
 
-    return pool.execute(sql)
+    const [arr, fields] = await pool.execute(sql, [id])
+
+    return (arr.length > 0) ? arr : false
   }
 }

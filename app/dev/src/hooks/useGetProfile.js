@@ -45,10 +45,10 @@ function useGetProfile() {
         headers: { 'Authorization': `Bearer ${args.accessToken}` },
         refreshTokens: () => dispatch(refresh({ accessToken: args.accessToken }))
       })
+
       // console.log(resp.data) // testing
-      if (resp.data.error) {
-        // console.log(resp.data.error) // testing
-        setError(resp.data.error)
+      if (resp.data.type === 'ERROR') {
+        setError(resp.data.message)
       } else
         args.setUserState(resp.data)
       // return resp.data // no need to return anything.
