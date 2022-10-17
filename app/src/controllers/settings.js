@@ -120,17 +120,20 @@ exports.updateSettings = async (req, res, next) => {
 
       /* Create a shallow copy of the req.pics array to iterate over it,
       to save up the rest of the submitted pictures (if any) */
-      if (req.pics.length > 1) req.pics = req.pics.slice(1)
-      // console.log('REMAINING PICS: ' + JSON.stringify(req.pics)) // testing
-    }
+      if (req.pics.length > 1) req.remainingPics = req.pics.slice(1)
+      // console.log('REMAINING PICS: ' + JSON.stringify(req.remainingPics)) // testing
+    } else
+      req.remainingPics = req.pics
     
     /* Let's count how many pics in total the user already has in DB. */
     const picsAmount = await PicModel.countPics({ id: currentUser.id })
+
     // Check we don't surpass the 5 pics limit.
     const filesLeft = 5 - picsAmount
+
     // If there are more pics in the submitted form, save them too!
-    if (req.pics && req.pics.length > 0 && filesLeft > 0) {
-      for (const pic of req.pics) {
+    if (req.remainingPics && req.remainingPics.length > 0 && filesLeft > 0) {
+      for (const pic of req.remainingPics) {
         await savePic(pic, currentUser.id, false)
       }
     }

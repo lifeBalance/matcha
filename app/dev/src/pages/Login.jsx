@@ -71,10 +71,10 @@ function Login() {
   function openModal(data) {
     // console.log(data.type) // testing
     setModalContent(data.message)
-    if (data.type === 'ERROR' || (data.type === 'SUCCESS' && isProfiled))
+    if (data.type === 'ERROR' || (data.type === 'SUCCESS' && data.profiled))
       setModalIsOpen(true)
-    else if (data.type === 'SUCCESS' && !isProfiled)
-      navigate('/', { replace: true })
+    else if (data.type === 'SUCCESS' && !data.profiled)
+      navigate('/edit', { replace: true })
   }
 
   function submitHandler(e) {

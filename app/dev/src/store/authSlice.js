@@ -117,7 +117,7 @@ const authSlice = createSlice({
       state.errorLoggingIn = false
 
       // console.log(action) // testing
-      // console.log(action.payload); // testing
+      // console.log(action.payload) // testing
       if (action.payload) {
         localStorage.setItem('accessToken', action.payload.access_token)
         state.accessToken = action.payload.access_token
