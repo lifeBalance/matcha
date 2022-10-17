@@ -74,17 +74,19 @@ exports.refresh = async (req, res, next) => {
     const oldRefreshTokenHash = createHash('sha256')
       .update(oldRefreshToken)
       .digest('hex')
-    const [rowArr, fields2] = await RefreshTokenModel.read(oldRefreshTokenHash)
+    const refreshTokenExists = await RefreshTokenModel.read(oldRefreshTokenHash)
 
     /* If the DB returns an empty array, it means the token is not whitelisted,
     because maybe the user used it and was removed (or may be a stolen token)*/
-    if (!Array.isArray(rowArr) || !rowArr.length) {
-      res.status(400).json({ message: 'bad request' })
-      return
+    if (!refreshTokenExists) {
+      return res.status(200).json({
+        type: 'ERROR',
+        message: 'bad request'
+      })
     } else {
-      const [delArr, fields3] = await RefreshTokenModel.delete(oldRefreshTokenHash)
-      if (delArr.affectedRows)
-        console.log('Old Refresh Token was deleted')
+      const tokenWasDeleted = await RefreshTokenModel.delete(oldRefreshTokenHash)
+      // if (tokenWasDeleted)
+      //   console.log('Old Refresh Token was deleted') // testing
     }
     // res.status(200).json('found it') // testing
     /* If all is good:
@@ -123,22 +125,26 @@ exports.refresh = async (req, res, next) => {
       expires_at: expiryRefreshToken // already in seconds ;-)
     })
     // Store the Refresh Token in DB, by invoking the create method on the instance
-    const ret = await RefreshToken.create()
+    const tokenWasCreated = await RefreshToken.create()
     // console.log('ret: ' + JSON.stringify(ret)) // testing
 
-    if (ret[0].affectedRows === 1) {
+    if (tokenWasCreated) {
       // Delete the old Refresh Token
       // await RefreshToken.delete({ token: oldRefreshTokenHash })
       // Send the access_token in the response body
       res.status(200).json({
+        type:         'SUCCESS',
         message:      'tokens have been refreshed!',
         access_token: accessToken,
         profiled:     currentUser.profiled,
         uid:          currentUser.id
       })
-      console.log('tokens have been refreshed!');
+      // console.log('tokens have been refreshed!')  // testing
     } else {
-      res.status(401).json({ message: 'wrong password' })
+      res.status(200).json({
+        type:     'ERROR',
+        message:  'Refresh token could not be stored in DB'
+      })
     }
   } catch(error) {
     console.log(error)
