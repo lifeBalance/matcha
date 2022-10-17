@@ -38,7 +38,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 CREATE TABLE IF NOT EXISTS `pic_urls` (
     `user_id` INT UNSIGNED NOT NULL,
-    `url` VARCHAR(255) NOT NULL,
+    `url` VARCHAR(255) PRIMARY KEY NOT NULL,
     `profile_pic` BOOLEAN DEFAULT FALSE
 );
 
@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS `refresh_tokens` (
 
 CREATE TABLE IF NOT EXISTS `email_tokens` (
     `email` VARCHAR(255) UNIQUE NOT NULL,
-    `token_hash` VARCHAR(32) NOT NULL,
+    `token_hash` VARCHAR(32) PRIMARY KEY NOT NULL,
     `expires_at` INT UNSIGNED NOT NULL
 );
 
