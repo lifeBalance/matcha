@@ -40,6 +40,7 @@ const profilesRoutes = require('./src/routes/profiles')
 const settingsRoutes = require('./src/routes/settings')
 const confirmRoutes = require('./src/routes/confirm')
 const refreshRoutes = require('./src/routes/refresh')
+const resetRoutes = require('./src/routes/reset')
 
 const testsRoutes = require('./src/routes/tests')
 
@@ -49,6 +50,7 @@ app.use('/api', profilesRoutes)   // check own and other users profiles
 app.use('/api', settingsRoutes)   // create/update OWN Profile
 app.use('/api', confirmRoutes)    // for confirming account
 app.use('/api', refreshRoutes)    // for silently refreshing tokens
+app.use('/api', resetRoutes)      // for resetting passwords
 
 app.use('/api', testsRoutes) // testing stuff
 

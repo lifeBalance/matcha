@@ -5,19 +5,19 @@ const router = express.Router()
 
 const confirmController = require('../controllers/confirm')
 
-// validator for email (same code as in React front-end)
+// Middlewares
 const {
-  validateConfirmationParams
-} = require('../middlewares/validateConfirmationParams')
+  validateEmailRequestForm
+} = require('../middlewares/validateEmailRequestForm')
 
 const {
-  validateConfirmationRequest
-} = require('../middlewares/validateConfirmationRequest')
+  validateLinkParams
+} = require('../middlewares/validateLinkParams')
+
+// POST => /api/confirm (requests for emails with account confirmation links)
+router.post('/confirm', validateEmailRequestForm, confirmController.requestEmail)
 
 // PUT => /api/confirm (for confirming account)
-router.put('/confirm', validateConfirmationParams, confirmController.confirm)
-
-// POST => /api/confirm (requests for an email with account confirmation link)
-router.post('/confirm', validateConfirmationRequest, confirmController.requestEmail)
+router.put('/confirm', validateLinkParams, confirmController.confirm)
 
 module.exports = router

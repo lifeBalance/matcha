@@ -2,7 +2,7 @@ const {
   validateEmail
 } = require('../utils/validators')
 
-exports.validateConfirmationParams = (req, res, next) => {
+exports.validateLinkParams = (req, res, next) => {
   if (!req.hasOwnProperty('body')       ||
       !req.body.hasOwnProperty('email') ||
       !req.body.hasOwnProperty('token') ||

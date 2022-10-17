@@ -34,6 +34,7 @@ exports.login = async (req, res, next) => {
     }
 
     bcrypt.compare(req.body.password, currentUser.pwd_hash, (err, result) => {
+      console.log('WRONG PASSWORD DAWG!') // testing
       if (result == false) {
         return res.status(200).json({ 
           type: 'ERROR',

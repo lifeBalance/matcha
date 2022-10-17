@@ -30,7 +30,7 @@ module.exports = class EmailToken {
 
     const [arr, _] = await pool.execute(sql, [data.email])
 
-    // console.log('arr' + JSON.stringify(arr));
+    console.log('arr' + JSON.stringify(arr));
     return (arr.length > 0) ? arr[0] : false
   }
 

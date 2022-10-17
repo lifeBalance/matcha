@@ -133,7 +133,7 @@ function ResetPassword() {
 
   function closeModalHandler() {
     setModalIsOpen(false)
-    // if (!requestError)
+    if (!requestError)
       navigate('/', { replace: true })
   }
 

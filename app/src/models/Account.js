@@ -52,4 +52,12 @@ module.exports = class Account {
     
     return (ret.affectedRows === 1) ? true : false
   }
+
+  static async resetPassword(data) {
+    const sql = 'UPDATE users SET pwd_hash = ? WHERE email = ?'
+    const [fields, _] = await pool.execute(sql, [data.pwd_hash, data.email])
+
+    // console.log('fields: '+ JSON.stringify(fields)) // testing
+    return (fields.affectedRows === 1) ? true : false
+  }
 }
