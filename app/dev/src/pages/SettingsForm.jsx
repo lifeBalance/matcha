@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 
 // redux
 import { useSelector, useDispatch } from 'react-redux'
-import { logout, setIsProfiled } from '../store/authSlice'
+import { setIsConfirmed, setIsProfiled } from '../store/authSlice'
 
 // hooks
 import useInput from '../hooks/useInput'
@@ -254,6 +254,7 @@ function SettingsForm(props) {
       </>)
        // Set the proper state to be able to leave form
       dispatch(setIsProfiled())
+      dispatch(setIsConfirmed(data.confirmed))
 
       // Invoke the Profile Pic state using Setter (passed down in the props object)
       props.setProfilePic(data.profile_pic)
@@ -264,12 +265,12 @@ function SettingsForm(props) {
       </>)
     }
     // SET THE PROFILE PICTURE (If the user added one)
-    if (data.profilePic) props.setProfilePic(data.profilePic)
+    // if (data.profilePic) props.setProfilePic(data.profilePic)
 
     setModalIsOpen(true)
 
     // Log out the user if she's not confirmed
-    if (!data.confirmed) dispatch(logout())
+    // if (data.confirmed === 0) dispatch(logout())
   }
 
   function closeFilePickerModalHandler() {

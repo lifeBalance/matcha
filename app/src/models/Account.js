@@ -43,7 +43,7 @@ module.exports = class Account {
     // The execute method returns two Arrays: one with the results and 'fields'.
     const [arr, fields] = await pool.execute(sql, [val]) // returns empty array or [ { username: ...} ]
     // console.log('USER: ' + JSON.stringify(arr)) // testing
-    return (arr.length === 0) ? null : arr[0]
+    return (arr.length === 0) ? false : arr[0]
   }
 
   static async confirmAccount(data) {

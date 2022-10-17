@@ -9,11 +9,13 @@ import Hero from '../components/Hero'
 import UserMiniCard from '../components/UserMiniCard'
 
 // redux
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { logout } from '../store/authSlice'
 
 function ProfileList() {
   const {
     isProfiled,
+    isConfirmed,
     isLoggedIn,
     accessToken
   } = useSelector((slices) => slices.auth)
@@ -22,12 +24,20 @@ function ProfileList() {
   const [page, setPage] = React.useState(1)
   
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   /* If the user is logged in but not profiled, we redirect to Settings form */
   React.useEffect(() => {
     if (isLoggedIn && isProfiled === 0) navigate('/edit', { replace: true })
   }, [isProfiled, isLoggedIn])
 
+  /* If the user modified her email settings and as a result has to
+  confirm her Account, we log her out. */
+  React.useEffect(() => {
+    if (!isConfirmed) dispatch(logout())
+  }, [isConfirmed])
+
+  
   /* When the page loads (or when the user logs out), we run the hook */
   React.useEffect(() => {
     if (isLoggedIn && accessToken) getProfileList({ accessToken, page })

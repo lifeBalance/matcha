@@ -24,9 +24,11 @@ module.exports = class RefreshToken {
     return pool.execute(sql, [hash]) // returns...
   }
 
-  static delete(hash) {
+  static async delete(hash) {
     const sql = `DELETE FROM refresh_tokens WHERE token_hash = ?`
 
-    return pool.execute(sql, [hash]) // returns...
+    const [ret, fields] = await pool.execute(sql, [hash])
+
+    return (ret.affectedRows === 1) ? true : false
   }
 }

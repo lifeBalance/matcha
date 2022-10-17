@@ -43,14 +43,16 @@ CREATE TABLE IF NOT EXISTS `pic_urls` (
 );
 
 CREATE TABLE IF NOT EXISTS `refresh_tokens` (
+    `id` INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
     `user_id` INT UNSIGNED,
-    `token_hash` VARCHAR(64) PRIMARY KEY NOT NULL,
+    `token_hash` VARCHAR(64) NOT NULL,
     `expires_at` INT UNSIGNED NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `email_tokens` (
+    `id` INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
     `email` VARCHAR(255) UNIQUE NOT NULL,
-    `token_hash` VARCHAR(32) PRIMARY KEY NOT NULL,
+    `token_hash` VARCHAR(32) NOT NULL,
     `expires_at` INT UNSIGNED NOT NULL
 );
 

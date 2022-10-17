@@ -5,6 +5,7 @@ const initialState = {
   uid: false,
   isLoggedIn: false,
   isProfiled: false,
+  isConfirmed: false,
   accessToken: '',
   isLoggingIn: false,
   isLoggingOut: false,
@@ -92,6 +93,10 @@ const authSlice = createSlice({
     setIsProfiled: (state, action) => {
       // console.log(action);
       state.isProfiled = true
+    },
+    setIsConfirmed: (state, action) => {
+      // console.log(action) // testing
+      state.isConfirmed = action.payload
     }
   },
 
@@ -118,6 +123,7 @@ const authSlice = createSlice({
         state.accessToken = action.payload.access_token
         state.uid = action.payload.uid
         state.isProfiled = action.payload.profiled
+        state.isConfirmed = true
         // The callback we passed to the extraReducer is under action.meta.arg!
         action.meta.arg.openModal(action.payload)
       }
@@ -127,7 +133,7 @@ const authSlice = createSlice({
       state.errorLoggingIn = action.payload
       // console.log(action) // testing
       // The callback we passed to the extraReducer is under action.meta.arg!
-      action.meta.arg.openModal(action.payload.message)
+      action.meta.arg.openModal(action.payload)
     },
 
     // LOGOUT
@@ -176,6 +182,11 @@ const authSlice = createSlice({
   },
 })
 
-export const { loginAfterReload, resetLoggingInErrors, setIsProfiled } = authSlice.actions
+export const {
+  loginAfterReload,
+  resetLoggingInErrors,
+  setIsProfiled,
+  setIsConfirmed
+} = authSlice.actions
 export { login, logout, refresh } // async actions
 export default authSlice.reducer

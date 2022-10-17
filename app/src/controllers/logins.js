@@ -24,6 +24,7 @@ exports.login = async (req, res, next) => {
     const currentUser = await AccountModel.readOne({ 
       username: req.body.username
     })
+    // console.log(JSON.stringify(currentUser)) // testing
 
     if (!currentUser) {
       return res.status(200).json({

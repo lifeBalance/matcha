@@ -64,13 +64,17 @@ function useSubmitProfile() {
             accessToken: args.accessToken
           }))
         })
-      // console.log(resp.data) // testing
 
-      setSubmitError(false) // we use this just to choose the proper Icon :-)
-      args.callback(resp.data)
-      // return resp.data
+      // console.log(resp.data) // testing
+      if (resp.data.type === 'ERROR') {
+        setSubmitError(true)
+        args.callback(resp.data)
+      } else {
+        setSubmitError(false)
+        args.callback(resp.data)
+      }
     } catch (error) {
-      console.log(error.response) // testing
+      console.log(error) // testing
       // console.log(error.response?.data) // testing
       setSubmitError(true)
       args.callback(error.response?.data)

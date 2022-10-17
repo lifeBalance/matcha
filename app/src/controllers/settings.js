@@ -53,7 +53,8 @@ exports.updateSettings = async (req, res, next) => {
       the uid that we got from the authorization middleware */
     const currentUser = await AccountModel.readOne({ id: req.uid })
     if (!currentUser) {
-      return res.status(204).json({
+      return res.status(200).json({
+        type: 'ERROR',
         message: 'Sorry, requested user does not exist'
       })
     }
@@ -90,7 +91,7 @@ exports.updateSettings = async (req, res, next) => {
       // If there's another user (with another UID) that is using that email...
       if (anotherUser) {
         return res.status(200).json({
-          type: 'WARNING',
+          type: 'ERROR',
           message: 'Sorry, that email already exists in our Database'
         })
       } else {

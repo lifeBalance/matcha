@@ -23,14 +23,14 @@ exports.handleRefreshToken = async (req, res, next) => {
     var oldRefreshToken = req?.cookies?.refreshToken // function scoped
     // Early return if no Refresh token was sent!
     if (!oldRefreshToken) {
-      console.log('no refresh token sent');
-      next()
-      return
+      console.log('Cookie did not include the Refresh token!');
+      return next()
     }
 
     /* The verify method returns the payload if the token is legit, and it's 
     not expired; otherwise it throws some error that we have to handle. */
-    jwt.verify(oldRefreshToken, process.env.SECRET_JWT_KEY)
+    if (oldRefreshToken)
+      jwt.verify(oldRefreshToken, process.env.SECRET_JWT_KEY)
     next()
   } catch (error) {
     /* If the Refresh Token is just expired, we catch the error
@@ -38,16 +38,19 @@ exports.handleRefreshToken = async (req, res, next) => {
     if (error.name === 'TokenExpiredError') next()
 
     // For any other token verification error, party stops here.
-    else res.status(403).json({ message: error })
+    else res.status(200).json({
+      type: 'ERROR',
+      message: error
+    })
   } finally {
     // console.log('oldRefreshToken: ' + oldRefreshToken);
     const hash = createHash('sha256').update(oldRefreshToken).digest('hex')
     // console.log('HASH: ' + hash) // testing
 
     // Here is where we DELETE the Refresh Token from the DB
-    const [rowArr, fields2] = await RefreshTokenModel.delete(hash)
-    // console.log('YOYOYO '+ JSON.stringify(rowArr)) // testing
-    if (rowArr?.affectedRows)
+    const deleted = await RefreshTokenModel.delete(hash)
+    console.log('was refresh token deleted? '+ deleted) // testing
+    if (deleted)
       console.log('An old refresh token was deleted')
   }
 }
