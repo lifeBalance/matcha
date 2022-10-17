@@ -5,6 +5,8 @@ const RefreshTokenModel = require('../models/RefreshToken')
 // To compare with the stored encrypted passwords
 const bcrypt = require('bcrypt')
 
+const { comparePasswords } = require('../utils/passwords') 
+
 // To create JSON Web Tokens
 const jwt = require("jsonwebtoken")
 
@@ -24,7 +26,7 @@ exports.login = async (req, res, next) => {
     const currentUser = await AccountModel.readOne({ 
       username: req.body.username
     })
-    // console.log(JSON.stringify(currentUser)) // testing
+    console.log(JSON.stringify(currentUser)) // testing
 
     if (!currentUser) {
       return res.status(200).json({
@@ -33,15 +35,15 @@ exports.login = async (req, res, next) => {
       })
     }
 
-    bcrypt.compare(req.body.password, currentUser.pwd_hash, (err, result) => {
-      console.log('WRONG PASSWORD DAWG!') // testing
-      if (result == false) {
-        return res.status(200).json({ 
-          type: 'ERROR',
-          message: 'Wrong password.'
-        })
-      }
-    })
+    const passwordsMatch = await comparePasswords(req.body.password, currentUser.pwd_hash)
+    if (!passwordsMatch) {
+      // console.log('PASSWORDS DO NOT MATCH!') // testing
+
+      return res.status(200).json({ 
+        type: 'ERROR',
+        message: 'Wrong password.'
+      })
+    }
 
     // If the user's account is NOT confirmed
     if (!currentUser.confirmed) {

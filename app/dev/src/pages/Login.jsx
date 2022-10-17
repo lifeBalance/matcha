@@ -69,12 +69,13 @@ function Login() {
 
   // pass this function to the reducer to open the modal ;-)
   function openModal(data) {
-    // console.log(data.type) // testing
+    // console.log(data) // testing
     setModalContent(data.message)
-    if (data.type === 'ERROR' || (data.type === 'SUCCESS' && data.profiled))
-      setModalIsOpen(true)
-    else if (data.type === 'SUCCESS' && !data.profiled)
+
+    if (data.hasOwnProperty('profiled') && !data.profiled)
       navigate('/edit', { replace: true })
+    else
+      setModalIsOpen(true)
   }
 
   function submitHandler(e) {

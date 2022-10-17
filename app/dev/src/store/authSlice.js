@@ -99,17 +99,19 @@ const authSlice = createSlice({
       state.isConfirmed = action.payload
     }
   },
-
+  
   extraReducers: {
     [login.pending]: (state) => {
       state.isLoggingIn = true
     },
-
+    
     [login.fulfilled]: (state, action) => {
+      // console.log(action) // testing
       state.isLoggingIn = false
 
       if (action.payload.type === 'ERROR') {
         state.errorLoggingIn = true
+        state.isLoggedIn = false
         action.meta.arg.openModal(action.payload)
         return
       }

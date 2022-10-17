@@ -16,6 +16,7 @@ module.exports = class EmailToken {
       this.token_hash,
       this.expires_at
     ])
+
     if (ret.affectedRows === 1) {
       return { 
         email: this.email,
@@ -30,7 +31,7 @@ module.exports = class EmailToken {
 
     const [arr, _] = await pool.execute(sql, [data.email])
 
-    console.log('arr' + JSON.stringify(arr));
+    // console.log('arr' + JSON.stringify(arr)) // testing
     return (arr.length > 0) ? arr[0] : false
   }
 
