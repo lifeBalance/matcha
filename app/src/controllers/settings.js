@@ -1,5 +1,6 @@
 // To create/update Profile Settings (one model could deal with several tables).
 const SettingsModel = require('../models/Settings')
+const AccountModel = require('../models/Account')
 // Let's pull also the Pic model for the profile pictures
 const PicModel = require('../models/Pic')
 
@@ -53,7 +54,7 @@ exports.updateSettings = async (req, res, next) => {
   try {
     /* Assign to 'currentUser' the user we've just pulled from the DB using
       the uid that we got from the authorization middleware */
-    const currentUser = await AccountModel.readOne({ id: req.uid })
+    const currentUser = await SettingsModel.readSettings({ id: req.uid })
     if (!currentUser) {
       return res.status(200).json({
         type: 'ERROR',
