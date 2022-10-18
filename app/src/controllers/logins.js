@@ -1,5 +1,6 @@
 // Models to verify user's credentials with DB, and store Refresh Tokens.
 const AccountModel = require('../models/Account')
+const PicModel = require('../models/Pic')
 const RefreshTokenModel = require('../models/RefreshToken')
 
 // Custom ASYNC function To compare with the stored in DB encrypted passwords.
@@ -86,6 +87,9 @@ exports.login = async (req, res, next) => {
     // Store the Refresh Token in DB, by invoking the create method on the instance
     const ret = await RefreshToken.create()
 
+    // Pull the profile pic from DB (It could be an empty string or null)
+    const profile_pic = await PicModel.readProfilePicUrl({ id: currentUser.id })
+
     // Send the access_token in the response body
     res.status(200).json({
       type: 'SUCCESS',
@@ -93,7 +97,8 @@ exports.login = async (req, res, next) => {
       access_token: accessToken,
       profiled:     currentUser.profiled,
       confirmed:    currentUser.confirmed,
-      uid:          currentUser.id
+      uid:          currentUser.id,
+      profile_pic:  profile_pic
     })
   } catch(error) {
     console.log(error)
