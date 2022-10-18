@@ -9,12 +9,12 @@ const loginsController = require('../controllers/logins')
 const { validateLogin } = require('../middlewares/validateLogin')
 
 // Something is WRONG with this middleware...
-const { handleRefreshToken } = require('../middlewares/handleRefreshToken')
+const { deleteRefreshToken } = require('../middlewares/deleteRefreshToken')
 
 // POST => /api/logins (for logging in)
 router.post('/logins', validateLogin, loginsController.login)
 
 // DELETE => /api/logins (for logging out)
-router.delete('/logins', loginsController.logout)
+router.delete('/logins', deleteRefreshToken, loginsController.logout)
 
 module.exports = router

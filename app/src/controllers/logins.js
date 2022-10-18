@@ -24,7 +24,7 @@ exports.login = async (req, res, next) => {
     const currentUser = await AccountModel.readOne({ 
       username: req.body.username
     })
-    // console.log(JSON.stringify(currentUser)) // testing
+    console.log(JSON.stringify(currentUser)) // testing
 
     if (!currentUser) {
       return res.status(200).json({
@@ -104,9 +104,10 @@ exports.login = async (req, res, next) => {
 
 exports.logout = async (req, res, next) => {
   try {
-    // Let's delete the hardened cookie on the user's Browser. Options must be
-    // identical to those given to those used when sending the cookie,
-    // excluding the 'expires' and 'maxAge' options.
+    /* The 'deleteRefreshToken' middleware deleted the Refresh Token in the 
+      DB, now let's delete the hardened COOKIE on the user's Browser. In order 
+      to do that, the options must be identical to the ones used when sending 
+      the cookie at log in (excluding the 'expires' and 'maxAge' options) */
     res.clearCookie('refreshToken', {
         path:     '/api',
         // secure:   true,
