@@ -41,7 +41,7 @@ const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
       withCredentials: true
     })
 
-    // console.log(response.data) // testing
+    console.log(response.data) // testing
     // console.log(args) // testing
     // console.log(thunkAPI) // testing
     return response.data // Important!
@@ -115,17 +115,17 @@ const authSlice = createSlice({
         action.meta.arg.openModal(action.payload)
         return
       }
-      state.isLoggedIn = true
-      state.errorLoggingIn = false
 
       // console.log(action) // testing
       // console.log(action.payload) // testing
       if (action.payload) {
+        state.isLoggedIn = true
+        state.errorLoggingIn = false
         localStorage.setItem('accessToken', action.payload.access_token)
         state.accessToken = action.payload.access_token
         state.uid = action.payload.uid
         state.isProfiled = action.payload.profiled
-        state.isConfirmed = true
+        state.isConfirmed = action.payload.confirmed
         // The callback we passed to the extraReducer is under action.meta.arg!
         action.meta.arg.openModal(action.payload)
       }

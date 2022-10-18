@@ -24,8 +24,7 @@ exports.login = async (req, res, next) => {
     const currentUser = await AccountModel.readOne({ 
       username: req.body.username
     })
-    console.log(JSON.stringify(currentUser)) // testing
-
+    // console.log(JSON.stringify(currentUser)) // testing
     if (!currentUser) {
       return res.status(200).json({
         type: 'ERROR',
@@ -36,7 +35,6 @@ exports.login = async (req, res, next) => {
     const passwordsMatch = await comparePasswords(req.body.password, currentUser.pwd_hash)
     if (!passwordsMatch) {
       // console.log('PASSWORDS DO NOT MATCH!') // testing
-
       return res.status(200).json({ 
         type: 'ERROR',
         message: 'Wrong password.'
@@ -94,6 +92,7 @@ exports.login = async (req, res, next) => {
       message: 'Successfully logged in!',
       access_token: accessToken,
       profiled:     currentUser.profiled,
+      confirmed:    currentUser.confirmed,
       uid:          currentUser.id
     })
   } catch(error) {
