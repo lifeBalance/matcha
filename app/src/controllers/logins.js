@@ -2,9 +2,7 @@
 const AccountModel = require('../models/Account')
 const RefreshTokenModel = require('../models/RefreshToken')
 
-// To compare with the stored encrypted passwords
-const bcrypt = require('bcrypt')
-
+// Custom ASYNC function To compare with the stored in DB encrypted passwords.
 const { comparePasswords } = require('../utils/passwords') 
 
 // To create JSON Web Tokens
@@ -26,7 +24,7 @@ exports.login = async (req, res, next) => {
     const currentUser = await AccountModel.readOne({ 
       username: req.body.username
     })
-    console.log(JSON.stringify(currentUser)) // testing
+    // console.log(JSON.stringify(currentUser)) // testing
 
     if (!currentUser) {
       return res.status(200).json({

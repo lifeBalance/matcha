@@ -61,12 +61,11 @@ exports.readAllProfiles = async (req, res, next) => {
   try {
     // Don't forget to check if the user requesting profiles is profiled!
     const settings = await SettingsModel.readSettings({ id: req.uid })
-    // console.log(JSON.stringify(ownProfileArr)) // testing
+    // console.log('PROFILES controller: ' + JSON.stringify(settings)) // testing
 
     /* If the user requesting profiles is not profiled, we don't send her
       the Profile list. */
     if (!settings.profiled || !settings.confirmed) {
-      // console.log('is profiled? '+settings.profiled)
       return res.status(200).json({
         type:       'ERROR',
         message:    'Sorry, you are not authorized to check other profiles',
@@ -75,11 +74,16 @@ exports.readAllProfiles = async (req, res, next) => {
       })
     }
     /* Here we have to add things such as pagination, filters, etc. */
-    // console.log('PAGE: '+JSON.stringify(req.params))
+    const page = parseInt(req.query.page)
+    console.log('PAGE: '+JSON.stringify(req.query.page))  // testing
+    console.log('PAGE: '+page)          // testing
 
     // Read all profiles, except the one of the user making the request!!!
-    const profileList = await ProfileModel.readAll({ id: req.uid})
-    // console.log('is profiled? '+ownProfileArr[0].profiled)
+    const profileList = await ProfileModel.readAll({
+      id: req.uid,
+      page: page
+    })
+
     res.status(200).json({
       type: 'SUCCESS',
       profiles: profileList,
