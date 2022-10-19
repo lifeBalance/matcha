@@ -73,11 +73,11 @@ function Settings() {
   else if (user)
   return (
     <div
-      className='bg-white rounded-lg mx-4 my-8 max-w-96'
+      className='bg-white sm:rounded-lg sm:my-8 max-w-screen-sm'
       id={user.userName}
     >
 
-      <div className='h-96 bg-gray-800 rounded-t-lg mx-auto'>
+      <div className='h-96 w-auto bg-gray-800 sm:rounded-t-lg'>
         {user.pics && user.pics.length > 0 ? (
           <Carousel slide={false}>
             {user.pics &&
@@ -86,7 +86,7 @@ function Settings() {
                 <img
                 key={Math.random()}
                 src={pic}
-                className='object-cover h-96 md:object-contain'
+                className='object-cover h-96 w-96'
                 />
                 ))}
           </Carousel>
