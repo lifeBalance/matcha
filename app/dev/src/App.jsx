@@ -19,7 +19,7 @@ import PageNotFound from './pages/PageNotFound'
 
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { loginAfterReload } from './store/authSlice'
+import { loginAfterReload, setProfilePic } from './store/authSlice'
 import Layout from './components/UI/Layout'
 
 // hooks
@@ -31,15 +31,16 @@ function App() {
   const {
     isLoggingIn,
     isLoggedIn,
-    accessToken
+    accessToken,
+    profilePic
   } = useSelector(slices => slices.auth)
 
   /* The 'profilePic' state must be set here in order to be passed down to
     the 'Layout' then to the 'Navbar'. Also, 'setProfilePic' is passed to the
     'Settings' page, so that when the user adds the first picture, we can 
     invoke it right there to set the `profilePic' state. */
-  const [profilePic, setProfilePic] = React.useState(null)
-  const {
+  // const [profilePic, setProfilePic] = React.useState(null)
+/*   const {
     isLoading,
     error,
     getProfile
@@ -47,17 +48,21 @@ function App() {
 
   function setUserState(data) {
     setProfilePic(data.profile_pic)
-  }
+    // setIsProfiled(data.profiled)
+    // setIsConfirmed(data.confirmed)
+  } */
 
   /* Retrieve the Access Token from Local Storage and set the proper isLoggedIn
     state in the UI. Useful for when the user refreshes the page, or closes
     the browser/tab without loggin out (hence, there's a token in local 
     storage). */
   React.useEffect(() => {
-    if (localStorage.getItem('accessToken')) dispatch(loginAfterReload())
-  }, [])
+    if (isLoggingIn) return
+    const matcha = localStorage.getItem('matcha')
+    if (!isLoggedIn && matcha) dispatch(loginAfterReload(matcha))
+  }, [isLoggingIn, isLoggedIn])
 
-  React.useEffect(() => {
+/*   React.useEffect(() => {
     if (isLoggingIn && !isLoggedIn) return
     else if (!isLoggingIn && isLoggedIn && accessToken)
       getProfile({
@@ -66,7 +71,7 @@ function App() {
         setUserState
       })
   }, [isLoggingIn, isLoggedIn, accessToken, profilePic])
-
+ */
   return (
     <BrowserRouter>
       <Layout profilePic={profilePic} >
@@ -88,7 +93,7 @@ function App() {
 
           <Route
             path='/edit'
-            element={<SettingsForm setProfilePic={(pic) => setProfilePic(pic)} />}
+            element={<SettingsForm />}
           />
 
           <Route

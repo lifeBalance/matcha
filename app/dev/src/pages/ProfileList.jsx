@@ -17,6 +17,7 @@ function ProfileList() {
     isProfiled,
     isConfirmed,
     isLoggedIn,
+    isLoggingIn,
     accessToken
   } = useSelector((slices) => slices.auth)
 
@@ -24,7 +25,6 @@ function ProfileList() {
   const [page, setPage] = React.useState(1)
   
   const navigate = useNavigate()
-  const dispatch = useDispatch()
 
   /* If the user is logged in but not profiled, we redirect to Settings form */
   React.useEffect(() => {
@@ -33,15 +33,16 @@ function ProfileList() {
 
   /* If the user modified her email settings and as a result has to
   confirm her Account, we log her out. */
-  React.useEffect(() => {
-    if (!isConfirmed) dispatch(logout())
-  }, [isConfirmed])
+  // React.useEffect(() => {
+  //   if (!isConfirmed) dispatch(logout())
+  // }, [isConfirmed])
 
   
   /* When the page loads (or when the user logs out), we run the hook */
   React.useEffect(() => {
+    if (isLoggingIn) return
     if (isLoggedIn && accessToken) getProfileList({ accessToken, page })
-  }, [isLoggedIn, accessToken, page])
+  }, [isLoggingIn, isLoggedIn, accessToken, page])
   
   // Profile list state
   const {

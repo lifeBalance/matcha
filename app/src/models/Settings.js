@@ -20,7 +20,7 @@ module.exports = class Settings {
   static async readSettings({ id }) {
     const sql =`
     SELECT
-    username, firstname, lastname, email, age, gender, prefers, bio, confirmed, profiled
+    id, username, firstname, lastname, email, age, gender, prefers, bio, confirmed, profiled
     FROM users WHERE id = ?`
 
     /* SELECT returns an ARRAY with two elements:

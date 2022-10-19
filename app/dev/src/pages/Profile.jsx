@@ -21,7 +21,12 @@ import { useSelector } from 'react-redux'
 
 function Profile() {
   const [user, setUser] = React.useState(null)
-  const { isLoggedIn, accessToken, uid } = useSelector((slices) => slices.auth)
+  const {
+    isLoggedIn,
+    isLoggingIn,
+    accessToken,
+    uid
+  } = useSelector((slices) => slices.auth)
   const navigate = useNavigate()
   const {
     error,
@@ -45,17 +50,28 @@ function Profile() {
     })
   }
 
-  // Redirect if the user is NOT logged in
+  /* When the page loads (or when the user logs out), we run the hook */
   React.useEffect(() => {
-    if (!isLoggedIn) navigate('/', { replace: true })
-    else getProfile({
-      /*  The URL of the request will depend on 'location.pathname', meaning the
-        URL in the browser's address bar, something like '/profiles/69' */
+    if (isLoggingIn) return
+    if (!isLoggingIn && !isLoggedIn) navigate('/', { replace: true })
+    if (!isLoggingIn && isLoggedIn && accessToken) getProfile({
       url: location.pathname,
       accessToken,
       setUserState: setProfile
     })
-  }, [isLoggedIn])
+  }, [isLoggingIn, isLoggedIn, accessToken])
+
+  // Redirect if the user is NOT logged in
+  // React.useEffect(() => {
+  //   if (!isLoggedIn) navigate('/', { replace: true })
+  //   else getProfile({
+  //     /*  The URL of the request will depend on 'location.pathname', meaning the
+  //       URL in the browser's address bar, something like '/profiles/69' */
+  //     url: location.pathname,
+  //     accessToken,
+  //     setUserState: setProfile
+  //   })
+  // }, [isLoggedIn])
 
   let gender
   if (user?.gender === 0) gender = '🍑 (Female)'

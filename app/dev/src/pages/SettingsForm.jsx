@@ -4,7 +4,11 @@ import { useNavigate } from 'react-router-dom'
 
 // redux
 import { useSelector, useDispatch } from 'react-redux'
-import { setIsConfirmed, setIsProfiled } from '../store/authSlice'
+import {
+  setIsConfirmed,
+  setIsProfiled,
+  setProfilePic
+} from '../store/authSlice'
 
 // hooks
 import useInput from '../hooks/useInput'
@@ -35,6 +39,7 @@ function SettingsForm(props) {
   // redux
   const {
     accessToken,
+    isLoggingIn,
     isLoggedIn,
     isProfiled,
     uid
@@ -149,14 +154,15 @@ function SettingsForm(props) {
   }
 
   React.useEffect(() => {
-    if (!isLoggedIn) navigate('/', { replace: true })
-    else getProfile({
+    if (isLoggingIn) return
+    if (!isLoggingIn && !isLoggedIn) navigate('/', { replace: true })
+    if (!isLoggingIn && isLoggedIn && accessToken) getProfile({
       url: '/settings', 
       id: uid,
       accessToken,
       setUserState
     })
-  }, [isLoggedIn])
+  }, [isLoggingIn, isLoggedIn, accessToken])
 
   let firstNameErrorContent
   if (firstNameHasError)
@@ -252,25 +258,24 @@ function SettingsForm(props) {
         <CheckCircleIcon className='inline w-5 text-green-500' />
         {data.message}
       </>)
-       // Set the proper state to be able to leave form
-      dispatch(setIsProfiled())
+      // console.log(data.profile_pic) // testing
+      if (data.profile_pic)
+        dispatch(setProfilePic(data.profile_pic))
       dispatch(setIsConfirmed(data.confirmed))
+       // Set the proper state to be able to leave form
+      dispatch(setIsProfiled(data.profiled))
 
-      // Invoke the Profile Pic state using Setter (passed down in the props object)
-      props.setProfilePic(data.profile_pic)
     } else {
       setModalContent(<>
         <CheckCircleIcon className='inline w-5 text-green-500' />
         {data.message}
       </>)
     }
-    // SET THE PROFILE PICTURE (If the user added one)
-    // if (data.profilePic) props.setProfilePic(data.profilePic)
 
     setModalIsOpen(true)
 
     // Log out the user if she's not confirmed
-    // if (data.confirmed === 0) dispatch(logout())
+    if (data.confirmed === 0) dispatch(logout())
   }
 
   function closeFilePickerModalHandler() {

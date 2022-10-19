@@ -30,13 +30,15 @@ function Navbar(props) {
   const {
     isLoggedIn,
     uid,
-    accessToken
+    accessToken,
+    profilePic
   } = useSelector(slices => slices.auth)
 
-  let imgElem = props.profilePic === null ?
+  console.log('Navbar: '+profilePic);
+  let imgElem = !profilePic ?
     <UserCircleIcon className='w-12 hover:text-blue-400' />
     :
-    <img src={props.profilePic} alt="" className='rounded-full h-12 w-12 object-cover' />
+    <img src={profilePic} alt="" className='rounded-full h-12 w-12 object-cover' />
 
   return (
     <nav className='bg-black'>

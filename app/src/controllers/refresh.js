@@ -3,6 +3,8 @@
 const RefreshTokenModel = require('../models/RefreshToken')
 // To check the user still has an Account in our site.
 const AccountModel = require('../models/Account')
+// Let's pull also the Pic model for the profile pictures
+const PicModel = require('../models/Pic')
 
 // To create both JWTs (Access and Refresh)
 const jwt = require("jsonwebtoken")
@@ -54,7 +56,7 @@ exports.refresh = async (req, res, next) => {
     token may still be valid, but she doesn't have an account in our 
     DB anymore. */
     const currentUser = await AccountModel.readOne({ id: payload.sub })
-
+    const profile_pic = await PicModel.readProfilePicUrl({ id: payload.sub })
     if (!currentUser) {
       return res.status(204).json({
         message: 'Sorry, requested user does not exist'
@@ -137,7 +139,9 @@ exports.refresh = async (req, res, next) => {
         message:      'tokens have been refreshed!',
         access_token: accessToken,
         profiled:     currentUser.profiled,
-        uid:          currentUser.id
+        confirmed:    currentUser.confirmed,
+        uid:          currentUser.id,
+        profile_pic:  profile_pic
       })
       // console.log('tokens have been refreshed!')  // testing
     } else {

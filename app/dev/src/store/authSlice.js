@@ -11,6 +11,7 @@ const initialState = {
   isLoggingOut: false,
   errorLoggingIn: false,
   errorLoggingOut: false,
+  profilePic: ''
 }
 
 const logout = createAsyncThunk('auth/logout', async function(args, thunkAPI) {
@@ -20,6 +21,7 @@ const logout = createAsyncThunk('auth/logout', async function(args, thunkAPI) {
     })
 
     localStorage.removeItem('accessToken')
+    localStorage.removeItem('matcha')
 
     // console.log(response.data)
     return response.data
@@ -31,7 +33,7 @@ const logout = createAsyncThunk('auth/logout', async function(args, thunkAPI) {
 
 const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
   // 'args' is an OBJECT, so invoke the extraReducer with an Object!!!
-  const { username, password, openModal } = args
+  const { username, password } = args
 
   try {
     const response = await axios.post('/api/logins', {
@@ -55,10 +57,11 @@ const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
 
 const refresh = createAsyncThunk('auth/refresh', async function (args, thunkAPI) {
   let { accessToken } = args
-  /* If we receive no Access Token in args, it means the user may have
-  RELOAD the page, so we reach to Local Storage to check if there's a 
-  token there */
-  if (!accessToken) accessToken = localStorage.getItem('accessToken') 
+  /*  If we receive no Access Token in args, it means the user may have
+    RELOADED the page, so we reach for Local Storage to check if there's a 
+    token there */
+  // if (!accessToken) accessToken = localStorage.getItem('accessToken')
+  if (!accessToken) accessToken = JSON.parse(localStorage.getItem('matcha')).accessToken
   /* If there's no token in Local storage, it means the user logged out, so 
     there's no "session" to REFRESH! */
   if (!accessToken) return thunkAPI.rejectWithValue('Expired session')
@@ -68,10 +71,10 @@ const refresh = createAsyncThunk('auth/refresh', async function (args, thunkAPI)
   try {
     const response = await axios.get('/api/refresh', {
       withCredentials: true,
-      headers: { 'Authorization': `Bearer ${args.accessToken}` },
+      headers: { 'Authorization': `Bearer ${accessToken}` },
     })
 
-    // console.log( response.data) // testing
+    console.log( response.data) // testing
     return response.data
   } catch (error) {
     // console.log(error?.response?.data?.message)  // testing
@@ -84,19 +87,39 @@ const authSlice = createSlice({
   initialState,
   reducers: {
     loginAfterReload: (state, action) => {
+      state.isLoggingIn = true
+      const matcha = JSON.parse(action.payload)
+      console.log('slice: '+action.payload)
+
+      const {
+        uid,
+        accessToken,
+        isProfiled,
+        isConfirmed,
+        profilePic
+      } = matcha
+
       state.isLoggedIn = true
-      state.accessToken = localStorage.getItem('accessToken')
+      state.uid = uid
+      state.accessToken = accessToken
+      state.isProfiled = isProfiled
+      state.isConfirmed = isConfirmed
+      state.profilePic = profilePic
+      state.isLoggingIn = false
     },
     resetLoggingInErrors: (state) => {
       state.errorLoggingIn = false
     },
     setIsProfiled: (state, action) => {
-      // console.log(action);
-      state.isProfiled = true
+      // console.log(action) // testing
+      state.isProfiled = action.payload
     },
     setIsConfirmed: (state, action) => {
       // console.log(action) // testing
       state.isConfirmed = action.payload
+    },
+    setProfilePic: (state, action) => {
+      state.profilePic = action.payload
     }
   },
   
@@ -121,11 +144,22 @@ const authSlice = createSlice({
       if (action.payload) {
         state.isLoggedIn = true
         state.errorLoggingIn = false
-        localStorage.setItem('accessToken', action.payload.access_token)
         state.accessToken = action.payload.access_token
         state.uid = action.payload.uid
         state.isProfiled = action.payload.profiled
         state.isConfirmed = action.payload.confirmed
+        state.profilePic = action.payload.profile_pic
+
+        // Let's save these pieces of state in Local Storage
+        const matcha = {
+          uid: action.payload.uid,
+          accessToken: action.payload.access_token,
+          isProfiled: action.payload.profiled,
+          isConfirmed: action.payload.confirmed,
+          profilePic: action.payload.profile_pic,
+        }
+        localStorage.setItem('matcha', JSON.stringify(matcha))
+
         // The callback we passed to the extraReducer is under action.meta.arg!
         action.meta.arg.openModal(action.payload)
       }
@@ -148,6 +182,7 @@ const authSlice = createSlice({
       state.errorLoggingIn = false
       state.accessToken = ''
       localStorage.removeItem('accessToken')
+      localStorage.removeItem('matcha')
       // if (action) console.log(action)
     },
     [logout.rejected]: (state, action) => {
@@ -169,8 +204,22 @@ const authSlice = createSlice({
       state.errorLoggingIn = null
       if (action.payload && action.payload.access_token) {
         // localStorage.removeItem('accessToken')
-        localStorage.setItem('accessToken', action.payload.access_token)
+        // We receive the new Access Token in the payload; let's set state:
         state.accessToken = action.payload.access_token
+        state.uid = action.payload.uid
+        state.profilePic = action.payload.profile_pic
+        state.profiled = action.payload.profiled
+        state.confirmed = action.payload.confirmed
+        // Grab the Local Storage item
+        const matcha = localStorage.getItem('matcha')
+        console.log(matcha);
+        // Parse it into an object
+        const parsed = JSON.parse(matcha)
+        // Update its Access token property
+        parsed.accessToken = action.payload.access_token
+        // Save it back to Local Storage
+        localStorage.setItem('matcha', JSON.stringify({ ...parsed }))
+        // localStorage.setItem('accessToken', action.payload.access_token)
       }
     },
     [refresh.rejected]: (state, action) => {
@@ -188,7 +237,8 @@ export const {
   loginAfterReload,
   resetLoggingInErrors,
   setIsProfiled,
-  setIsConfirmed
+  setIsConfirmed,
+  setProfilePic
 } = authSlice.actions
 export { login, logout, refresh } // async actions
 export default authSlice.reducer

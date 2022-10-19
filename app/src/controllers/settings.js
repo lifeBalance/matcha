@@ -55,7 +55,9 @@ exports.updateSettings = async (req, res, next) => {
     /* Assign to 'currentUser' the user we've just pulled from the DB using
       the uid that we got from the authorization middleware */
     const currentUser = await SettingsModel.readSettings({ id: req.uid })
+    // console.log('currentUser: '+JSON.stringify(currentUser)) // testing
     if (!currentUser) {
+      // console.log('Sorry, requested user does not exist') // testing
       return res.status(200).json({
         type: 'ERROR',
         message: 'Sorry, requested user does not exist'
@@ -72,7 +74,7 @@ exports.updateSettings = async (req, res, next) => {
       prefers,
       bio
     } = req.fields
-
+    // console.log('SETTINGS - FORM FIELDS: '+JSON.stringify(req.fields)) // testing
     /**
      *  Let's initialize the variable 'confirmed` to 1 (true), meaning that
      * if the user is creating/updating her profile, she's confirmed her 
@@ -87,9 +89,9 @@ exports.updateSettings = async (req, res, next) => {
       DB, we gotta check there's not another user with that new Email. */
     if (currentUser.email !== email) {
       // Check that the new Email does not belong to another user.
-      const anotherUser = await AccountModel.readOne({ email })
+      const anotherUser = await AccountModel.readOne({ email: email })
 
-      // console.log('Check new email: ' + JSON.stringify(rowArr2)) // testing
+      // console.log('SETTINGS - Check new email: ' + JSON.stringify(rowArr2)) // testing
 
       // If there's another user (with another UID) that is using that email...
       if (anotherUser) {
@@ -113,10 +115,9 @@ exports.updateSettings = async (req, res, next) => {
      */
     // Check if user has a Profile picture set in DB
     const hasProfilePic = await PicModel.readProfilePicUrl({ id: currentUser.id })
+    // console.log('SETTINGS - hasProfilePic? '+ hasProfilePic) // testing
       // Let's set the first pic submitted as the Profile pic.
     if (!hasProfilePic && req.pics && req.pics.length > 0) {
-      // console.log('Trying to write profile pic!!!') // testing
-
       /* The next function call writes the first pic to the user's folder and
       to the DB, and returns its URL (that we'll send back in the response */
       var profilePicUrl = await savePic(req.pics[0], currentUser.id, true)
@@ -124,7 +125,7 @@ exports.updateSettings = async (req, res, next) => {
       /* Create a shallow copy of the req.pics array to iterate over it,
       to save up the rest of the submitted pictures (if any) */
       if (req.pics.length > 1) req.remainingPics = req.pics.slice(1)
-      // console.log('REMAINING PICS: ' + JSON.stringify(req.remainingPics)) // testing
+      // console.log('SETTINGS - REMAINING PICS: ' + JSON.stringify(req.remainingPics)) // testing
     } else
       req.remainingPics = req.pics
     
@@ -140,7 +141,7 @@ exports.updateSettings = async (req, res, next) => {
         await savePic(pic, currentUser.id, false)
       }
     }
-    // console.log('Profile pic: ' + profile_pic_url) // testing
+    // console.log('SETTINGS - Profile pic: ' + profilePicUrl) // testing
     // Instantiate the Settings model class to update/create new Profile
     const settings = new SettingsModel({
       firstname,
@@ -156,20 +157,25 @@ exports.updateSettings = async (req, res, next) => {
 
     // We could use the DB response, to check if the profile was created/updated
     const success = await settings.update()
-    
+    // console.log('SETTINGS UPDATED? '+success) // testing
 
     let msg = 'Profile successfully updated.'
     if (!confirmed) msg += " Don't forget to confirm your account!"
 
     if (success) {
+      // console.log('SETTINGS: SUCCESS')  // testing
       return res.status(200).json({
         type: 'SUCCESS',
         message: msg,
         confirmed: confirmed,
-        profile_pic: profilePicUrl
+        profiled: 1,
+        profile_pic: profilePicUrl || ''
       })
     } else {
-      res.status(400).json({ message: 'woops' })
+      res.status(200).json({
+        type: 'ERROR',
+        message: 'woops'
+      })
     }
   } catch(error) {
     console.log(error)
