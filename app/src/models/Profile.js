@@ -10,7 +10,7 @@ module.exports = class Profile {
   static async readOne({ id }) {
     const sql =`
     SELECT
-    username, firstname, lastname, age, gender, prefers, bio
+    id, username, firstname, lastname, age, gender, prefers, bio
     FROM users WHERE id = ?`
 
     const [arr, fields] = await pool.execute(sql, [id])
@@ -19,7 +19,10 @@ module.exports = class Profile {
 
   static async readAll(data) {
     const { id } = data
-    const sql = 'SELECT * FROM users WHERE id != ?'
+    const sql = `
+    SELECT
+    id, username, firstname, lastname, age, gender, prefers, bio
+    FROM users WHERE id != ?`
 
     const [arr, fields] = await pool.execute(sql, [id])
 

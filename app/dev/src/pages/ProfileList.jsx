@@ -61,11 +61,12 @@ function ProfileList() {
   if (isLoadingProfiles) content = <p>Loading...</p>
   else if (profiles && profiles.length > 0 && !errorLoadingProfiles && !isLoadingProfiles)
     content = (
-    <ul className='space-y-6'>
-      {profiles.map((user) => (
+    <ul className='space-y-3 mb-3'>
+      {/* console.log(JSON.stringify(profiles)) */}
+      {profiles.map(profile => (
         <UserMiniCard
-          user={user}
-          key={user.id}
+          key={profile.id}
+          profile={profile}
         />
       ))}
     </ul>)
@@ -77,7 +78,7 @@ function ProfileList() {
       {content}
 
       <button
-        className='justify-center bg-slate-500 px-4 py-2'
+        className='justify-center bg-transparent border-white border-2 rounded-lg hover:bg-white hover:bg-opacity-20 text-white px-4 py-2'
         onClick={() => setPage((prevState) => prevState + 1)}
       >
         Load More...

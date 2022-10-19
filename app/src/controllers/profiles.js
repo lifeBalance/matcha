@@ -83,12 +83,18 @@ exports.readAllProfiles = async (req, res, next) => {
       id: req.uid,
       page: page
     })
-    // console.log('PROFILE LIST: '+JSON.stringify(profileList)) // testing
+    // console.log('PROFILE LIST 1: '+JSON.stringify(profileList)) // testing
+    const profiles = []
+    for (const prof of profileList) {
+      let profPic = await PicModel.readProfilePicUrl({ id: prof.id })
+      profiles.push({ ...prof, profilePic: profPic || '' })
+    }
+    // console.log('PROFILE LIST 2: '+JSON.stringify(profiles)) // testing
 
     res.status(200).json({
       type: 'SUCCESS',
       message: 'there you go champ',
-      profiles: profileList,
+      profiles: profiles,
       profiled: settings.profiled, // We need this in both cases
       confirmed: settings.confirmed
     })
