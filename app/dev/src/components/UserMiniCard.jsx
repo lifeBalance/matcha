@@ -10,7 +10,12 @@ function UserMiniCard(props) {
 
   return (
     <li className='bg-white p-8 rounded-lg'>
-      <Link to={`profiles/${id}`}>{id} {username} {email}</Link>
+      <Link to={`profiles/${id}`}>
+        <div className="flex">
+          {/* <img src="" alt="" /> */}
+          {id} {username} {email}
+        </div>
+      </Link>
     </li>
   )
 }

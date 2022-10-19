@@ -47,12 +47,10 @@ function SignUp() {
   function openModalHandler(msg) {
     setModalIsOpen(true)
     setModalContent(msg)
-    // setSubmitError(false)
-    // navigate('/', { replace: true })
   }
+
   function closeModalHandler() {
     setModalIsOpen(false)
-    // setSubmitError(false)
     if (!submitError)
       navigate('/', { replace: true })
   }
@@ -127,13 +125,6 @@ function SignUp() {
     !passwordConfHasError && passwordConf.length == password.length &&
     usernameAvailable
   )
-  // console.log(usernameHasError,
-  //   firstNameHasError,
-  //   lastNameHasError,
-  //   emailHasError,
-  //   passwordHasError,
-  //   passwordConfHasError,
-  //   usernameAvailable);
 
   async function submitHandler(e) {
     e.preventDefault()
@@ -148,10 +139,6 @@ function SignUp() {
       email,
       password
     }, openModalHandler)
-
-    // console.log('success?', !isSubmitting, !submitError);
-    // if there was no error
-    // if (!isSubmitting && !submitError) navigate('/', {replace: true})
   }
 
   let usernameErrorContent 

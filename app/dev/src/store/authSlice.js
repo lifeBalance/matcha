@@ -58,9 +58,8 @@ const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
 const refresh = createAsyncThunk('auth/refresh', async function (args, thunkAPI) {
   let { accessToken } = args
   /*  If we receive no Access Token in args, it means the user may have
-    RELOADED the page, so we reach for Local Storage to check if there's a 
-    token there */
-  // if (!accessToken) accessToken = localStorage.getItem('accessToken')
+    RELOADED the page, and the Access Token is not in memory anymore, so we 
+    reach for Local Storage to check if there's a token there */
   if (!accessToken) accessToken = JSON.parse(localStorage.getItem('matcha')).accessToken
   /* If there's no token in Local storage, it means the user logged out, so 
     there's no "session" to REFRESH! */
@@ -74,7 +73,7 @@ const refresh = createAsyncThunk('auth/refresh', async function (args, thunkAPI)
       headers: { 'Authorization': `Bearer ${accessToken}` },
     })
 
-    console.log( response.data) // testing
+    // console.log( response.data) // testing
     return response.data
   } catch (error) {
     // console.log(error?.response?.data?.message)  // testing
@@ -209,13 +208,12 @@ const authSlice = createSlice({
       state.isLoggedIn = true
       state.errorLoggingIn = null
       if (action.payload && action.payload.access_token) {
-        // localStorage.removeItem('accessToken')
-        // We receive the new Access Token in the payload; let's set state:
+        // We receive lots of intel in the payload; let's set state:
         state.accessToken = action.payload.access_token
-        state.uid = action.payload.uid
-        state.profilePic = action.payload.profile_pic
-        state.profiled = action.payload.profiled
-        state.confirmed = action.payload.confirmed
+        state.uid         = action.payload.uid
+        state.profilePic  = action.payload.profile_pic
+        state.profiled    = action.payload.profiled
+        state.confirmed   = action.payload.confirmed
         // Grab the Local Storage item
         const matcha = localStorage.getItem('matcha')
         // console.log(matcha)   // testing
@@ -228,7 +226,6 @@ const authSlice = createSlice({
 
         // Save it back to Local Storage
         localStorage.setItem('matcha', JSON.stringify({ ...parsed }))
-        // localStorage.setItem('accessToken', action.payload.access_token)
       }
     },
     [refresh.rejected]: (state, action) => {

@@ -9,6 +9,7 @@ import {
   ArrowLeftOnRectangleIcon,
   UserCircleIcon,
   UserPlusIcon,
+  UsersIcon,
 } from '@heroicons/react/24/outline'
 
 import { useSelector, useDispatch } from 'react-redux'
@@ -17,7 +18,7 @@ import { logout } from '../../../store/authSlice'
 
 function MobileMenu() {
   // redux
-  const isLoggedIn = useSelector((slices) => slices.auth.isLoggedIn)
+  const isLoggedIn = useSelector(slices => slices.auth.isLoggedIn)
   const dispatch = useDispatch()
 
   function logoutHandler() {
@@ -42,20 +43,21 @@ function MobileMenu() {
       {isLoggedIn ? (
         <>
           <Link
-            to='/users'
+            to='/'
             className='hover:text-pink-500 pt-6 pl-4'
             onClick={() => dispatch(closeMobileMenu())}
           >
-            users
+            <UsersIcon className='inline text-green-400 w-6 -mt-1 mr-2' />
+            user profiles
           </Link>
 
           <Link
-            to='/profile'
+            to='/settings'
             className='hover:text-pink-500 pt-6 pl-4'
             onClick={() => dispatch(closeMobileMenu())}
           >
             <UserCircleIcon className='inline text-blue-500 w-6 -mt-1 mr-2' />
-            profile
+            settings
           </Link>
 
           <Link

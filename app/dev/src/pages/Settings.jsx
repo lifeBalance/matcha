@@ -73,32 +73,32 @@ function Settings() {
   else if (user)
   return (
     <div
-      className='bg-white p-4 rounded-lg my-8 mx-4 max-w-2xl'
+      className='bg-white rounded-lg mx-4 my-8 max-w-96'
       id={user.userName}
     >
-      <h1 className='text-gray-700 text-2xl font-bold text-center pt-6 pb-8'>
-        {user.userName}
-      </h1>
 
-      <div className='h-96 bg-gray-800 rounded-lg mx-auto'>
+      <div className='h-96 bg-gray-800 rounded-t-lg mx-auto'>
         {user.pics && user.pics.length > 0 ? (
           <Carousel slide={false}>
             {user.pics &&
               user.pics.length > 0 &&
               user.pics.map((pic, idx) => (
                 <img
-                  key={Math.random()}
-                  src={pic}
-                  className=' object-cover h-96 sm:object-contain'
+                key={Math.random()}
+                src={pic}
+                className='object-cover h-96 md:object-contain'
                 />
-              ))}
+                ))}
           </Carousel>
         ) : (
           <UserCircleIcon className='text-white w-[50%] justify-center mx-auto' />
-        )}
+          )}
       </div>
 
       <div className='p-8 text-xl text-gray-700 space-y-3 flex flex-col'>
+        <h1 className='text-gray-700 text-2xl font-bold text-center'>
+          {user.userName}
+        </h1>
         <p>
           <span className='font-semibold'>Full name:</span> {user.firstName}{' '}
           {user.lastName}
