@@ -61,15 +61,13 @@ function Profile() {
     })
   }, [isLoggingIn, isLoggedIn, accessToken])
 
-  let gender
+  let gender = ' 🙅 (Non-binary)'
   if (user?.gender === 0) gender = '🍑 (Female)'
   else if (user?.gender === 1) gender = '🍆 (Male)'
-  else gender = ' 🙅 (Non-binary)'
 
-  let preferences
+  let preferences = '🍆 and 🍑 (Males and Females 😏)'
   if (user?.preferences === 0) preferences = '🍑 (Females)'
   else if (user?.preferences === 1) preferences = '🍆 (Males)'
-  else preferences = '🍆 and 🍑 (Males and Females 😏)'
 
   // CONTENT
   if (isLoading && !error)
