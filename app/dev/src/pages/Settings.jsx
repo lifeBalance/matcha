@@ -95,7 +95,7 @@ function Settings() {
           )}
       </div>
 
-      <div className='p-8 text-xl text-gray-700 space-y-3 flex flex-col'>
+      <div className='p-8 text-xl text-gray-700 space-y-3 flex flex-col max-w-sm'>
         <h1 className='text-gray-700 text-2xl font-bold text-center'>
           {user.userName}
         </h1>
