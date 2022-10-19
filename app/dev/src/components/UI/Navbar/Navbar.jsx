@@ -1,5 +1,4 @@
 import React from 'react'
-import axios from 'axios'
 
 import { NavLink, useLocation } from 'react-router-dom'
 
@@ -20,21 +19,13 @@ import {
   ArrowLeftOnRectangleIcon
 } from '@heroicons/react/24/outline'
 
-// hooks
-// import useGetProfilePic from '../../../hooks/useGetProfilePic'
-
 function Navbar(props) {
   const dispatch = useDispatch()
   const location = useLocation()
   const isOpen = useSelector(slices => slices.burger.burgerIsOpen)
-  const {
-    isLoggedIn,
-    uid,
-    accessToken,
-    profilePic
-  } = useSelector(slices => slices.auth)
+  const { isLoggedIn, profilePic } = useSelector(slices => slices.auth)
 
-  console.log('Navbar: '+profilePic);
+  // console.log('Navbar: '+profilePic)  // testing
   let imgElem = !profilePic ?
     <UserCircleIcon className='w-12 hover:text-blue-400' />
     :

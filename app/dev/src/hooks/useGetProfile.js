@@ -46,7 +46,7 @@ function useGetProfile() {
         refreshTokens: () => dispatch(refresh({ accessToken: args.accessToken }))
       })
 
-      console.log(resp.data) // testing
+      // console.log(resp.data) // testing
       if (resp.data.type === 'ERROR') {
         setError(resp.data.message)
       } else

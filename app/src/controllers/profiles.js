@@ -75,17 +75,19 @@ exports.readAllProfiles = async (req, res, next) => {
     }
     /* Here we have to add things such as pagination, filters, etc. */
     const page = parseInt(req.query.page)
-    console.log('PAGE: '+JSON.stringify(req.query.page))  // testing
-    console.log('PAGE: '+page)          // testing
+    // console.log('PAGE: '+JSON.stringify(req.query.page))  // testing
+    console.log('PAGE: '+page+' UID: '+req.uid)          // testing
 
     // Read all profiles, except the one of the user making the request!!!
     const profileList = await ProfileModel.readAll({
       id: req.uid,
       page: page
     })
+    console.log('PROFILE LIST: '+JSON.stringify(profileList)) // testing
 
     res.status(200).json({
       type: 'SUCCESS',
+      message: 'there you go champ',
       profiles: profileList,
       profiled: settings.profiled, // We need this in both cases
       confirmed: settings.confirmed

@@ -19,7 +19,7 @@ import PageNotFound from './pages/PageNotFound'
 
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { loginAfterReload, setProfilePic } from './store/authSlice'
+import { loginAfterReload } from './store/authSlice'
 import Layout from './components/UI/Layout'
 
 // hooks

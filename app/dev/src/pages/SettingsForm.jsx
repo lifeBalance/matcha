@@ -9,6 +9,7 @@ import {
   setIsProfiled,
   setProfilePic
 } from '../store/authSlice'
+import { logout } from '../store/authSlice'
 
 // hooks
 import useInput from '../hooks/useInput'
@@ -36,7 +37,6 @@ import {
 } from '../utils/validators'
 
 function SettingsForm(props) {
-  // redux
   const {
     accessToken,
     isLoggingIn,
@@ -275,7 +275,7 @@ function SettingsForm(props) {
     setModalIsOpen(true)
 
     // Log out the user if she's not confirmed
-    if (data.confirmed === 0) dispatch(logout())
+    // if (data.confirmed === 0) dispatch(logout())
   }
 
   function closeFilePickerModalHandler() {

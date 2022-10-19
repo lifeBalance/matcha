@@ -43,7 +43,7 @@ const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
       withCredentials: true
     })
 
-    console.log(response.data) // testing
+    // console.log(response.data) // testing
     // console.log(args) // testing
     // console.log(thunkAPI) // testing
     return response.data // Important!
@@ -89,7 +89,7 @@ const authSlice = createSlice({
     loginAfterReload: (state, action) => {
       state.isLoggingIn = true
       const matcha = JSON.parse(action.payload)
-      console.log('slice: '+action.payload)
+      // console.log('slice: '+action.payload)  // testing
 
       const {
         uid,
@@ -119,7 +119,13 @@ const authSlice = createSlice({
       state.isConfirmed = action.payload
     },
     setProfilePic: (state, action) => {
+      // Set in memory state
       state.profilePic = action.payload
+
+      // Persist state to Local storage
+      const matcha = JSON.parse(localStorage.getItem('matcha'))
+      matcha.profilePic = action.payload
+      localStorage.setItem('matcha', JSON.stringify(matcha))
     }
   },
   
@@ -212,11 +218,14 @@ const authSlice = createSlice({
         state.confirmed = action.payload.confirmed
         // Grab the Local Storage item
         const matcha = localStorage.getItem('matcha')
-        console.log(matcha);
+        // console.log(matcha)   // testing
+
         // Parse it into an object
         const parsed = JSON.parse(matcha)
+
         // Update its Access token property
         parsed.accessToken = action.payload.access_token
+
         // Save it back to Local Storage
         localStorage.setItem('matcha', JSON.stringify({ ...parsed }))
         // localStorage.setItem('accessToken', action.payload.access_token)

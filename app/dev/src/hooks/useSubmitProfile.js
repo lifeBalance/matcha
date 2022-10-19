@@ -37,7 +37,7 @@ function useSubmitProfile() {
   const submitProfile = React.useCallback(async function (args) {
     setIsSubmitting(true)
     // console.log(args) // testing
-    
+
     const formData = new FormData()
     formData.append('firstname', args.firstName)
     formData.append('lastname', args.lastName)
@@ -65,7 +65,7 @@ function useSubmitProfile() {
           }))
         })
 
-      console.log(resp.data) // testing
+      // console.log(resp.data) // testing
       if (resp.data.type === 'ERROR') {
         setSubmitError(true)
         args.callback(resp.data)
@@ -75,7 +75,6 @@ function useSubmitProfile() {
       }
     } catch (error) {
       // console.log(error) // testing
-      // console.log(error.response?.data) // testing
       setSubmitError(true)
       args.callback(error.response?.data)
     } finally {

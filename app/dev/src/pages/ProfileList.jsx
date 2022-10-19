@@ -10,7 +10,7 @@ import UserMiniCard from '../components/UserMiniCard'
 
 // redux
 import { useSelector, useDispatch } from 'react-redux'
-import { logout } from '../store/authSlice'
+import { logout, loginAfterReload } from '../store/authSlice'
 
 function ProfileList() {
   const {
@@ -25,25 +25,26 @@ function ProfileList() {
   const [page, setPage] = React.useState(1)
   
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   /* If the user is logged in but not profiled, we redirect to Settings form */
   React.useEffect(() => {
-    if (isLoggedIn && isProfiled === 0) navigate('/edit', { replace: true })
-  }, [isProfiled, isLoggedIn])
-
-  /* If the user modified her email settings and as a result has to
-  confirm her Account, we log her out. */
-  // React.useEffect(() => {
-  //   if (!isConfirmed) dispatch(logout())
-  // }, [isConfirmed])
-
-  
-  /* When the page loads (or when the user logs out), we run the hook */
-  React.useEffect(() => {
     if (isLoggingIn) return
-    if (isLoggedIn && accessToken) getProfileList({ accessToken, page })
-  }, [isLoggingIn, isLoggedIn, accessToken, page])
-  
+    else {
+      if (isLoggedIn) {
+        if (isProfiled === 0) navigate('/edit', { replace: true })
+        if (!isConfirmed) dispatch(logout())
+        else if (accessToken) {
+          getProfileList({ accessToken, page })
+        } else {
+          const matcha = localStorage.getItem('matcha')
+          dispatch(loginAfterReload(matcha))
+        }
+      }
+    }
+  }, [isLoggingIn, isLoggedIn, isProfiled, isConfirmed, accessToken, page])
+
+
   // Profile list state
   const {
     profiles,
