@@ -69,6 +69,10 @@ exports.login = async (req, res, next) => {
         location: req.gps
       })
     }
+    /*  If the user set has her location set to manual, let's  
+      pull it from DB and send it back in the response. */
+    const gpsResponse = (!location || !location.manual) ? req.gps : location
+    console.log('gpsResponse: '+JSON.stringify(gpsResponse))  // testing
 
     // Generate the access_token
     const accessToken = jwt.sign({
@@ -118,7 +122,8 @@ exports.login = async (req, res, next) => {
       profiled:     currentUser.profiled,
       confirmed:    currentUser.confirmed,
       uid:          currentUser.id,
-      profile_pic:  profile_pic
+      profile_pic:  profile_pic,
+      gps:          gpsResponse
     })
   } catch(error) {
     console.log(error)

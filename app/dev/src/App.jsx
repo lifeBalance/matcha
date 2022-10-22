@@ -19,29 +19,44 @@ import PageNotFound from './pages/PageNotFound'
 
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { loginAfterReload, setCoords } from './store/authSlice'
+import {
+  loginAfterReload,
+  setCoords,
+  setManualLocation,
+  setCurrentLocation
+} from './store/authSlice'
 import Layout from './components/UI/Layout'
 
 function App() {
+  // redux
   const dispatch = useDispatch()
+  const gps = useSelector(slices => slices.auth.gps)
+
 
   const {
     isLoggingIn,
     isLoggedIn,
-    profilePic
+    profilePic,
   } = useSelector(slices => slices.auth)
-  const coords = useSelector(slices => slices.auth.gps.coords)
 
-  /* Let's set the GPS state as soon as the APP loads. */
+  /* Let's set the CURRENT LOCATION global state as soon as the APP 
+    component loads (this is the geolocation of the navigator browser 
+    API). This way we'll have it available in case we need it. */
   React.useEffect(() => {
-    // if (!navigator.geolocation) return
+    if (!navigator.geolocation) return
 
-    navigator.geolocation.getCurrentPosition(pos => {
-      dispatch(setCoords({
+    console.log('navigator is ON!') // testing
+
+    function handleSuccess(pos) {
+      dispatch(setCurrentLocation({
         lat: pos.coords.latitude,
         lng: pos.coords.longitude
       }))
-    })
+    }
+
+    function handleError(err) { console.log(err) }
+
+    navigator.geolocation.getCurrentPosition(handleSuccess, handleError)
   }, [])
 
   /* Retrieve the Access Token from Local Storage and set the proper isLoggedIn

@@ -8,6 +8,8 @@ function useMap() {
   // redux
   const dispatch = useDispatch()
   /* Let's use here the 'manual' state from GLOBAL STATE! */
+  const currentLocation = useSelector(slices => slices.auth.currentLocation)
+  /* Let's use here the 'manual' state from GLOBAL STATE! */
   const manual = useSelector(slices => slices.auth.gps.manual)
 
   /* The location in our GLOBAL STATE; it could contain either:
@@ -48,18 +50,22 @@ function useMap() {
     navigator.geolocation.getCurrentPosition(handleSuccess, handleError)
   }, [])
 
-  /* If the user turns MANUAL on, we switcharoo the center to the 'currentLoc' 
-    LOCAL STATE; otherwise we use the 'coords' GLOBAL STATE. */
+  /* If the user has MANUAL on, and the coordinates of the GPS global 
+    state have been initialized, we set the center to tha point. 
+    But if MANUAL is off, we set the center of the map to the coordinates
+    set in the 'currentLocation' GLOBAL STATE (browser geolocation). */
   React.useEffect(() => {
-    if (manual === false && currentLoc) setCenter(currentLoc)
-    else {
+    if (manual && coords.lat !== 0 && coords.lng !== 0)
       setCenter({ lat: coords.lat, lng: coords.lng })
-    }
+    else if (manual === false && currentLocation)
+      setCenter({ lat: currentLocation.lat, lng: currentLocation.lng })
+
     console.log(center)   // testing
   }, [manual, currentLoc])
 
-  /* The following hook, saves the center to GLOBAL STATE whenever a change 
-    in the 'center' LOCAL STATE is detected. */
+  /*  The following hook, saves the center to the 'gps' GLOBAL STATE 
+    whenever a change in the 'center' LOCAL STATE is detected. This 
+    'center' local state is modified with the marker (and MANUAL is on). */
   React.useEffect(() => {
     // We can't dispatch just 'center' bc is a non-serializable object!
     dispatch(setCoords({ lat: center.lat, lng: center.lng }))

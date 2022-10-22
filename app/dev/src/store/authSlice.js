@@ -15,7 +15,8 @@ const initialState = {
   gps: {
     coords: { lat: 0, lng: 0 },
     manual: false
-  }
+  },
+  currentLocation: { lat: 0, lng: 0 }
 }
 
 const logout = createAsyncThunk('auth/logout', async function(args, thunkAPI) {
@@ -38,7 +39,9 @@ const logout = createAsyncThunk('auth/logout', async function(args, thunkAPI) {
 const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
   // 'args' is an OBJECT, so invoke the extraReducer with an Object!!!
   const { username, password } = args
-console.log(thunkAPI.getState().auth) // testing
+
+  console.log(thunkAPI.getState().auth) // testing
+
   try {
     const response = await axios.post('/api/logins', {
       username: username,
@@ -100,15 +103,17 @@ const authSlice = createSlice({
         accessToken,
         isProfiled,
         isConfirmed,
-        profilePic
+        profilePic,
+        gps
       } = matcha
 
       state.isLoggedIn = true
       state.uid = uid
-      state.accessToken = accessToken
-      state.isProfiled = isProfiled
-      state.isConfirmed = isConfirmed
-      state.profilePic = profilePic
+      state.accessToken   = accessToken
+      state.isProfiled    = isProfiled
+      state.isConfirmed   = isConfirmed
+      state.profilePic    = profilePic
+      state.gps           = gps
       state.isLoggingIn = false
     },
     resetLoggingInErrors: (state) => {
@@ -132,12 +137,15 @@ const authSlice = createSlice({
       localStorage.setItem('matcha', JSON.stringify(matcha))
     },
     setCoords: (state, action) => {
-      console.log(action.payload);
+      console.log(action.payload) // testing
       state.gps.coords = action.payload
       console.log('auth Slice: ' + JSON.stringify(action.payload)) // testing
     },
     setManualLocation: (state, action) => {
       state.gps.manual = action.payload
+    },
+    setCurrentLocation: (state, action) => {
+      state.currentLocation = action.payload
     }
   },
   
@@ -158,23 +166,25 @@ const authSlice = createSlice({
       }
 
       // console.log(action) // testing
-      // console.log(action.payload) // testing
+      console.log(action.payload) // testing
       if (action.payload) {
-        state.isLoggedIn = true
+        state.isLoggedIn  = true
         state.errorLoggingIn = false
         state.accessToken = action.payload.access_token
-        state.uid = action.payload.uid
-        state.isProfiled = action.payload.profiled
+        state.uid         = action.payload.uid
+        state.isProfiled  = action.payload.profiled
         state.isConfirmed = action.payload.confirmed
-        state.profilePic = action.payload.profile_pic
+        state.profilePic  = action.payload.profile_pic
+        state.gps         = action.payload.gps
 
         // Let's save these pieces of state in Local Storage
         const matcha = {
-          uid: action.payload.uid,
-          accessToken: action.payload.access_token,
-          isProfiled: action.payload.profiled,
-          isConfirmed: action.payload.confirmed,
-          profilePic: action.payload.profile_pic,
+          uid:          action.payload.uid,
+          accessToken:  action.payload.access_token,
+          isProfiled:   action.payload.profiled,
+          isConfirmed:  action.payload.confirmed,
+          profilePic:   action.payload.profile_pic,
+          gps:          action.payload.gps
         }
         localStorage.setItem('matcha', JSON.stringify(matcha))
 
@@ -259,7 +269,8 @@ export const {
   setIsConfirmed,
   setProfilePic,
   setCoords,
-  setManualLocation
+  setManualLocation,
+  setCurrentLocation
 } = authSlice.actions
 export { login, logout, refresh } // async actions
 export default authSlice.reducer
