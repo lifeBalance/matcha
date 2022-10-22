@@ -132,6 +132,7 @@ const authSlice = createSlice({
       localStorage.setItem('matcha', JSON.stringify(matcha))
     },
     setCoords: (state, action) => {
+      console.log(action.payload);
       state.gps.coords = action.payload
       console.log('auth Slice: ' + JSON.stringify(action.payload)) // testing
     },

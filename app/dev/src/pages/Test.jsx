@@ -6,7 +6,7 @@ import { Checkbox, Label } from 'flowbite-react'
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux'
-import { setManualLocation } from '../store/authSlice'
+import { setCoords, setManualLocation } from '../store/authSlice'
 
 function Test() {
   // redux
@@ -30,8 +30,8 @@ function Test() {
       1. The location in GLOBAL STATE.
       2. The currentLoc LOCAL STATE. */
   const [center, setCenter] = React.useState({
-    lat: coords.lat.toFixed(4),
-    lng: coords.lng.toFixed(4)
+    lat: coords.lat,
+    lng: coords.lng
   })
 
   /* As soon as the Map component loads, we get the navigator's geolocation. If this browser's API is not authorized, the 
@@ -58,10 +58,18 @@ function Test() {
     LOCAL STATE. */
   React.useEffect(() => {
     if (manual === false && currentLoc) setCenter(currentLoc)
-    else setCenter({ lat: coords.lat, lng: coords.lng })
+    else {
+      setCenter({ lat: coords.lat, lng: coords.lng })
+    }
 
     console.log(center);
   }, [manual, currentLoc])
+
+  /* The following hook, saves the center to GLOBAL STATE. */
+  React.useEffect(() => {
+    // We can't dispatch just 'center' bc is a non-serializable object!
+    dispatch(setCoords({ lat: center.lat, lng: center.lng }))
+  }, [center])
 
   return (
     <div className=''>
