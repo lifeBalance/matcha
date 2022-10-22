@@ -13,8 +13,7 @@ const initialState = {
   errorLoggingOut: false,
   profilePic: '',
   gps: {
-    lat: 0,
-    lng: 0,
+    coords: { lat: 0, lng: 0 },
     manual: false
   }
 }
@@ -132,8 +131,8 @@ const authSlice = createSlice({
       matcha.profilePic = action.payload
       localStorage.setItem('matcha', JSON.stringify(matcha))
     },
-    setGps: (state, action) => {
-      state.gps = action.payload
+    setCoords: (state, action) => {
+      state.gps.coords = action.payload
       console.log('auth Slice: ' + JSON.stringify(action.payload)) // testing
     },
     setManualLocation: (state, action) => {
@@ -258,7 +257,7 @@ export const {
   setIsProfiled,
   setIsConfirmed,
   setProfilePic,
-  setGps,
+  setCoords,
   setManualLocation
 } = authSlice.actions
 export { login, logout, refresh } // async actions

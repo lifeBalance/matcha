@@ -19,7 +19,7 @@ import PageNotFound from './pages/PageNotFound'
 
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { loginAfterReload, setGps } from './store/authSlice'
+import { loginAfterReload, setCoords } from './store/authSlice'
 import Layout from './components/UI/Layout'
 
 function App() {
@@ -28,22 +28,21 @@ function App() {
   const {
     isLoggingIn,
     isLoggedIn,
-    gps,
     profilePic
   } = useSelector(slices => slices.auth)
+  const coords = useSelector(slices => slices.auth.gps.coords)
 
   /* Let's set the GPS state as soon as the APP loads. */
   React.useEffect(() => {
-    if (!navigator.geolocation) return
+    // if (!navigator.geolocation) return
 
     navigator.geolocation.getCurrentPosition(pos => {
-      dispatch(setGps({
+      dispatch(setCoords({
         lat: pos.coords.latitude,
-        lng: pos.coords.longitude,
-        manual: false
+        lng: pos.coords.longitude
       }))
     })
-  }, [gps])
+  }, [])
 
   /* Retrieve the Access Token from Local Storage and set the proper isLoggedIn
     state in the UI. Useful for when the user refreshes the page, or closes

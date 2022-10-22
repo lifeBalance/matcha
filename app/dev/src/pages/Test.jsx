@@ -1,69 +1,93 @@
 import React from 'react'
 
-// Components
-import Modal from '../components/UI/Modal'
 // import Map from '../components/Map'
 import Map2 from '../components/Map2'
-
-// Hooks
-import useTests from '../hooks/useTests'
+import { Checkbox, Label } from 'flowbite-react'
 
 // Redux
 import { useDispatch, useSelector } from 'react-redux'
-import { refresh } from '../store/authSlice'
+import { setManualLocation } from '../store/authSlice'
 
 function Test() {
-  const [modalIsOpen, setModalIsOpen] = React.useState(false)
-  const [modalContent, setModalContent] = React.useState(null)
-
   // redux
-  const accessToken = useSelector(slices => slices.auth.accessToken)
   const dispatch = useDispatch()
+  /* Let's use here the 'manual' state from GLOBAL STATE! */
+  const manual = useSelector(slices => slices.auth.gps.manual)
 
-  // function feedback(msg) {
-  //   setModalContent(msg)
-  //   // setModalIsOpen(true)
-  // }
+  /* The location in our GLOBAL STATE; it could contain either:
+      1. The navigator's geolocation set at LOG IN.
+      2. The user's IP geolocation set at LOG IN.
+      3. After the 1st LOGIN, the MANUAL location set in settings */
+  const coords = useSelector(slices => slices.auth.gps.coords)
 
-  // const {
-  //   content,
-  //   isLoading,
-  //   error,
-  //   getTests
-  // } = useTests({ feedback })
+  /* A LOCAL state with the navigator's geolocation obtained as soon 
+  as the MAP component loaded (it could be null if the user didn't 
+  authorize the browser's geolocation API. */
+  const [currentLoc, setCurrentLoc] = React.useState(null)
 
-  // React.useEffect(() => {
-  //   getTests()
-  // }, [])
+  console.log('current location: '+ JSON.stringify(currentLoc));
+  /* LOCAL STATE for the center of the map that could be switched between:
+      1. The location in GLOBAL STATE.
+      2. The currentLoc LOCAL STATE. */
+  const [center, setCenter] = React.useState({
+    lat: coords.lat.toFixed(4),
+    lng: coords.lng.toFixed(4)
+  })
 
-  function closeModalHandler() {
-    setModalIsOpen(false)
-    // navigate('/', { replace: true })
-  }
+  /* As soon as the Map component loads, we get the navigator's geolocation. If this browser's API is not authorized, the 
+  'currentLoc' LOCAL STATE, stays null (its initial value). */
+  React.useEffect(() => {
+    // if (!navigator.geolocation) return
+    function handleSuccess(pos) {
+      setCurrentLoc({
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+      })
+    }
 
-  // let contentElem = isLoading ? 
-  //   (<p>Loading...</p>)
-  //   :
-  //   (<p>hoes</p>)
+    function handleError(err) {
+      console.log(err)
+    }
+
+    console.log('navigator is ON!') // testing
+    navigator.geolocation.getCurrentPosition(handleSuccess, handleError)
+  }, [])
+
+  /* If the user set to MANUAL, she can set manually her location; if she
+    turns MANUAL OFF, then we switcharoo the center to the 'currentLoc' 
+    LOCAL STATE. */
+  React.useEffect(() => {
+    if (manual === false && currentLoc) setCenter(currentLoc)
+    else setCenter({ lat: coords.lat, lng: coords.lng })
+
+    console.log(center);
+  }, [manual, currentLoc])
 
   return (
     <div className=''>
-      {/* {modalIsOpen && (
-        <Modal closeModal={closeModalHandler}>
-          <p>{modalContent}</p>
-        </Modal>
-      )} */}
-      {/* <h1 className='text-2xl font-bold text-center'>{contentElem}</h1> */}
-      {/* <p>Coordinates: {content.coordinates}</p> */}
       <h1>Map 2</h1>
-      <Map2 />
+      <p className='text-white text-center font-bold'>
+        {/* Lat: {loc.lat.toFixed(4)} Long: {loc.lng.toFixed(4)} */}
+        {currentLoc && `Lat: ${currentLoc.lat} Long: ${currentLoc.lng}`}
+      </p>
+      <Map2 center={center} setCenter={setCenter} manual={manual} />
 
-      <button
-        onClick={() => dispatch(refresh({ accessToken }))}
-        className='bg-blue-500 w-full text-white font-bold p-4 rounded-lg active:bg-blue-400 hover:bg-blue-600'
-      >
-        Refresh token
-      </button>
+      <div className="flex items-center gap-2">
+        <Checkbox
+          id='manual'
+          onChange={() => dispatch(setManualLocation(!manual))}
+          checked={manual}
+        />
+
+        <Label htmlFor='manual' >
+          <p className='text-white font-bold'>Set Manual Location</p>
+        </Label>
+      </div>
+
+      <p className='text-white text-center font-bold'>
+        Lat: {center.lat} Long: {center.lng} Manual: {manual.toString()}
+      </p>
+      {/* {console.log(typeof(center.lat))} */}
     </div>
   )
 }
