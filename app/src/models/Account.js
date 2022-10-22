@@ -60,4 +60,28 @@ module.exports = class Account {
     // console.log('fields: '+ JSON.stringify(fields)) // testing
     return (fields.affectedRows === 1) ? true : false
   }
+
+  static async setLocation(data) {
+    const sql = `
+    UPDATE users
+    SET location = ?
+    WHERE id = ?`
+    const [fields, _] = await pool.execute(sql, [
+      JSON.stringify(data.location),
+      data.uid
+    ])
+
+    // console.log('fields: '+ JSON.stringify(fields)) // testing
+    return (fields.affectedRows === 1) ? true : false
+  }
+
+  static async getLocation(data) {
+    const sql = `
+    SELECT location FROM users
+    WHERE id = ?`
+    const [arr, _] = await pool.execute(sql, [data.uid])
+
+    // console.log('arr: '+ JSON.stringify(arr)) // testing
+    return arr.length ? arr[0].location : false
+  }
 }

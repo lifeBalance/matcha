@@ -18,10 +18,12 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.1",
     "formidable": "^2.0.1",
+    "geoip-lite": "^1.4.6",
     "jsonwebtoken": "^8.5.1",
     "knex": "^2.3.0",
     "mysql2": "^2.3.3",
-    "nodemailer": "^6.8.0"
+    "nodemailer": "^6.8.0",
+    "request-ip": "^3.3.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.5.0",

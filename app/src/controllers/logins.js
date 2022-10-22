@@ -49,6 +49,26 @@ exports.login = async (req, res, next) => {
         message: 'Please, confirm your account before logging in.'
       })
     }
+    /* Let's start by checking that the user didn't set her LOCATION to
+      'manual'; in that case we don't write her current location to the DB
+      (her current location may be coming either from her browser or from
+      her IP address). */
+    const location = await AccountModel.getLocation({ uid: currentUser.id })
+    // console.log('LOGINS CONTROLLER: '+JSON.stringify(location)) // testing
+
+    /* We'll set the user's location at LOGIN, unless she's decided to set 
+      her coordinates manually through her Profile Settings (On the FIRST LOGIN, 'location' will be null, since it hasn't been set yet, and 
+      that's the DEFAULT VALUE of the column in the DB). */
+    if (!location || !location.manual) {
+      // console.log('LOGINS - LOCATION not MANUAL: '+JSON.stringify(req.gps)) // testing
+
+      /* Let's write the gps coordinates to the DB (later the user may decide 
+        to set them manually through her Profile settings).*/
+      await AccountModel.setLocation({
+        uid:      currentUser.id,
+        location: req.gps
+      })
+    }
 
     // Generate the access_token
     const accessToken = jwt.sign({

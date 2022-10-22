@@ -6,7 +6,7 @@ const useTests = (args) => {
   const [error, setError] = React.useState(null)
   const [content, setContent] = React.useState(null)
 
-  const getTests = async () => {
+  const getTests = async (args) => {
     try {
       setIsLoading(true)
       const url = '/api/tests'
@@ -19,9 +19,9 @@ const useTests = (args) => {
       console.log(response.data)
 
       setError(null)
-      setContent(response.data.content)
+      setContent(response.data)
       args.feedback(response.data.message)
-      return response.data
+      // return response.data
     } catch (error) {
       setError(error)
       console.log(error)

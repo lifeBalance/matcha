@@ -11,7 +11,12 @@ const initialState = {
   isLoggingOut: false,
   errorLoggingIn: false,
   errorLoggingOut: false,
-  profilePic: ''
+  profilePic: '',
+  gps: {
+    lat: 0,
+    lng: 0,
+    manual: false
+  }
 }
 
 const logout = createAsyncThunk('auth/logout', async function(args, thunkAPI) {
@@ -34,11 +39,12 @@ const logout = createAsyncThunk('auth/logout', async function(args, thunkAPI) {
 const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
   // 'args' is an OBJECT, so invoke the extraReducer with an Object!!!
   const { username, password } = args
-
+console.log(thunkAPI.getState().auth) // testing
   try {
     const response = await axios.post('/api/logins', {
       username: username,
-      password: password
+      password: password,
+      gps: thunkAPI.getState().auth.gps
     }, {
       withCredentials: true
     })
@@ -125,6 +131,13 @@ const authSlice = createSlice({
       const matcha = JSON.parse(localStorage.getItem('matcha'))
       matcha.profilePic = action.payload
       localStorage.setItem('matcha', JSON.stringify(matcha))
+    },
+    setGps: (state, action) => {
+      state.gps = action.payload
+      console.log('auth Slice: ' + JSON.stringify(action.payload)) // testing
+    },
+    setManualLocation: (state, action) => {
+      state.gps.manual = action.payload
     }
   },
   
@@ -244,7 +257,9 @@ export const {
   resetLoggingInErrors,
   setIsProfiled,
   setIsConfirmed,
-  setProfilePic
+  setProfilePic,
+  setGps,
+  setManualLocation
 } = authSlice.actions
 export { login, logout, refresh } // async actions
 export default authSlice.reducer

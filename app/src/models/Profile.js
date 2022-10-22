@@ -25,7 +25,7 @@ module.exports = class Profile {
     FROM users WHERE id != ?`
 
     const [arr, fields] = await pool.execute(sql, [id])
-
-    return (arr.length > 0) ? arr : false
+    console.log('Profile Model: '+JSON.stringify(arr))
+    return arr // it could be an empty array
   }
 }

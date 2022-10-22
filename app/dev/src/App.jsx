@@ -19,11 +19,8 @@ import PageNotFound from './pages/PageNotFound'
 
 // redux
 import { useDispatch, useSelector } from 'react-redux'
-import { loginAfterReload } from './store/authSlice'
+import { loginAfterReload, setGps } from './store/authSlice'
 import Layout from './components/UI/Layout'
-
-// hooks
-import useGetProfile from './hooks/useGetProfile'
 
 function App() {
   const dispatch = useDispatch()
@@ -31,26 +28,22 @@ function App() {
   const {
     isLoggingIn,
     isLoggedIn,
-    accessToken,
+    gps,
     profilePic
   } = useSelector(slices => slices.auth)
 
-  /* The 'profilePic' state must be set here in order to be passed down to
-    the 'Layout' then to the 'Navbar'. Also, 'setProfilePic' is passed to the
-    'Settings' page, so that when the user adds the first picture, we can 
-    invoke it right there to set the `profilePic' state. */
-  // const [profilePic, setProfilePic] = React.useState(null)
-/*   const {
-    isLoading,
-    error,
-    getProfile
-  } = useGetProfile()
+  /* Let's set the GPS state as soon as the APP loads. */
+  React.useEffect(() => {
+    if (!navigator.geolocation) return
 
-  function setUserState(data) {
-    setProfilePic(data.profile_pic)
-    // setIsProfiled(data.profiled)
-    // setIsConfirmed(data.confirmed)
-  } */
+    navigator.geolocation.getCurrentPosition(pos => {
+      dispatch(setGps({
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude,
+        manual: false
+      }))
+    })
+  }, [gps])
 
   /* Retrieve the Access Token from Local Storage and set the proper isLoggedIn
     state in the UI. Useful for when the user refreshes the page, or closes
@@ -62,16 +55,6 @@ function App() {
     if (!isLoggedIn && matcha) dispatch(loginAfterReload(matcha))
   }, [isLoggingIn, isLoggedIn])
 
-/*   React.useEffect(() => {
-    if (isLoggingIn && !isLoggedIn) return
-    else if (!isLoggingIn && isLoggedIn && accessToken)
-      getProfile({
-        url: '/settings',
-        accessToken,
-        setUserState
-      })
-  }, [isLoggingIn, isLoggedIn, accessToken, profilePic])
- */
   return (
     <BrowserRouter>
       <Layout profilePic={profilePic} >
