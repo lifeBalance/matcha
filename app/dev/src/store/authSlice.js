@@ -104,17 +104,19 @@ const authSlice = createSlice({
         isProfiled,
         isConfirmed,
         profilePic,
-        gps
+        gps,
+        currentLocation
       } = matcha
 
-      state.isLoggedIn = true
-      state.uid = uid
-      state.accessToken   = accessToken
-      state.isProfiled    = isProfiled
-      state.isConfirmed   = isConfirmed
-      state.profilePic    = profilePic
-      state.gps           = gps
-      state.isLoggingIn = false
+      state.isLoggedIn      = true
+      state.uid             = uid
+      state.accessToken     = accessToken
+      state.isProfiled      = isProfiled
+      state.isConfirmed     = isConfirmed
+      state.profilePic      = profilePic
+      state.gps             = gps
+      state.currentLocation = currentLocation
+      state.isLoggingIn     = false
     },
     resetLoggingInErrors: (state) => {
       state.errorLoggingIn = false
@@ -168,14 +170,15 @@ const authSlice = createSlice({
       // console.log(action) // testing
       console.log(action.payload) // testing
       if (action.payload) {
-        state.isLoggedIn  = true
-        state.errorLoggingIn = false
-        state.accessToken = action.payload.access_token
-        state.uid         = action.payload.uid
-        state.isProfiled  = action.payload.profiled
-        state.isConfirmed = action.payload.confirmed
-        state.profilePic  = action.payload.profile_pic
-        state.gps         = action.payload.gps
+        state.isLoggedIn      = true
+        state.errorLoggingIn  = false
+        state.accessToken     = action.payload.access_token
+        state.uid             = action.payload.uid
+        state.isProfiled      = action.payload.profiled
+        state.isConfirmed     = action.payload.confirmed
+        state.profilePic      = action.payload.profile_pic
+        state.gps             = action.payload.gps
+        state.currentLocation = action.payload.currentLocation
 
         // Let's save these pieces of state in Local Storage
         const matcha = {

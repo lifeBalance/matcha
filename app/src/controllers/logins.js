@@ -49,29 +49,39 @@ exports.login = async (req, res, next) => {
         message: 'Please, confirm your account before logging in.'
       })
     }
+
+    // REMEMBER: We set the user's location at LOGIN!! (design choice)
+
     /* Let's start by checking that the user didn't set her LOCATION to
-      'manual'; in that case we don't write her current location to the DB
-      (her current location may be coming either from her browser or from
-      her IP address). */
+      'manual' in her Profile Settings; in that case we don't write her 
+      current location to the DB (either req.geoLoc or req.geoIpLoc). */
     const location = await AccountModel.getLocation({ uid: currentUser.id })
     // console.log('LOGINS CONTROLLER: '+JSON.stringify(location)) // testing
 
-    /* We'll set the user's location at LOGIN, unless she's decided to set 
-      her coordinates manually through her Profile Settings (On the FIRST LOGIN, 'location' will be null, since it hasn't been set yet, and 
-      that's the DEFAULT VALUE of the column in the DB). */
+    let liveLocation = req.geoLoc
+    if (req.geoLoc.coords.lat === 0 && req.geoLoc.coords.lng === 0)
+      liveLocation = req.geoIpLoc
+    console.log(`logins CONTROLLER - liveLocation = 
+                ${JSON.stringify(liveLocation)}`)
+
+    /* On the FIRST LOGIN, the 'location' column in the DB, will be null, since it hasn't been set yet, and that's the DEFAULT VALUE for this column). */
     if (!location || !location.manual) {
       // console.log('LOGINS - LOCATION not MANUAL: '+JSON.stringify(req.gps)) // testing
 
-      /* Let's write the gps coordinates to the DB (later the user may decide 
-        to set them manually through her Profile settings).*/
+      /*  Let's write the gps coordinates to the DB (it could be either 
+        the browser's Geolocation API or the one we juiced from her IP).*/
       await AccountModel.setLocation({
         uid:      currentUser.id,
-        location: req.gps
+        location: liveLocation
       })
     }
-    /*  If the user set has her location set to manual, let's  
-      pull it from DB and send it back in the response. */
-    const gpsResponse = (!location || !location.manual) ? req.gps : location
+
+    /*  Now let's use whatever we have in the DB and place it in a 
+      variable to send it back in the response. */
+    const gpsResponse = (!location || !location.manual) ?
+      liveLocation
+      :
+      location
     console.log('gpsResponse: '+JSON.stringify(gpsResponse))  // testing
 
     // Generate the access_token
@@ -116,14 +126,15 @@ exports.login = async (req, res, next) => {
 
     // Send the access_token in the response body
     res.status(200).json({
-      type: 'SUCCESS',
-      message: 'Successfully logged in!',
-      access_token: accessToken,
-      profiled:     currentUser.profiled,
-      confirmed:    currentUser.confirmed,
-      uid:          currentUser.id,
-      profile_pic:  profile_pic,
-      gps:          gpsResponse
+      type:             'SUCCESS',
+      message:          'Successfully logged in!',
+      access_token:     accessToken,
+      profiled:         currentUser.profiled,
+      confirmed:        currentUser.confirmed,
+      uid:              currentUser.id,
+      profile_pic:      profile_pic,
+      gps:              gpsResponse,
+      currentLocation:  liveLocation
     })
   } catch(error) {
     console.log(error)

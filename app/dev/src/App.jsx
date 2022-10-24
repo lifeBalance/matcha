@@ -32,7 +32,6 @@ function App() {
   const dispatch = useDispatch()
   const gps = useSelector(slices => slices.auth.gps)
 
-
   const {
     isLoggingIn,
     isLoggedIn,
@@ -41,9 +40,11 @@ function App() {
 
   /* Let's set the CURRENT LOCATION global state as soon as the APP 
     component loads (this is the geolocation of the navigator browser 
-    API). This way we'll have it available in case we need it. */
+    API). This way we'll have it available to be sent when the 
+    user logs in. */
   React.useEffect(() => {
-    if (!navigator.geolocation) return
+    if (!navigator.geolocation ||
+        (gps.coords.lat !== 0 && gps.coords.lng !== 0)) return
 
     console.log('navigator is ON!') // testing
 
