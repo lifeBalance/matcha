@@ -5,7 +5,7 @@ import Map from '../components/Map'
 import { Checkbox, Label } from 'flowbite-react'
 
 // Redux
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 
 // hooks
 import useMap from '../hooks/useMap'
@@ -18,7 +18,7 @@ function Test() {
   const {
     center,
     setCenter,
-    manual,
+    manualLocation,
     setManualLocation
   } = useMap()
 
@@ -29,13 +29,13 @@ function Test() {
         {/* Lat: {loc.lat.toFixed(4)} Long: {loc.lng.toFixed(4)} */}
         {/* {currentLoc && `Lat: ${currentLoc.lat} Long: ${currentLoc.lng}`} */}
       </p>
-      <Map center={center} setCenter={setCenter} manual={manual} />
+      <Map center={center} setCenter={setCenter} manual={manualLocation} />
 
       <div className="flex items-center gap-2">
         <Checkbox
           id='manual'
-          onChange={() => dispatch(setManualLocation(!manual))}
-          checked={manual}
+          onChange={() => dispatch(setManualLocation(!manualLocation))}
+          checked={manualLocation}
         />
 
         <Label htmlFor='manual' >
@@ -44,7 +44,7 @@ function Test() {
       </div>
 
       <p className='text-white text-center font-bold'>
-        Lat: {center.lat} Long: {center.lng} Manual: {manual.toString()}
+        Lat: {center.lat} Long: {center.lng} Manual: {!!manualLocation}
       </p>
       {/* {console.log(typeof(center.lat))} */}
     </div>

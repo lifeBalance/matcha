@@ -21,16 +21,13 @@ import PageNotFound from './pages/PageNotFound'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   loginAfterReload,
-  setCoords,
-  setManualLocation,
-  setCurrentLocation
+  setLiveLocation
 } from './store/authSlice'
 import Layout from './components/UI/Layout'
 
 function App() {
   // redux
   const dispatch = useDispatch()
-  const gps = useSelector(slices => slices.auth.gps)
 
   const {
     isLoggingIn,
@@ -38,18 +35,17 @@ function App() {
     profilePic,
   } = useSelector(slices => slices.auth)
 
-  /* Let's set the CURRENT LOCATION global state as soon as the APP 
-    component loads (this is the geolocation of the navigator browser 
-    API). This way we'll have it available to be sent when the 
-    user logs in. */
+  /* Let's set the LIVE LOCATION global state as soon as the APP 
+    component loads, so that we'll have it available to be sent when the 
+    user logs in (It will contain the initial state if the user didn't 
+    authorize the geolocation of the navigator browser API). */
   React.useEffect(() => {
-    if (!navigator.geolocation ||
-        (gps.coords.lat !== 0 && gps.coords.lng !== 0)) return
+    if (!navigator.geolocation) return
 
     console.log('navigator is ON!') // testing
 
     function handleSuccess(pos) {
-      dispatch(setCurrentLocation({
+      dispatch(setLiveLocation({
         lat: pos.coords.latitude,
         lng: pos.coords.longitude
       }))

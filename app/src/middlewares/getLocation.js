@@ -24,17 +24,14 @@ exports.getLocation = (req, res, next) => {
     // const IP = '??.??.??.??'      // Helsinki - HIVE
     const geoIpCoords = geoip.lookup(IP).ll
 
-    
-    req.geoIpLoc = {
-      coords: { lat: geoIpCoords[0], lng: geoIpCoords[1] },
-      manual: false
-    }
+    req.geoIpLoc = { lat: geoIpCoords[0], lng: geoIpCoords [1] }
+
     console.log(`getLocation MW (geoip): 
                   ${JSON.stringify(req.geoIpLoc)}`) // testing
 
     /* Let's hang the location browser's geolocation received in the body 
     of the Request, directly in the Request object (it could be null). */
-    req.geoLoc = req.body.gps
+    req.geoLoc = req.body.liveLocation
     console.log(`getLocation MW (browser):
                   ${JSON.stringify(req.geoLoc)}`) // testing
   next()

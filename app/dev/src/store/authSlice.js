@@ -12,11 +12,9 @@ const initialState = {
   errorLoggingIn: false,
   errorLoggingOut: false,
   profilePic: '',
-  gps: {
-    coords: { lat: 0, lng: 0 },
-    manual: false
-  },
-  currentLocation: { lat: 0, lng: 0 }
+  location: { lat: 0, lng: 0 },
+  liveLocation: { lat: 0, lng: 0 },
+  manualLocation: false
 }
 
 const logout = createAsyncThunk('auth/logout', async function(args, thunkAPI) {
@@ -44,9 +42,9 @@ const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
 
   try {
     const response = await axios.post('/api/logins', {
-      username: username,
-      password: password,
-      gps: thunkAPI.getState().auth.gps
+      username:     username,
+      password:     password,
+      liveLocation: thunkAPI.getState().auth.liveLocation
     }, {
       withCredentials: true
     })
@@ -96,7 +94,7 @@ const authSlice = createSlice({
     loginAfterReload: (state, action) => {
       state.isLoggingIn = true
       const matcha = JSON.parse(action.payload)
-      // console.log('slice: '+action.payload)  // testing
+      console.log('slice: '+action.payload)  // testing
 
       const {
         uid,
@@ -104,9 +102,12 @@ const authSlice = createSlice({
         isProfiled,
         isConfirmed,
         profilePic,
-        gps,
-        currentLocation
+        location,
+        liveLocation,
+        manualLocation
       } = matcha
+
+      console.log(matcha);
 
       state.isLoggedIn      = true
       state.uid             = uid
@@ -114,8 +115,9 @@ const authSlice = createSlice({
       state.isProfiled      = isProfiled
       state.isConfirmed     = isConfirmed
       state.profilePic      = profilePic
-      state.gps             = gps
-      state.currentLocation = currentLocation
+      state.location        = location
+      state.liveLocation    = liveLocation
+      state.manualLocation  = manualLocation
       state.isLoggingIn     = false
     },
     resetLoggingInErrors: (state) => {
@@ -138,16 +140,33 @@ const authSlice = createSlice({
       matcha.profilePic = action.payload
       localStorage.setItem('matcha', JSON.stringify(matcha))
     },
-    setCoords: (state, action) => {
-      console.log(action.payload) // testing
-      state.gps.coords = action.payload
-      console.log('auth Slice: ' + JSON.stringify(action.payload)) // testing
+    setLocation: (state, action) => {
+      state.location = action.payload
+
+      // Persist state to Local storage
+      const matcha = JSON.parse(localStorage.getItem('matcha'))
+      if (matcha) {
+        matcha.location = action.payload
+        localStorage.setItem('matcha', JSON.stringify(matcha))
+      }
+    },
+    setLiveLocation: (state, action) => {
+      state.liveLocation = action.payload
+
+      // Persist state to Local storage
+      const matcha = JSON.parse(localStorage.getItem('matcha'))
+      if (matcha) {
+        matcha.liveLocation = action.payload
+        localStorage.setItem('matcha', JSON.stringify(matcha))
+      }
     },
     setManualLocation: (state, action) => {
-      state.gps.manual = action.payload
-    },
-    setCurrentLocation: (state, action) => {
-      state.currentLocation = action.payload
+      state.manualLocation = action.payload
+
+      // Persist state to Local storage
+      const matcha = JSON.parse(localStorage.getItem('matcha'))
+      matcha.manualLocation = action.payload
+      localStorage.setItem('matcha', JSON.stringify(matcha))
     }
   },
   
@@ -177,17 +196,20 @@ const authSlice = createSlice({
         state.isProfiled      = action.payload.profiled
         state.isConfirmed     = action.payload.confirmed
         state.profilePic      = action.payload.profile_pic
-        state.gps             = action.payload.gps
-        state.currentLocation = action.payload.currentLocation
+        state.location        = action.payload.location
+        state.liveLocation    = action.payload.liveLocation,
+        state.manualLocation  = action.payload.manualLocation
 
         // Let's save these pieces of state in Local Storage
         const matcha = {
-          uid:          action.payload.uid,
-          accessToken:  action.payload.access_token,
-          isProfiled:   action.payload.profiled,
-          isConfirmed:  action.payload.confirmed,
-          profilePic:   action.payload.profile_pic,
-          gps:          action.payload.gps
+          uid:            action.payload.uid,
+          accessToken:    action.payload.access_token,
+          isProfiled:     action.payload.profiled,
+          isConfirmed:    action.payload.confirmed,
+          profilePic:     action.payload.profile_pic,
+          location:       action.payload.location,
+          liveLocation:   action.payload.liveLocation,
+          manualLocation: action.payload.manualLocation
         }
         localStorage.setItem('matcha', JSON.stringify(matcha))
 
@@ -212,7 +234,6 @@ const authSlice = createSlice({
       state.isLoggedIn = false
       state.errorLoggingIn = false
       state.accessToken = ''
-      localStorage.removeItem('accessToken')
       localStorage.removeItem('matcha')
       // if (action) console.log(action)
     },
@@ -235,11 +256,14 @@ const authSlice = createSlice({
       state.errorLoggingIn = null
       if (action.payload && action.payload.access_token) {
         // We receive lots of intel in the payload; let's set state:
-        state.accessToken = action.payload.access_token
-        state.uid         = action.payload.uid
-        state.profilePic  = action.payload.profile_pic
-        state.profiled    = action.payload.profiled
-        state.confirmed   = action.payload.confirmed
+        state.accessToken     = action.payload.access_token
+        state.uid             = action.payload.uid
+        state.profilePic      = action.payload.profile_pic
+        state.profiled        = action.payload.profiled
+        state.confirmed       = action.payload.confirmed
+        state.location        = action.payload.location
+        state.liveLocation    = action.payload.liveLocation
+        state.manualLocation  = action.payload.manualLocation
         // Grab the Local Storage item
         const matcha = localStorage.getItem('matcha')
         // console.log(matcha)   // testing
@@ -272,8 +296,9 @@ export const {
   setIsConfirmed,
   setProfilePic,
   setCoords,
-  setManualLocation,
-  setCurrentLocation
+  setLiveLocation,
+  setLocation,
+  setManualLocation
 } = authSlice.actions
 export { login, logout, refresh } // async actions
 export default authSlice.reducer
