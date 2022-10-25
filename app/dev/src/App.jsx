@@ -42,8 +42,6 @@ function App() {
   React.useEffect(() => {
     if (!navigator.geolocation) return
 
-    console.log('navigator is ON!') // testing
-
     function handleSuccess(pos) {
       dispatch(setLiveLocation({
         lat: pos.coords.latitude,
@@ -51,7 +49,7 @@ function App() {
       }))
     }
 
-    function handleError(err) { console.log(err) }
+    function handleError(err) { /* console.log(err) */ }
 
     navigator.geolocation.getCurrentPosition(handleSuccess, handleError)
   }, [])

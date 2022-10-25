@@ -2,7 +2,7 @@ import React from 'react'
 
 function Input(props) {
   return (
-    <div className='relative flex flex-col pb-20 w-full '>
+    <div className='relative flex flex-col pb-20 w-full px-2'>
       <div className='flex flex-col w-full'>
         <label className='text-2xl font-medium text-white pb-2 capitalize align-left'>{props.label}</label>
 

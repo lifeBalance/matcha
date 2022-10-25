@@ -4,7 +4,7 @@ import { XCircleIcon } from '@heroicons/react/24/outline'
 
 function FilePicker(props) {
   return (
-    <div className='relative flex flex-col pb-20 w-full '>
+    <div className='relative flex flex-col pb-20 w-full px-2'>
       <label
         className='block mb-2 text-2xl font-medium text-white capitalize'
         htmlFor='file_input'

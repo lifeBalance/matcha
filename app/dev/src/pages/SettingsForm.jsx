@@ -17,6 +17,7 @@ import useTextArea from '../hooks/useTextArea'
 import useSubmitProfile from '../hooks/useSubmitProfile'
 import useGetProfile from '../hooks/useGetProfile'
 import useFilePicker from '../hooks/useFilePicker'
+import useMap from '../hooks/useMap'
 
 // components
 import Input from '../components/UI/Input'
@@ -24,6 +25,8 @@ import Select from '../components/UI/Select'
 import TextArea from '../components/UI/TextArea'
 import Modal from '../components/UI/Modal'
 import FilePicker from '../components/UI/FilePicker'
+import Map from '../components/Map'
+import { Checkbox, Label } from 'flowbite-react'
 
 //icons
 import { HandRaisedIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
@@ -50,6 +53,7 @@ function SettingsForm() {
 
   const [formIsValid, setFormIsValid] = React.useState(false)
   const [formWasChanged, setFormWasChanged] = React.useState(false)
+  const [mapWasChanged, setMapWasChanged] = React.useState(false)
   const navigate = useNavigate()
 
   React.useEffect(() => {
@@ -127,6 +131,14 @@ function SettingsForm() {
     areaWasChanged: bioWasChanged
   } = useTextArea(255)
 
+  // MAP
+  const {
+    center,
+    setCenter,
+    manualLocation,
+    setManualLocation
+  } = useMap()
+
   const {
     files,
     setFiles,
@@ -149,6 +161,9 @@ function SettingsForm() {
     setPreferencesValue(data.prefers)
     setBioValue(unescape(data.bio))
     setFilesLeft(data.pics_left)
+    setCenter({ lat: data.location.lat, lng: data.location.lng })
+    setManualLocation({ manual: data.location.manual })
+    // console.log(data.location) // testing
   }
 
   React.useEffect(() => {
@@ -216,7 +231,8 @@ function SettingsForm() {
       genderWasChanged ||
       preferencesWasChanged ||
       bioWasChanged ||
-      filePickerWasChanged
+      filePickerWasChanged ||
+      mapWasChanged
     ) {
       setFormWasChanged(true)
     } else {
@@ -230,7 +246,8 @@ function SettingsForm() {
     genderWasChanged,
     preferencesWasChanged,
     bioWasChanged,
-    filePickerWasChanged
+    filePickerWasChanged,
+    mapWasChanged
   ])
 
   function onCancelButtonHandler(e) {
@@ -281,7 +298,7 @@ function SettingsForm() {
   // Submit profile
   function submitHandler(e) {
     e.preventDefault()
-
+    // console.log(center) // testing
     submitProfile({
       accessToken,
       firstName,
@@ -291,6 +308,8 @@ function SettingsForm() {
       genderValue,
       preferencesValue,
       bioValue,
+      manualLocation,
+      center,
       files,
       callback: getModalFeedback
     })
@@ -314,8 +333,13 @@ function SettingsForm() {
     if (isProfiled) navigate('/', { replace: true })
   }
 
+  function handleManualLocation(params) {
+    dispatch(setManualLocation(!manualLocation))
+    setMapWasChanged(true)
+  }
+
   return (
-    <div className='py-10 px-4'>
+    <div className='py-10'>
       {modalIsOpen && (
         <Modal closeModal={closeModalHandler}>
           <p>{modalContent}</p>
@@ -402,6 +426,23 @@ function SettingsForm() {
           charactersLeft={255 - bioValue.length}
           maxLength={255}
         />
+
+        <div className="flex flex-col pb-20">
+          <h1 className='text-2xl font-medium text-white pb-2 capitalize align-left pl-2'>Your location</h1>
+
+          <Map center={center} setCenter={setCenter} manual={manualLocation} />
+          <div className="flex ml-4 mt-2 space-x-2 items-center">
+            <Checkbox
+              id='manual'
+              onChange={handleManualLocation}
+              checked={manualLocation}
+              />
+
+            <Label htmlFor='manual' >
+              <p className='text-white font-bold'>Set Manual Location</p>
+            </Label>
+          </div>
+        </div>
 
         <FilePicker
           label='upload some pics'

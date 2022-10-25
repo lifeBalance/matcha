@@ -135,7 +135,7 @@ exports.login = async (req, res, next) => {
       profile_pic:      profile_pic,
       location:         dbLocation,
       liveLocation:     liveLocation,
-      manualLocation:   dbLocation?.manual || false
+      manualLocation:   dbLocation?.manual === 'true' || false
     })
   } catch(error) {
     console.log(error)

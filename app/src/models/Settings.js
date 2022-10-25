@@ -15,12 +15,13 @@ module.exports = class Settings {
     this.bio          = data.bio
     this.id           = data.id
     this.confirmed    = data.confirmed
+    this.location     = data.location
   }
 
   static async readSettings({ id }) {
     const sql =`
     SELECT
-    id, username, firstname, lastname, email, age, gender, prefers, bio, confirmed, profiled
+    id, username, firstname, lastname, email, age, gender, prefers, bio, confirmed, profiled, location
     FROM users WHERE id = ?`
 
     /* SELECT returns an ARRAY with two elements:
@@ -42,7 +43,8 @@ module.exports = class Settings {
       prefers = ?,
       bio = ?,
       profiled = 1,
-      confirmed = ?
+      confirmed = ?,
+      location = ?
     WHERE id = ?`
 
     const fields = await pool.execute(sql, [
@@ -54,6 +56,7 @@ module.exports = class Settings {
       this.prefers,
       this.bio,
       this.confirmed,
+      this.location,
       this.id
     ])
 

@@ -2,7 +2,7 @@ import React from 'react'
 
 function Select(props) {
   return (
-    <div className='relative flex flex-col pb-20 w-full '>
+    <div className='relative flex flex-col pb-20 w-full px-2'>
       <label
         htmlFor={props.for}
         className='block mb-2 text-2xl font-medium text-white capitalize'

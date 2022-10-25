@@ -38,7 +38,7 @@ const login = createAsyncThunk('auth/login', async function(args, thunkAPI) {
   // 'args' is an OBJECT, so invoke the extraReducer with an Object!!!
   const { username, password } = args
 
-  console.log(thunkAPI.getState().auth) // testing
+  // console.log(thunkAPI.getState().auth) // testing
 
   try {
     const response = await axios.post('/api/logins', {
@@ -94,7 +94,7 @@ const authSlice = createSlice({
     loginAfterReload: (state, action) => {
       state.isLoggingIn = true
       const matcha = JSON.parse(action.payload)
-      console.log('slice: '+action.payload)  // testing
+      // console.log('slice: '+action.payload)  // testing
 
       const {
         uid,
@@ -107,7 +107,7 @@ const authSlice = createSlice({
         manualLocation
       } = matcha
 
-      console.log(matcha);
+      // console.log(matcha) // testing
 
       state.isLoggedIn      = true
       state.uid             = uid
@@ -162,11 +162,13 @@ const authSlice = createSlice({
     },
     setManualLocation: (state, action) => {
       state.manualLocation = action.payload
-
+      
       // Persist state to Local storage
       const matcha = JSON.parse(localStorage.getItem('matcha'))
-      matcha.manualLocation = action.payload
-      localStorage.setItem('matcha', JSON.stringify(matcha))
+      if (matcha) {
+        matcha.manualLocation = action.payload
+        localStorage.setItem('matcha', JSON.stringify(matcha))
+      }
     }
   },
   
@@ -187,7 +189,7 @@ const authSlice = createSlice({
       }
 
       // console.log(action) // testing
-      console.log(action.payload) // testing
+      // console.log(action.payload) // testing
       if (action.payload) {
         state.isLoggedIn      = true
         state.errorLoggingIn  = false
@@ -197,7 +199,7 @@ const authSlice = createSlice({
         state.isConfirmed     = action.payload.confirmed
         state.profilePic      = action.payload.profile_pic
         state.location        = action.payload.location
-        state.liveLocation    = action.payload.liveLocation,
+        state.liveLocation    = action.payload.liveLocation
         state.manualLocation  = action.payload.manualLocation
 
         // Let's save these pieces of state in Local Storage
@@ -257,25 +259,24 @@ const authSlice = createSlice({
       if (action.payload && action.payload.access_token) {
         // We receive lots of intel in the payload; let's set state:
         state.accessToken     = action.payload.access_token
-        state.uid             = action.payload.uid
-        state.profilePic      = action.payload.profile_pic
-        state.profiled        = action.payload.profiled
-        state.confirmed       = action.payload.confirmed
-        state.location        = action.payload.location
-        state.liveLocation    = action.payload.liveLocation
-        state.manualLocation  = action.payload.manualLocation
+        state.uid             = action.payload.uid          // ??
+        state.profilePic      = action.payload.profile_pic  // ??
+        state.profiled        = action.payload.profiled     // ??
+        state.confirmed       = action.payload.confirmed    // ??
+
         // Grab the Local Storage item
         const matcha = localStorage.getItem('matcha')
         // console.log(matcha)   // testing
+        if (matcha) {
+          // Parse it into an object
+          const parsed = JSON.parse(matcha)
 
-        // Parse it into an object
-        const parsed = JSON.parse(matcha)
+          // Update its Access token property
+          parsed.accessToken = action.payload.access_token
 
-        // Update its Access token property
-        parsed.accessToken = action.payload.access_token
-
-        // Save it back to Local Storage
-        localStorage.setItem('matcha', JSON.stringify({ ...parsed }))
+          // Save it back to Local Storage
+          localStorage.setItem('matcha', JSON.stringify({ ...parsed }))
+        }
       }
     },
     [refresh.rejected]: (state, action) => {

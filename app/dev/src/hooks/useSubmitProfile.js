@@ -46,6 +46,8 @@ function useSubmitProfile() {
     formData.append('gender', args.genderValue)
     formData.append('prefers', args.preferencesValue)
     formData.append('bio', args.bioValue ?? '')
+    formData.append('coords', JSON.stringify(args.center))
+    formData.append('manual', args.manualLocation)
     args.files.forEach((pic, idx) => {
       formData.append(`pic${idx}`, pic)
     })

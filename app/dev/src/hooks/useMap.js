@@ -60,7 +60,7 @@ function useMap() {
       // console.log(liveLocation)
     }
     // console.log(`CENTER: ${JSON.stringify(center)}`)   // testing
-  }, [manualLocation])
+  }, [manualLocation, liveLocation, manualLocation])
 
   /*  The following hook, saves the center to the 'location' GLOBAL STATE 
     as soon as the hook in invoked, and also whenever a change in the 

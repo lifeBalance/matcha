@@ -32,20 +32,31 @@ exports.getSettings = async (req, res, next) => {
   const pics = await PicModel.readAll({ id: req.uid })
 
   const fakeBio = 'Some users prefer to keep an air of mistery about themselves...'
+
+  /* The following variable is to convert the 'manual' nested
+    property to Boolean. No big deal.
+  */
+  const location = {
+    lat: settings.location.lat,
+    lng: settings.location.lng,
+    manual: settings.location.manual === 'true' || false,
+  }
+
   // Send Account information to prepopulate fields in the Profile form.
   res.status(200).json({
-    uid:          req.uid, // send it just in case...
-    username:     settings.username,
-    firstname:    settings.firstname,
-    lastname:     settings.lastname,
-    email:        settings.email,
-    age:          settings.age,
-    gender:       settings.gender,
-    prefers:      settings.prefers,
-    bio:          settings.bio || fakeBio,
-    profile_pic:  profile_pic_url,
-    pics:         pics,
-    pics_left:    5 - pics.length 
+    uid:            req.uid, // send it just in case...
+    username:       settings.username,
+    firstname:      settings.firstname,
+    lastname:       settings.lastname,
+    email:          settings.email,
+    age:            settings.age,
+    gender:         settings.gender,
+    prefers:        settings.prefers,
+    bio:            settings.bio || fakeBio,
+    profile_pic:    profile_pic_url,
+    pics:           pics,
+    pics_left:      5 - pics.length,
+    location:       location
   })
 }
 
@@ -72,9 +83,15 @@ exports.updateSettings = async (req, res, next) => {
       age,
       gender,
       prefers,
-      bio
+      bio,
+      coords,
+      manual
     } = req.fields
+    const location = { ...JSON.parse(coords), manual: manual }
+
     // console.log('SETTINGS - FORM FIELDS: '+JSON.stringify(req.fields)) // testing
+    // console.log('SETTINGS - Location: '+JSON.stringify(location)) // testing
+
     /**
      *  Let's initialize the variable 'confirmed` to 1 (true), meaning that
      * if the user is creating/updating her profile, she's confirmed her 
@@ -152,7 +169,8 @@ exports.updateSettings = async (req, res, next) => {
       prefers: parseInt(prefers),
       bio,
       id: currentUser.id,
-      confirmed: confirmed
+      confirmed: confirmed,
+      location: location
     })
 
     // We could use the DB response, to check if the profile was created/updated
