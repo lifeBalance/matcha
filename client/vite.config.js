@@ -16,10 +16,10 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: '../public'
+    outDir: '../server/public'
   },
   root: './',             // disable before build
-  publicDir: '../public', // disable before build
+  publicDir: '../server/public', // disable before build
   plugins: [
     react(),
     // basicSsl(),
