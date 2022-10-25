@@ -18,6 +18,7 @@ import useSubmitProfile from '../hooks/useSubmitProfile'
 import useGetProfile from '../hooks/useGetProfile'
 import useFilePicker from '../hooks/useFilePicker'
 import useMap from '../hooks/useMap'
+import useDeletePics from '../hooks/useDeletePics'
 
 // components
 import Input from '../components/UI/Input'
@@ -26,6 +27,7 @@ import TextArea from '../components/UI/TextArea'
 import Modal from '../components/UI/Modal'
 import FilePicker from '../components/UI/FilePicker'
 import Map from '../components/Map'
+import DeletePics from '../components/DeletePics'
 import { Checkbox, Label } from 'flowbite-react'
 
 //icons
@@ -140,6 +142,12 @@ function SettingsForm() {
   } = useMap()
 
   const {
+    deletePics,
+    setDeletePics,
+    handleRemovePic
+  } = useDeletePics()
+
+  const {
     files,
     setFiles,
     filesLeft,
@@ -160,6 +168,7 @@ function SettingsForm() {
     setGenderValue(data.gender)
     setPreferencesValue(data.prefers)
     setBioValue(unescape(data.bio))
+    setDeletePics(data.pics)
     setFilesLeft(data.pics_left)
     setCenter({ lat: data.location.lat, lng: data.location.lng })
     setManualLocation({ manual: data.location.manual })
@@ -339,7 +348,7 @@ function SettingsForm() {
   }
 
   return (
-    <div className='py-10'>
+    <div className='py-10 max-w-xl'>
       {modalIsOpen && (
         <Modal closeModal={closeModalHandler}>
           <p>{modalContent}</p>
@@ -452,6 +461,8 @@ function SettingsForm() {
           filesLeft={filesLeft}
           onClickHandler={deletePic}
         />
+
+        {deletePics.length > 0 && <DeletePics pics={deletePics} handleRemovePic={handleRemovePic} />}
 
         <div className='flex flex-col md:flex-row space-y-10 md:space-y-0 mt-10 md:items-start'>
           <button
