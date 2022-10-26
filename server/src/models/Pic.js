@@ -50,24 +50,7 @@ module.exports = class Pic {
   }
 
   static async readAll({ id }) {
-    const sql = `
-    SELECT * FROM pic_urls
-    WHERE user_id = ?
-    ORDER BY profile_pic DESC`
-    /* SELECT returns an ARRAY with two elements:
-        0: An ARRAY with the rows (could be an empty array).
-        1: A fields OBJECT (metadata about the query result). */
-    const [arr, fields] = await pool.execute(sql, [id])
-    /* We map over the resulting array of objects in order to return an array 
-      of just pic URLs, which could be empty, if there are no pics. */
-    return arr.map((pic) => pic.url)
-  }
-
-  static async readNonProfile({ id }) {
-    const sql = `
-    SELECT * FROM pic_urls
-    WHERE user_id = ?
-    AND profile_pic = 0`
+    const sql = 'SELECT * FROM pic_urls WHERE user_id = ?'
     /* SELECT returns an ARRAY with two elements:
         0: An ARRAY with the rows (could be an empty array).
         1: A fields OBJECT (metadata about the query result). */

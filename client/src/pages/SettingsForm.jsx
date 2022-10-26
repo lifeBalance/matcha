@@ -17,7 +17,6 @@ import useTextArea from '../hooks/useTextArea'
 import useSubmitProfile from '../hooks/useSubmitProfile'
 import useGetProfile from '../hooks/useGetProfile'
 import useFilePicker from '../hooks/useFilePicker'
-import useProfilePicker from '../hooks/useProfilePicker'
 import useMap from '../hooks/useMap'
 import useDeletePics from '../hooks/useDeletePics'
 
@@ -27,7 +26,6 @@ import Select from '../components/UI/Select'
 import TextArea from '../components/UI/TextArea'
 import Modal from '../components/UI/Modal'
 import FilePicker from '../components/UI/FilePicker'
-import ProfilePicker from '../components/UI/ProfilePicker'
 import Map from '../components/Map'
 import DeletePics from '../components/DeletePics'
 import { Checkbox, Label } from 'flowbite-react'
@@ -164,16 +162,6 @@ function SettingsForm() {
     filePickerChangeHandler
   } = useFilePicker(5)
 
-  const {
-    file,
-    setFile,
-    profilePickerError,
-    setProfilePickerError,
-    deleteProfilePic,
-    profilePickerWasChanged,
-    profilePickerChangeHandler
-  } = useProfilePicker()
-
   function setUserState(data) {
     setUserName(data.username)
     setFirstName(data.firstname)
@@ -183,7 +171,7 @@ function SettingsForm() {
     setGenderValue(data.gender)
     setPreferencesValue(data.prefers)
     setBioValue(unescape(data.bio))
-    setExistingPics(data.extraPics)
+    setExistingPics(data.pics)
     setFilesLeft(data.pics_left)
     setCenter({ lat: data.location.lat, lng: data.location.lng })
     setManualLocation({ manual: data.location.manual })
@@ -257,8 +245,7 @@ function SettingsForm() {
       bioWasChanged         ||
       filePickerWasChanged  ||
       mapWasChanged         ||
-      deletePicsWasChanged  ||
-      profilePickerWasChanged
+      deletePicsWasChanged
     ) {
       setFormWasChanged(true)
     } else {
@@ -274,8 +261,7 @@ function SettingsForm() {
     bioWasChanged,
     filePickerWasChanged,
     mapWasChanged,
-    deletePicsWasChanged,
-    profilePickerWasChanged
+    deletePicsWasChanged
   ])
 
   function onCancelButtonHandler(e) {
@@ -338,7 +324,6 @@ function SettingsForm() {
       bioValue,
       manualLocation,
       center,
-      file,
       files,
       deletePics,
       callback: getModalFeedback
@@ -347,7 +332,7 @@ function SettingsForm() {
 
   /* Synchronize 'filesLeft' state. */
   React.useEffect(() => {
-    setFilesLeft(4 - existingPics.length - files.length)
+    setFilesLeft(5 - existingPics.length - files.length)
   }, [files, existingPics])
 
   console.log(`Files left: ${filesLeft}`) // testing
@@ -481,16 +466,8 @@ function SettingsForm() {
           </div>
         </div>
 
-        <ProfilePicker
-          label='upload a profile pic'
-          name='profile picker'
-          onChangeProfilePicker={profilePickerChangeHandler}
-          file={file}
-          onClickHandler={deleteProfilePic}
-        />
-
         <FilePicker
-          label='upload more pics'
+          label='upload some pics'
           name='picker'
           onChangeFilePicker={filePickerChangeHandler}
           files={files}

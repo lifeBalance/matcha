@@ -21,16 +21,12 @@ exports.savePic = async (pic, uid, is_profile_pic) => {
 
   /*  If the picture is a Profile pic, it means the user still doesn't 
     have a folder in /public/uploads, so let's create one. */
-  var folderExists
   try {
-    await fs.access(userFolder)
-    folderExists = true
-    console.log(`folderExists? ${folderExists}`) // testing
+    var folderExists = await fs.access(userFolder)
   } catch (error) {
-    folderExists = false
-    console.log(`It seems ${userFolder} doesn't exist! (${error})`) // testing
+    console.log(`Error checking for ${userFolder} existence (${error})`) // testing
   }
-
+  
   if (!folderExists) {
     try {
       await fs.mkdir(userFolder)

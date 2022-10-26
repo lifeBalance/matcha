@@ -40,7 +40,7 @@ function Settings() {
       gender:       data.gender,
       preferences:  data.prefers,
       bio:          unescape(data.bio),
-      pics:         data.allPics,
+      pics:         data.pics,
     })
   }
 
