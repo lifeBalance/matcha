@@ -482,7 +482,7 @@ function SettingsForm() {
         </div>
 
         <ProfilePicker
-          label='upload a profile pic'
+          label='set profile pic'
           name='profile picker'
           onChangeProfilePicker={profilePickerChangeHandler}
           file={file}
@@ -490,7 +490,7 @@ function SettingsForm() {
         />
 
         <FilePicker
-          label='upload some pics'
+          label='upload extra pics'
           name='picker'
           onChangeFilePicker={filePickerChangeHandler}
           files={files}

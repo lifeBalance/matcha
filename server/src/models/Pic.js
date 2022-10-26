@@ -51,7 +51,10 @@ module.exports = class Pic {
   }
 
   static async readAll({ id }) {
-    const sql = 'SELECT * FROM pic_urls WHERE user_id = ?'
+    const sql = `
+    SELECT * FROM pic_urls
+    WHERE user_id = ?
+    ORDER BY profile_pic DESC`
     /* SELECT returns an ARRAY with two elements:
         0: An ARRAY with the rows (could be an empty array).
         1: A fields OBJECT (metadata about the query result). */

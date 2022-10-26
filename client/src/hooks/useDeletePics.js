@@ -11,7 +11,7 @@ function useDeletePics() {
     const picName = e.currentTarget?.parentElement.firstElementChild.getAttribute('src')
 
     if (picName) {
-      console.log(picName) // testing
+      // console.log(picName) // testing
 
       // The array of pics that should be deleted in the backend.
       setDeletePics(prevState => {
@@ -22,7 +22,7 @@ function useDeletePics() {
       setExistingPics(prevState => {
         return prevState.filter(pic => pic !== picName)
       })
-      console.log(deletePics) // testing
+      // console.log(deletePics) // testing
       setDeletePicsWasChanged(true)
     }
   }
