@@ -142,9 +142,12 @@ function SettingsForm() {
   } = useMap()
 
   const {
+    existingPics,
+    setExistingPics,
     deletePics,
     setDeletePics,
-    handleRemovePic
+    handleRemovePic,
+    deletePicsWasChanged
   } = useDeletePics()
 
   const {
@@ -168,7 +171,7 @@ function SettingsForm() {
     setGenderValue(data.gender)
     setPreferencesValue(data.prefers)
     setBioValue(unescape(data.bio))
-    setDeletePics(data.pics)
+    setExistingPics(data.pics)
     setFilesLeft(data.pics_left)
     setCenter({ lat: data.location.lat, lng: data.location.lng })
     setManualLocation({ manual: data.location.manual })
@@ -233,15 +236,16 @@ function SettingsForm() {
 
   React.useEffect(() => {
     if (
-      firstNameWasChanged ||
-      lastNameWasChanged ||
-      emailWasChanged ||
-      ageWasChanged ||
-      genderWasChanged ||
+      firstNameWasChanged   ||
+      lastNameWasChanged    ||
+      emailWasChanged       ||
+      ageWasChanged         ||
+      genderWasChanged      ||
       preferencesWasChanged ||
-      bioWasChanged ||
-      filePickerWasChanged ||
-      mapWasChanged
+      bioWasChanged         ||
+      filePickerWasChanged  ||
+      mapWasChanged         ||
+      deletePicsWasChanged
     ) {
       setFormWasChanged(true)
     } else {
@@ -256,7 +260,8 @@ function SettingsForm() {
     preferencesWasChanged,
     bioWasChanged,
     filePickerWasChanged,
-    mapWasChanged
+    mapWasChanged,
+    deletePicsWasChanged
   ])
 
   function onCancelButtonHandler(e) {
@@ -320,9 +325,17 @@ function SettingsForm() {
       manualLocation,
       center,
       files,
+      deletePics,
       callback: getModalFeedback
     })
   }
+
+  /* Synchronize 'filesLeft' state. */
+  React.useEffect(() => {
+    setFilesLeft(5 - existingPics.length - files.length)
+  }, [files, existingPics])
+
+  console.log(`Files left: ${filesLeft}`) // testing
 
   if (gettingProfile && !errorGettingProfile)
     return (
@@ -462,7 +475,7 @@ function SettingsForm() {
           onClickHandler={deletePic}
         />
 
-        {deletePics.length > 0 && <DeletePics pics={deletePics} handleRemovePic={handleRemovePic} />}
+        {existingPics.length > 0 && <DeletePics pics={existingPics} handleRemovePic={handleRemovePic} />}
 
         <div className='flex flex-col md:flex-row space-y-10 md:space-y-0 mt-10 md:items-start'>
           <button

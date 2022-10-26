@@ -21,8 +21,19 @@ exports.savePic = async (pic, uid, is_profile_pic) => {
 
   /*  If the picture is a Profile pic, it means the user still doesn't 
     have a folder in /public/uploads, so let's create one. */
-  if (is_profile_pic)
-    await fs.mkdir(userFolder)
+  try {
+    var folderExists = await fs.access(userFolder)
+  } catch (error) {
+    console.log(`Error checking for ${userFolder} existence (${error})`) // testing
+  }
+  
+  if (!folderExists) {
+    try {
+      await fs.mkdir(userFolder)
+    } catch (error) {
+      console.log(`Error creating ${userFolder} (${error})`) // testing
+    }
+  }
 
   // Read the first pic (the server placed it in a /temp folder)
   const content = await fs.readFile(pic.filepath, (err, e) => {
@@ -44,4 +55,26 @@ exports.savePic = async (pic, uid, is_profile_pic) => {
 
   // We return the relative URL, in case we want to send it in the response.
   return `/uploads/${uid}/${pic.newFilename}.${ext}`
+}
+
+exports.deletePic = async (picUrl, uid) => {
+  const pathToPic = path.join(`${__dirname}/../../public${picUrl}`)
+
+  // console.log(`About to deletePic: ${pathToPic}`) // testing
+
+  // Delete the picture in the filesystemt.
+  try {
+    await fs.unlink(pathToPic)
+  } catch (error) {
+    console.log(`We couldn't delete ${pathToPic}`)
+  }
+
+  // Delete the URL to the DB.
+  await PicModel.deleteOne({
+    uid,
+    url: picUrl
+  })
+
+  // We return the URL of the pic we just deleted
+  return pathToPic
 }

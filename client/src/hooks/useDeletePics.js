@@ -1,22 +1,39 @@
 import React from 'react'
 
 function useDeletePics() {
+  const [existingPics, setExistingPics] = React.useState([])
   const [deletePics, setDeletePics] = React.useState([])
+  const [deletePicsWasChanged, setDeletePicsWasChanged] = React.useState(false)
 
   function handleRemovePic(e) {
-    const picName = e.target?.previousSibling?.getAttribute('src')
+    e.preventDefault()
+    // console.log(e.currentTarget?.parentElement.firstElementChild.getAttribute('src'))
+    const picName = e.currentTarget?.parentElement.firstElementChild.getAttribute('src')
 
-    if (picName) console.log(picName) // testing
+    if (picName) {
+      console.log(picName) // testing
 
-    setDeletePics(prevState => {
-      return prevState.filter(pic => pic !== picName)
-    })
+      // The array of pics that should be deleted in the backend.
+      setDeletePics(prevState => {
+        return [...prevState, picName]
+      })
+
+      // The array of pics in the backend.
+      setExistingPics(prevState => {
+        return prevState.filter(pic => pic !== picName)
+      })
+      console.log(deletePics) // testing
+      setDeletePicsWasChanged(true)
+    }
   }
 
   return {
+    existingPics,
+    setExistingPics,
     deletePics,
     setDeletePics,
-    handleRemovePic
+    handleRemovePic,
+    deletePicsWasChanged
   }
 }
 

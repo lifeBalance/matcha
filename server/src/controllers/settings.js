@@ -7,8 +7,8 @@ const PicModel = require('../models/Pic')
 // Utility for generate Email token and send Account Confirmation email
 const { tokenAndEmail } = require('../utils/tokenAndEmail')
 
-// For saving pics to DB and filesystem
-const { savePic } = require('../utils/savePic')
+// For saving/deleting pics to/from DB and filesystem
+const { savePic, deletePic } = require('../utils/picUtils')
 
 // Returns Email field and UID after authenticating user's Access Token
 exports.getSettings = async (req, res, next) => {
@@ -63,8 +63,8 @@ exports.getSettings = async (req, res, next) => {
 // Creates a Single Resource (a user Profile)
 exports.updateSettings = async (req, res, next) => {
   try {
-    /* Assign to 'currentUser' the user we've just pulled from the DB using
-      the uid that we got from the authorization middleware */
+    /*  Pull from DB the user with the uid that we got 
+      from the authorization middleware (if there's one) */
     const currentUser = await SettingsModel.readSettings({ id: req.uid })
     // console.log('currentUser: '+JSON.stringify(currentUser)) // testing
     if (!currentUser) {
@@ -85,9 +85,14 @@ exports.updateSettings = async (req, res, next) => {
       prefers,
       bio,
       coords,
-      manual
+      manual,
+      filesToDelete
     } = req.fields
     const location = { ...JSON.parse(coords), manual: manual }
+
+    // The array of files to delete (it may be empty)
+    const deleteList = JSON.parse(filesToDelete)
+    // console.log(deleteList) // testing
 
     // console.log('SETTINGS - FORM FIELDS: '+JSON.stringify(req.fields)) // testing
     // console.log('SETTINGS - Location: '+JSON.stringify(location)) // testing
@@ -150,7 +155,18 @@ exports.updateSettings = async (req, res, next) => {
     const picsAmount = await PicModel.countPics({ id: currentUser.id })
 
     // Check we don't surpass the 5 pics limit.
-    const filesLeft = 5 - picsAmount
+    const filesLeft = 5 - picsAmount + deleteList.length
+    console.log(`picsAmount: ${picsAmount}`) // testing
+    console.log(`deleteList: ${deleteList.length}`) // testing
+    console.log(`Files Left: ${filesLeft}`) // testing
+
+    // If there are pics to DELETE in the submitted form, delete them too!
+    if (deleteList && deleteList.length > 0) {
+      for (const pic of deleteList) {
+        console.log(`About to delete: ${pic}`)  // testing
+        await deletePic(pic, currentUser.id)
+      }
+    }
 
     // If there are more pics in the submitted form, save them too!
     if (req.remainingPics && req.remainingPics.length > 0 && filesLeft > 0) {
