@@ -29,7 +29,8 @@ exports.getSettings = async (req, res, next) => {
   })
 
   // Pull from the DB ALL of the pic URLs (including the one for the Profile)
-  const pics = await PicModel.readAll({ id: req.uid })
+  const extraPics = await PicModel.readNonProfile({ id: req.uid })
+  const allPics = await PicModel.readAll({ id: req.uid })
 
   const fakeBio = 'Some users prefer to keep an air of mistery about themselves...'
 
@@ -54,8 +55,9 @@ exports.getSettings = async (req, res, next) => {
     prefers:        settings.prefers,
     bio:            settings.bio || fakeBio,
     profile_pic:    profile_pic_url,
-    pics:           pics,
-    pics_left:      5 - pics.length,
+    extraPics:      extraPics,
+    allPics:        allPics,
+    pics_left:      4 - extraPics.length,
     location:       location
   })
 }
@@ -136,26 +138,30 @@ exports.updateSettings = async (req, res, next) => {
      * Pics stuff.
      */
     // Check if user has a Profile picture set in DB
-    const hasProfilePic = await PicModel.readProfilePicUrl({ id: currentUser.id })
+    const oldProfilePic = await PicModel.readProfilePicUrl({
+      id: currentUser.id
+    })
     // console.log('SETTINGS - hasProfilePic? '+ hasProfilePic) // testing
-      // Let's set the first pic submitted as the Profile pic.
-    if (!hasProfilePic && req.pics && req.pics.length > 0) {
-      /* The next function call writes the first pic to the user's folder and
-      to the DB, and returns its URL (that we'll send back in the response */
-      var profilePicUrl = await savePic(req.pics[0], currentUser.id, true)
 
-      /* Create a shallow copy of the req.pics array to iterate over it,
-      to save up the rest of the submitted pictures (if any) */
-      if (req.pics.length > 1) req.remainingPics = req.pics.slice(1)
-      // console.log('SETTINGS - REMAINING PICS: ' + JSON.stringify(req.remainingPics)) // testing
-    } else
-      req.remainingPics = req.pics
-    
+    // Let's save the Profile pic (if there's one) to the DB and filesystem.
+    if (req.profilePic) {
+      console.log(`ProfilePic: ${JSON.stringify(req.profilePic)}`)
+      // Delete the OLD profile pic, if any (from filesystem and DB).
+      if (oldProfilePic) {
+        await deletePic(oldProfilePic, currentUser.id)
+        console.log(`oldProfilePic: ${oldProfilePic}`)
+      }
+      /*  Write the NEW profile pic (to filesystem and DB), and 
+        store its URL (that we'll send back in the response. */
+      var profilePicUrl = await savePic(req.profilePic, currentUser.id, true)
+      console.log(`profilePicUrl (settings controller): ${profilePicUrl}`);
+    }
+
     /* Let's count how many pics in total the user already has in DB. */
     const picsAmount = await PicModel.countPics({ id: currentUser.id })
 
-    // Check we don't surpass the 5 pics limit.
-    const filesLeft = 5 - picsAmount + deleteList.length
+    // Check we don't exceed the 5 pics limit.
+    const filesLeft = 4 - picsAmount + deleteList.length
     console.log(`picsAmount: ${picsAmount}`) // testing
     console.log(`deleteList: ${deleteList.length}`) // testing
     console.log(`Files Left: ${filesLeft}`) // testing
@@ -163,17 +169,18 @@ exports.updateSettings = async (req, res, next) => {
     // If there are pics to DELETE in the submitted form, delete them too!
     if (deleteList && deleteList.length > 0) {
       for (const pic of deleteList) {
-        console.log(`About to delete: ${pic}`)  // testing
+        console.log(`About to delete (settings controller): ${pic}`)  // testing
         await deletePic(pic, currentUser.id)
       }
     }
 
     // If there are more pics in the submitted form, save them too!
-    if (req.remainingPics && req.remainingPics.length > 0 && filesLeft > 0) {
-      for (const pic of req.remainingPics) {
+    if (req.pics && req.pics.length > 0 && filesLeft > 0) {
+      for (const pic of req.pics) {
         await savePic(pic, currentUser.id, false)
       }
     }
+
     // console.log('SETTINGS - Profile pic: ' + profilePicUrl) // testing
     // Instantiate the Settings model class to update/create new Profile
     const settings = new SettingsModel({

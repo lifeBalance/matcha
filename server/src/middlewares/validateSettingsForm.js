@@ -12,7 +12,7 @@ const formidable = require('formidable')
 
 exports.validateSettingsForm = (req, res, next) => {
   const form = new formidable.IncomingForm()
-
+  
   form.parse(req, (err, fields, files) => {
     if (err) {
       next(err)
@@ -35,35 +35,49 @@ exports.validateSettingsForm = (req, res, next) => {
         !inrange(fields.prefers, 0, 2)        ||
         !inrange(fields.bio.length, 0, 255))
     {
-      res.status(400).json({ message: 'bad request' })
-      return
+      return res.status(200).json({ 
+        type: 'ERROR',
+        message: 'bad request'
+      })
     }
-
-    const pics = []
-    const regex = /^(image\/)(png|jpe?g|gif)$/  // regex to match image filetypes
-    if (Object.entries(files).length > 0) {
-      // console.log(`Amount of pics: ${Object.entries(files).length}`) // testing
-      if (Object.entries(files).length > 5) {
-        res.status(400).json({ message: 'bad request' })
-        return
-      }
-      for (const pic of Object.values(files)) {
-        // console.log(Object.keys(pic)) // testing (to check the props)
-        // console.log(`size: ${pic.size}, mime: ${pic.mimetype}`) // testing (to check the props)
-
-        if (pic.size > 2000000 || !pic.mimetype.match(regex)) {
-          /* As soon as one pic doesn't match the same requirements we had
-            in the front-end, it means shenanigans => 400, party's over! */
-          res.status(400).json({ message: 'bad request' })
-          return
-        }
-        pics.push(pic) // If pics are OK, push them to the array
-      }
-      // Let's attach the pics array to the Request object
-      req.pics = pics
-    }
-    // Let's attach the form fields array to the Request object
+    // If there's no error, let's attach the form fields array to the Request object
     req.fields = fields
+
+    // Let's create an empty array to attach the pics to the Request object
+    req.pics = []
+
+    // regex to match image filetypes
+    const regex = /^(image\/)(png|jpe?g|gif)$/
+
+    if (Object.entries(files).length === 0) next()
+
+    // for (const pic of Object.keys(files))
+    //   console.log(`Pic key: ${JSON.stringify(pic)}`) // testing
+
+    // console.log(`Amount of pics: ${Object.entries(files).length}`) // testing
+    if (Object.entries(files).length > 5) {
+      return res.status(200).json({
+        type: 'ERROR',
+        message: 'too many files'
+      })
+    }
+
+    for (const pic of Object.entries(files)) {
+      const filename = pic[0]
+      const file = pic[1]
+
+      if (file.size > 2000000 || !file.mimetype.match(regex)) {
+        return res.status(200).json({
+          type: 'ERROR',
+          message: 'wrong filetype'
+        })
+      }
+
+      if (filename === 'profilePic') req.profilePic = file
+      else req.pics.push(file)
+      console.log(`FileName: ${filename} - file: ${JSON.stringify(file)}`) // testing
+    }
+
     next()
   })
 }
