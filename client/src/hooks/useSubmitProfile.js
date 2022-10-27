@@ -50,6 +50,7 @@ function useSubmitProfile() {
     formData.append('filesToDelete', JSON.stringify(args.deletePics))
     formData.append('manual', args.manualLocation)
     formData.append('profilePic', args.file)
+    formData.append('tags', JSON.stringify(args.selectedTags))
     args.files.forEach((pic, idx) => {
       formData.append(`pic${idx}`, pic)
     })

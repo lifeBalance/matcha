@@ -17,6 +17,12 @@ export function validateName(str) {
   return str.toUpperCase().trim().match(regex)
 }
 
+export function validateTag(tag) {
+  // Between 2-30 characters, uppercase or lowercase (including tacs)
+  const regex = /^[A-Z\-]{2,30}$/
+  return tag.toUpperCase().trim().match(regex)
+}
+
 export function validateEmail(str) {
   const regex = 
   /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/

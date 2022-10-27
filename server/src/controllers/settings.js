@@ -43,6 +43,15 @@ exports.getSettings = async (req, res, next) => {
     manual: settings.location.manual === 'true' || false,
   }
 
+  // For testing purposes (before creating DB table and Tags model)
+  const tags = [
+    { value: 0, label: 'red' },
+    { value: 1, label: 'blue' },
+    { value: 2, label: 'yellow' },
+    { value: 3, label: 'green' },
+    { value: 4, label: 'orange' },
+    { value: 5, label: 'violet' },
+  ]
   // Send Account information to prepopulate fields in the Profile form.
   res.status(200).json({
     uid:            req.uid, // send it just in case...
@@ -58,7 +67,8 @@ exports.getSettings = async (req, res, next) => {
     extraPics:      extraPics,
     allPics:        allPics,
     pics_left:      4 - extraPics.length,
-    location:       location
+    location:       location,
+    tags:           tags
   })
 }
 
@@ -88,9 +98,17 @@ exports.updateSettings = async (req, res, next) => {
       bio,
       coords,
       manual,
-      filesToDelete
+      filesToDelete,
+      tags
     } = req.fields
+
+    // Let's parse the location (coords sent as a JSON string)
     const location = { ...JSON.parse(coords), manual: manual }
+    
+    // Let's parse the tags (sent as a JSON string)
+    const tagList = JSON.parse(tags)
+    console.log(`Tags: ${JSON.stringify(tagList)}`) // testing
+    // Save tags to DB to user's row (maybe in a JSON column)
 
     // The array of files to delete (it may be empty)
     const deleteList = JSON.parse(filesToDelete)

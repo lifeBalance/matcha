@@ -20,6 +20,7 @@ import useFilePicker from '../hooks/useFilePicker'
 import useProfilePicker from '../hooks/useProfilePicker'
 import useMap from '../hooks/useMap'
 import useDeletePics from '../hooks/useDeletePics'
+import useTagSelector from '../hooks/useTagSelector'
 
 // components
 import Input from '../components/UI/Input'
@@ -31,6 +32,7 @@ import FilePicker from '../components/UI/FilePicker'
 import Map from '../components/Map'
 import DeletePics from '../components/DeletePics'
 import { Checkbox, Label } from 'flowbite-react'
+import TagSelector from '../components/TagSelector'
 
 //icons
 import { HandRaisedIcon, CheckCircleIcon } from '@heroicons/react/24/outline'
@@ -174,6 +176,17 @@ function SettingsForm() {
     deletePicsWasChanged
   } = useDeletePics()
 
+  const {
+    availableTags,
+    setAvailableTags,
+    selectedTags,
+    addTag,
+    tagsWarning,
+    tagsError,
+    setTagsError,
+    tagSelectorWasChanged
+  } = useTagSelector()
+
   function setUserState(data) {
     setUserName(data.username)
     setFirstName(data.firstname)
@@ -188,6 +201,7 @@ function SettingsForm() {
     setCenter({ lat: data.location.lat, lng: data.location.lng })
     setManualLocation({ manual: data.location.manual })
     // console.log(data.location) // testing
+    setAvailableTags(data.tags)
   }
 
   React.useEffect(() => {
@@ -258,7 +272,8 @@ function SettingsForm() {
       filePickerWasChanged  ||
       mapWasChanged         ||
       deletePicsWasChanged  ||
-      profilePickerWasChanged
+      profilePickerWasChanged ||
+      tagSelectorWasChanged
     ) {
       setFormWasChanged(true)
     } else {
@@ -275,7 +290,8 @@ function SettingsForm() {
     filePickerWasChanged,
     mapWasChanged,
     deletePicsWasChanged,
-    profilePickerWasChanged
+    profilePickerWasChanged,
+    tagSelectorWasChanged
   ])
 
   function onCancelButtonHandler(e) {
@@ -341,6 +357,7 @@ function SettingsForm() {
       file,
       files,
       deletePics,
+      selectedTags,
       callback: getModalFeedback
     })
   }
@@ -462,6 +479,15 @@ function SettingsForm() {
           onChangeHandler={bioChangeHandler}
           charactersLeft={255 - bioValue.length}
           maxLength={255}
+        />
+
+        <TagSelector
+          availableTags={availableTags}
+          selectedTags={selectedTags}
+          addTag={addTag}
+          tagsError={tagsError}
+          setTagsError={setTagsError}
+          tagsWarning={tagsWarning}
         />
 
         <div className="flex flex-col pb-20">
