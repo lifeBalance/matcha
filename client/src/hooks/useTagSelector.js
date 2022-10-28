@@ -24,7 +24,14 @@ function useTagSelector() {
 
     if (meta.action === 'create-option') {
       if (validateTag(meta.option.label)) {
-        setSelectedTags(opt)
+        // setSelectedTags(opt)
+
+        const minusLastElement = opt.slice(0, -1)
+        let lastElement = opt[opt.length - 1]
+        // Let's write the label as lowercase
+        lastElement = { ...lastElement, label: lastElement.label.toLowerCase() }
+
+        setSelectedTags([...minusLastElement, lastElement])
       } else setTagsError('Only letters and dashes (between 2 and 30)')
     } else
       setSelectedTags(opt)
@@ -34,6 +41,7 @@ function useTagSelector() {
     availableTags,
     setAvailableTags,
     selectedTags,
+    setSelectedTags,
     tagsWarning,
     tagsError,
     setTagsError,

@@ -180,6 +180,7 @@ function SettingsForm() {
     availableTags,
     setAvailableTags,
     selectedTags,
+    setSelectedTags,
     addTag,
     tagsWarning,
     tagsError,
@@ -200,8 +201,8 @@ function SettingsForm() {
     setFilesLeft(data.pics_left)
     setCenter({ lat: data.location.lat, lng: data.location.lng })
     setManualLocation({ manual: data.location.manual })
-    // console.log(data.location) // testing
-    setAvailableTags(data.tags)
+    setAvailableTags(data.availableTags)
+    setSelectedTags(data.userTags)
   }
 
   React.useEffect(() => {

@@ -1,8 +1,12 @@
 // To create/update Profile Settings (one model could deal with several tables).
 const SettingsModel = require('../models/Settings')
 const AccountModel = require('../models/Account')
+
 // Let's pull also the Pic model for the profile pictures
 const PicModel = require('../models/Pic')
+
+// Let's pull also the Tag model for the tags
+const TagModel = require('../models/Tag')
 
 // Utility for generate Email token and send Account Confirmation email
 const { tokenAndEmail } = require('../utils/tokenAndEmail')
@@ -43,15 +47,14 @@ exports.getSettings = async (req, res, next) => {
     manual: settings.location.manual === 'true' || false,
   }
 
-  // For testing purposes (before creating DB table and Tags model)
-  const tags = [
-    { value: 0, label: 'red' },
-    { value: 1, label: 'blue' },
-    { value: 2, label: 'yellow' },
-    { value: 3, label: 'green' },
-    { value: 4, label: 'orange' },
-    { value: 5, label: 'violet' },
-  ]
+  // Let's query the DB for ALL the available Tags.
+  const allTags = await TagModel.readAll()
+  // console.log(`allTags: ${JSON.stringify(allTags)}`)  // testing
+
+  // Let's query the DB for the user Tags.
+  const userTags = await TagModel.readTagsArray(settings.tags)
+  // console.log(`USER TAGS: ${userTags}`) // testing
+
   // Send Account information to prepopulate fields in the Profile form.
   res.status(200).json({
     uid:            req.uid, // send it just in case...
@@ -68,7 +71,8 @@ exports.getSettings = async (req, res, next) => {
     allPics:        allPics,
     pics_left:      4 - extraPics.length,
     location:       location,
-    tags:           tags
+    availableTags:  allTags,
+    userTags:       userTags
   })
 }
 
@@ -102,19 +106,31 @@ exports.updateSettings = async (req, res, next) => {
       tags
     } = req.fields
 
-    // Let's parse the location (coords sent as a JSON string)
+    // Let's parse the location (coords sent as a JSON string) <== Mb in middleware?
     const location = { ...JSON.parse(coords), manual: manual }
     
-    // Let's parse the tags (sent as a JSON string)
+    // TODO:
+    // Make sure the user doesn't try to write more than 5 tags to DB (count preexisting ones)
+    // Let's parse the tags (sent as a JSON string) <== Mb in middleware?
     const tagList = JSON.parse(tags)
-    console.log(`Tags: ${JSON.stringify(tagList)}`) // testing
-    // Save tags to DB to user's row (maybe in a JSON column)
+    const tagIdList = [] // This is what we'll write to the `users` table
+    // console.log(`Tags: ${JSON.stringify(tagList)}`) // testing
+    for (const tag of tagList) {
+      if (tag.hasOwnProperty('__isNew__')) {
+        const tagId = await TagModel.writeOne(tag.label)
+        console.log(`NEW TAG: ${tag.label}`) // Write the tag to DB (get id of row)
+        tagIdList.push(tagId)
+      } else {
+        tagIdList.push(tag.value)
+      }
+      console.log(`TAG ID list: ${tagIdList}`)
+    }
 
     // The array of files to delete (it may be empty)
     const deleteList = JSON.parse(filesToDelete)
     // console.log(deleteList) // testing
-    console.log(`extraPics: ${JSON.stringify(req.extraPics)}`) // testing
-    console.log(`profilePic: ${JSON.stringify(req.profilePic)}`) // testing
+    // console.log(`extraPics: ${JSON.stringify(req.extraPics)}`) // testing
+    // console.log(`profilePic: ${JSON.stringify(req.profilePic)}`) // testing
 
     // console.log('SETTINGS - FORM FIELDS: '+JSON.stringify(req.fields)) // testing
     // console.log('SETTINGS - Location: '+JSON.stringify(location)) // testing
@@ -201,13 +217,14 @@ exports.updateSettings = async (req, res, next) => {
       firstname,
       lastname,
       email,
-      age: parseInt(age),
-      gender: parseInt(gender),
-      prefers: parseInt(prefers),
+      age:        parseInt(age),
+      gender:     parseInt(gender),
+      prefers:    parseInt(prefers),
       bio,
-      id: currentUser.id,
-      confirmed: confirmed,
-      location: location
+      id:         currentUser.id,
+      confirmed:  confirmed,
+      location:   location,
+      tags:       tagIdList
     })
 
     // We could use the DB response, to check if the profile was created/updated
