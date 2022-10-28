@@ -1,52 +1,66 @@
 import React from 'react'
 
-// import Map from '../components/Map'
-import Map from '../components/Map'
-import { Checkbox, Label } from 'flowbite-react'
-
-// Redux
-import { useDispatch } from 'react-redux'
-
-// hooks
-import useMap from '../hooks/useMap'
+import socketIO from 'socket.io-client'
 
 function Test() {
-  // redux
-  const dispatch = useDispatch()
+  const [socket, setSocket] = React.useState(null)
+  const [message, setMessage] = React.useState('')
+  const [messageList, setMessageList] = React.useState([])
+  const [socketId, setSocketId] = React.useState(null)
 
-  // hook
-  const {
-    center,
-    setCenter,
-    manualLocation,
-    setManualLocation
-  } = useMap()
+  React.useEffect(() => {
+    const tmp = socketIO.connect('http://localhost')
+    setSocket(tmp)
+    return () => tmp.disconnect()
+  }, [])
+
+  React.useEffect(() => {
+    if (!socket) return
+
+    socket.on('connected', () => {
+      setSocketId(socket.id)
+    })
+  }, [socket])
+  
+  React.useEffect(() => {
+    if (!socket) return
+
+    socket.on('msg', msg => {
+      setMessageList([...messageList, msg])
+    })
+  }, [socket, messageList])
+
+  function sendMessage() {
+    if (!socket) return
+
+    socket.emit('msg', message)   // send the message to the server
+    setMessage('')                // clear the input text
+  }
 
   return (
-    <div className=''>
-      <h1>Map</h1>
-      <p className='text-white text-center font-bold'>
-        {/* Lat: {loc.lat.toFixed(4)} Long: {loc.lng.toFixed(4)} */}
-        {/* {currentLoc && `Lat: ${currentLoc.lat} Long: ${currentLoc.lng}`} */}
-      </p>
-      <Map center={center} setCenter={setCenter} manual={manualLocation} />
+    <div className='flex flex-col space-y-3'>
+      <h1 className='text-white text-2xl'>Chat {socketId}</h1>
 
-      <div className="flex items-center gap-2">
-        <Checkbox
-          id='manual'
-          onChange={() => dispatch(setManualLocation(!manualLocation))}
-          checked={manualLocation}
-        />
+      <input
+        type="text"
+        value={message}
+        onChange={e => setMessage(e.target.value)}
+      />
 
-        <Label htmlFor='manual' >
-          <p className='text-white font-bold'>Set Manual Location</p>
-        </Label>
-      </div>
+      <button
+        className='text-white rounded-md border border-white p-4'
+        onClick={sendMessage}>
+        Send message
+      </button>
 
-      <p className='text-white text-center font-bold'>
-        Lat: {center.lat} Long: {center.lng} Manual: {!!manualLocation}
-      </p>
-      {/* {console.log(typeof(center.lat))} */}
+      <ul>
+        {messageList.map(msg => (
+          <li
+            className='text-white'
+            key={Math.random()}
+          >{msg}</li>
+        ))}
+      </ul>
     </div>
   )
 }

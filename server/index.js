@@ -2,6 +2,18 @@ const express = require('express')
 const app = express()
 const path = require('path')
 
+// Add a Node HTTP server so that we can also use it with socket.io
+const http = require('http')
+const server = http.createServer(app)
+const { Server } = require("socket.io")
+
+const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST']
+  }
+})
+
 /**
 **  Middleware
 */
@@ -59,6 +71,29 @@ app.get('/*', function (req, res) {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-app.listen(3000, () => {
+// The chat
+io.on('connection', socket => {
+  // Send a 'connected' event when the connection is available.
+  io.emit('connected', socket.id)
+
+  // When a user connects to the socket logs it to the shell.
+  console.log(`user connected (${socket.id})`)
+  // console.log(socket) // testing
+
+  // When a user disconnects from the socket, logs it too.
+  socket.on('disconnect', socket => {
+    console.log(`user disconnected (${socket.id})`)
+    // console.log(socket) // testing
+  })
+
+  // When a user sends a 'msg' event to the socket...
+  socket.on('msg', msg => {
+    console.log(msg.id, msg)
+    // ... send the event (and 'msg' content) back to the client.
+    io.emit('msg', msg)
+  })
+})
+
+server.listen(3000, () => {
   console.log('App running on port 3000');
 })
