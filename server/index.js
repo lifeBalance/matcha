@@ -73,24 +73,34 @@ app.get('/*', function (req, res) {
 
 // The chat
 io.on('connection', socket => {
-  // Send a 'connected' event when the connection is available.
-  io.emit('connected', socket.id)
-
   // When a user connects to the socket logs it to the shell.
   console.log(`user connected (${socket.id})`)
   // console.log(socket) // testing
 
-  // When a user disconnects from the socket, logs it too.
-  socket.on('disconnect', socket => {
-    console.log(`user disconnected (${socket.id})`)
-    // console.log(socket) // testing
-  })
+  // Send a 'connected' event when the connection is available.
+  io.emit('connected', socket.id)
 
   // When a user sends a 'msg' event to the socket...
-  socket.on('msg', msg => {
-    console.log(msg.id, msg)
-    // ... send the event (and 'msg' content) back to the client.
-    io.emit('msg', msg)
+  socket.on('msg', data => {
+    console.log(data.message, data.room, data.socketId)
+    // ... send the event (and 'msg' content) back to the proper room.
+    socket.to(data.room).emit('msg', {message: data.message, own: false})
+  })
+
+  // Create a room based on the 'create-room' event sent from client
+  socket.on('join-room', num => {
+    console.log(`request to join room: ${num}`) // testing
+
+    socket.join(num)
+    console.log(`room ${num} was joined by ${socket.id}`) // testing
+
+    socket.emit('room-joined', num) // notify the user the room is done
+  })
+  
+  // When a user disconnects from the socket, logs it too.
+  socket.on('disconnect', socket => {
+    console.log(`user disconnected (${socket})`) // testing
+    // console.log(socket) // testing
   })
 })
 
