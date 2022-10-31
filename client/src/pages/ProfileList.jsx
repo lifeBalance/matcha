@@ -52,7 +52,9 @@ function ProfileList() {
     isLoadingProfiles,
     errorLoadingProfiles
   } = useGetProfileList()
-  console.log(profiles);
+
+  // console.log(profiles)  // testing
+
   // If the user is not logged in, we just return the Hero content
   if (!isLoggedIn) return (<Hero />)
 

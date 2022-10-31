@@ -37,7 +37,7 @@ function UserMiniCard(props) {
 
 const isOnline = 0 // PLACEHOLDER
   return (
-    <li className='md:rounded-lg flex flex-col w-[360px] bg-black'>
+    <li className='md:rounded-lg flex flex-col w-[360px] md:w-96 bg-black'>
         {pics && pics.length > 0 ?
         (<div className='h-96' >
           <Carousel slide={false}>
