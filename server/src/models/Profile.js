@@ -19,10 +19,23 @@ module.exports = class Profile {
 
   static async readAll(data) {
     const { id } = data
-    const sql = `
+    const sql = 
+    `
     SELECT
-    id, username, firstname, lastname, age, gender, prefers, bio
-    FROM users WHERE id != ?`
+      users.id,
+      users.username,
+      users.firstname,
+      users.lastname,
+      users.age,
+      users.gender,
+      users.prefers,
+      users.bio,
+      (SELECT JSON_ARRAYAGG(JSON_OBJECT('url', pic_urls.url, 'profile', pic_urls.profile_pic))
+      FROM pic_urls
+      WHERE pic_urls.user_id = users.id
+      ) AS pics
+      FROM users
+    WHERE users.id != ?`
 
     const [arr, fields] = await pool.execute(sql, [id])
     console.log('Profile Model: '+JSON.stringify(arr))

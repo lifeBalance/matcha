@@ -52,7 +52,7 @@ function ProfileList() {
     isLoadingProfiles,
     errorLoadingProfiles
   } = useGetProfileList()
-
+  console.log(profiles);
   // If the user is not logged in, we just return the Hero content
   if (!isLoggedIn) return (<Hero />)
 
@@ -78,7 +78,7 @@ function ProfileList() {
       {content}
 
       <button
-        className='justify-center bg-transparent border-white border-2 rounded-lg hover:bg-white hover:bg-opacity-20 text-white px-4 py-2'
+        className='justify-center bg-transparent border-white border-2 rounded-lg hover:bg-white hover:bg-opacity-20 text-white px-4 py-2 mb-2 mx-2'
         onClick={() => setPage((prevState) => prevState + 1)}
       >
         Load More...

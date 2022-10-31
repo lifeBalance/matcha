@@ -84,11 +84,11 @@ exports.readAllProfiles = async (req, res, next) => {
       page: page
     })
     // console.log('PROFILE LIST 1: '+JSON.stringify(profileList)) // testing
-    const profiles = []
-    for (const prof of profileList) {
-      let profPic = await PicModel.readProfilePicUrl({ id: prof.id })
-      profiles.push({ ...prof, profilePic: profPic || '' })
-    }
+    const profiles = profileList
+    // for (const prof of profileList) {
+    //   let profPic = await PicModel.readProfilePicUrl({ id: prof.id })
+    //   profiles.push({ ...prof, profilePic: profPic || '' })
+    // }
     // console.log('PROFILE LIST 2: '+JSON.stringify(profiles)) // testing
 
     res.status(200).json({

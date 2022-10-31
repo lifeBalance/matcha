@@ -66,7 +66,7 @@ function Map(props) {
   return (
     <div className='z-0 rounded-md'>
       <MapContainer
-        style={{ height: 380, width: 375 }}
+        style={{ height: 380, width: 360 }}
         center={props.center}
         zoom={12}
         scrollWheelZoom={false}

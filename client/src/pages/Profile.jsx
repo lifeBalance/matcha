@@ -80,7 +80,7 @@ function Profile() {
       className='bg-white sm:rounded-lg sm:my-8 max-w-screen-sm'
       id={user.userName}
     >
-      <div className='h-96 w-auto bg-gray-800 sm:rounded-t-lg'>
+      <div className='h-96 w-auto bg-gray-800 sm:rounded-t-lg flex'>
         {user.pics && user.pics.length > 0 ? (
           <Carousel slide={false}>
             {user.pics &&
@@ -94,7 +94,7 @@ function Profile() {
               ))}
           </Carousel>
         ) : (
-          <UserCircleIcon className='text-white w-[50%] justify-center mx-auto' />
+          <UserCircleIcon className='text-white w-[80%] justify-center mx-auto' />
         )}
       </div>
 

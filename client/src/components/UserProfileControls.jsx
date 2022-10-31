@@ -17,7 +17,7 @@ function UserProfileControls(props) {
   } = props
 
   return (
-    <div className='flex space-x-5 justify-center mb-4'>
+    <div className='flex space-x-5 justify-center mt-3'>
       {!youLikeUser && !userLikesYou && (<>
         <Tooltip content='Like' placement='top-end'>
           <HeartIcon className='w-10 text-gray-400 cursor-pointer hover:scale-125'/>
