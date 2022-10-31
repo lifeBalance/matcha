@@ -16,7 +16,9 @@ import { logout } from '../../../store/authSlice'
 import { UserCircleIcon } from '@heroicons/react/24/solid'
 import {
   ArrowRightOnRectangleIcon,
-  ArrowLeftOnRectangleIcon
+  ArrowLeftOnRectangleIcon,
+  BellIcon,
+  HeartIcon
 } from '@heroicons/react/24/outline'
 
 function Navbar(props) {
@@ -40,6 +42,14 @@ function Navbar(props) {
           <MenuItem title='test' route='test' />
           {isLoggedIn ? 
             (<>
+              <NavLink to='/notifications'>
+                <BellIcon className='text-gray-400 hover:text-yellow-400 hover:cursor-pointer w-10' />
+              </NavLink>
+
+              <NavLink to='/matches'>
+                <HeartIcon className='text-gray-400 hover:text-red-400 hover:cursor-pointer w-10' />
+              </NavLink>
+
               <NavLink to='/settings'>
                 {imgElem}
               </NavLink>

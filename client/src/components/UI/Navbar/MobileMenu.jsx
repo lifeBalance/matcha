@@ -10,6 +10,8 @@ import {
   UserCircleIcon,
   UserPlusIcon,
   UsersIcon,
+  BellIcon,
+  HeartIcon
 } from '@heroicons/react/24/outline'
 
 import { useSelector, useDispatch } from 'react-redux'
@@ -49,6 +51,24 @@ function MobileMenu() {
           >
             <UsersIcon className='inline text-green-400 w-6 -mt-1 mr-2' />
             user profiles
+          </Link>
+
+          <Link
+            to='/'
+            className='hover:text-pink-500 pt-6 pl-4'
+            onClick={() => dispatch(closeMobileMenu())}
+          >
+            <BellIcon className='inline text-yellow-400 w-6 hover:cursor-pointer -mt-1 mr-2' />
+            notifications
+          </Link>
+
+          <Link
+            to='/'
+            className='hover:text-pink-500 pt-6 pl-4'
+            onClick={() => dispatch(closeMobileMenu())}
+          >
+            <HeartIcon className='inline text-red-400 w-6 -mt-1 mr-2' />
+            matches
           </Link>
 
           <Link
