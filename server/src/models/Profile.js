@@ -30,15 +30,17 @@ module.exports = class Profile {
       users.gender,
       users.prefers,
       users.bio,
+      users.online,
+      users.last_seen,
+      users.tags,
       (SELECT JSON_ARRAYAGG(JSON_OBJECT('url', pic_urls.url, 'profile', pic_urls.profile_pic))
-      FROM pic_urls
-      WHERE pic_urls.user_id = users.id
-      ) AS pics
+        FROM pic_urls
+        WHERE pic_urls.user_id = users.id) AS pics
       FROM users
     WHERE users.id != ?`
 
     const [arr, fields] = await pool.execute(sql, [id])
-    console.log('Profile Model: '+JSON.stringify(arr))
+    // console.log('Profile Model: '+JSON.stringify(arr))
     return arr // it could be an empty array
   }
 }

@@ -18,11 +18,14 @@ function UserMiniCard(props) {
   const {
     id,
     username,
+    online,
+    last_seen,
     rated,
     age,
     gender,
     prefers,
-    pics
+    pics,
+    tags
   } = props.profile
   // console.log(JSON.stringify(props.profile)) // testing
   const [isCollapsed, setIsCollapsed] = React.useState(true)
@@ -59,7 +62,7 @@ const isOnline = 0 // PLACEHOLDER
 
       <div className={`flex justify-between bg-black ${isCollapsed && 'md:rounded-b-lg'}`}>
         <p className='text-white text-center font-bold p-4 flex items-center'>
-          <span className={`w-4 h-4 inline-block rounded-full mr-1 ${isOnline ? 'bg-green-500' : 'bg-slate-500'}`}></span>{username}
+          <span className={`w-4 h-4 inline-block rounded-full mr-1 ${online ? 'bg-green-500' : 'bg-slate-500'}`}></span>{username}
         </p>
 
         <EyeIcon
@@ -76,7 +79,12 @@ const isOnline = 0 // PLACEHOLDER
           <p><span className='text-slate-700 font-semibold'>Gender:</span> {genderElem}</p>
           <p><span className='text-slate-700 font-semibold'>Prefers:</span> {prefersElem}</p>
           <p><span className='text-slate-700 font-semibold'>Distance:</span> 69 km. away</p>
-          <p><span className='text-slate-700 font-semibold'>Tags:</span> 69 km. away</p>
+          <p className='flex flex-wrap'><span className='text-slate-700 font-semibold'>Tags:</span> {tags.map(t => (
+          <span key={Math.random()} className='mx-1 px-2 bg-slate-300 rounded-lg shadow-md break-keep'>
+            {t}
+          </span>))}</p>
+          {!online &&
+          (<p><span className='text-slate-700 font-semibold'>Last Seen: </span> {last_seen}</p>)}
           <UserProfileControls 
               youLikeUser={true}
               userLikesYou={true}
@@ -86,5 +94,5 @@ const isOnline = 0 // PLACEHOLDER
     </li>
   )
 }
-
+// new Date(last_seen * 1000).toLocaleString()
 export default UserMiniCard

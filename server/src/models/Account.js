@@ -84,4 +84,26 @@ module.exports = class Account {
     // console.log('arr: '+ JSON.stringify(arr)) // testing
     return arr.length ? arr[0].location : false
   }
+
+  static async setOnline(data) {
+    const sql = `
+    UPDATE users SET online = 1 WHERE id = ?`
+    const [fields, _] = await pool.execute(sql, [data.uid])
+
+    // console.log('fields: '+ JSON.stringify(fields)) // testing
+    return (fields.affectedRows === 1) ? true : false
+  }
+
+  static async setOffline(data) {
+    const sql = `
+    UPDATE users
+    SET online = 0, last_seen = ?
+    WHERE id = ?`
+    const [fields, _] = await pool.execute(sql, [
+      data.last_seen, data.uid
+    ])
+
+    // console.log('fields: '+ JSON.stringify(fields)) // testing
+    return (fields.affectedRows === 1) ? true : false
+  }
 }

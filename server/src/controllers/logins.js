@@ -123,6 +123,7 @@ exports.login = async (req, res, next) => {
 
     // Pull the profile pic from DB (It could be an empty string or null)
     const profile_pic = await PicModel.readProfilePicUrl({ id: currentUser.id })
+    await AccountModel.setOnline({ uid: currentUser.id })
 
     // Send the access_token in the response body
     res.status(200).json({
@@ -155,7 +156,17 @@ exports.logout = async (req, res, next) => {
         httpOnly: true,
         // sameSite: 'None'
     })
-    res.status(200).json({ message: 'successfully logged out' })
+    // Set 'online' status to 0 (offline), and last_seen to current date.
+    console.log(`id: ${req.uid}, date: ${Math.floor(Date.now() / 1000)}`);
+    if (req?.uid) await AccountModel.setOffline({
+      uid: req.uid,
+      last_seen: Math.floor(Date.now() / 1000)
+    })
+
+    res.status(200).json({
+      type: 'SUCCESS',
+      message: 'successfully logged out'
+    })
   } catch (error) {
     console.log(error)
     next(error)

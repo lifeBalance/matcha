@@ -31,12 +31,14 @@ exports.deleteRefreshToken = async (req, res, next) => {
   not expired; otherwise it throws some error that we have to handle. */
   if (oldRefreshToken) {
     try {
-      jwt.verify(oldRefreshToken, process.env.SECRET_JWT_KEY)
+      // jwt.verify(oldRefreshToken, process.env.SECRET_JWT_KEY)
+      req.uid = jwt.verify(oldRefreshToken, process.env.SECRET_JWT_KEY).sub
 
+      // console.log(`user id: ${req.uid}`)  // testing
       const hash = createHash('sha256').update(oldRefreshToken).digest('hex')
 
       const deleted = await RefreshTokenModel.delete(hash)
-      if (deleted) console.log('An old refresh token was deleted') // testing
+      // if (deleted) console.log('An old refresh token was deleted') // testing
 
       return next()
     } catch (error) {
