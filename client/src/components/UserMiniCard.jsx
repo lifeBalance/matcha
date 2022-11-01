@@ -1,9 +1,12 @@
 import React from 'react'
 
+// redux
+import { useSelector } from 'react-redux'
+
 // components
 import { Collapse } from 'react-collapse'
 import { Carousel } from 'flowbite-react'
-import UserProfileControls from '../components/UserProfileControls'
+import ProfileControls from './ProfileControls'
 
 //icons
 import {
@@ -18,6 +21,8 @@ function UserMiniCard(props) {
   const {
     id,
     username,
+    firstname,
+    lastname,
     online,
     last_seen,
     rated,
@@ -25,10 +30,28 @@ function UserMiniCard(props) {
     gender,
     prefers,
     pics,
-    tags
+    tags,
+    bio
   } = props.profile
   // console.log(JSON.stringify(props.profile)) // testing
   const [isCollapsed, setIsCollapsed] = React.useState(true)
+
+  const { uid } = useSelector(slices => slices.auth)
+  // console.log(props)  // testing
+
+  function onViewProfile(e) {
+    setIsCollapsed(!isCollapsed)
+
+    if (isCollapsed) {
+      // emit 'viewed_profile'
+      console.log(e.currentTarget)
+      props.notify({
+        room: id,
+        from: uid,
+        type: 'view'
+      })
+    }
+  }
 
   let genderElem = 'Non-binary'
   if (gender === 1) genderElem = 'Male'
@@ -38,7 +61,6 @@ function UserMiniCard(props) {
   if (prefers === 0) prefersElem = 'Females'
   else if (prefers === 1) prefersElem = 'Males'
 
-const isOnline = 0 // PLACEHOLDER
   return (
     <li className='md:rounded-lg flex flex-col w-[360px] md:w-96 bg-black'>
         {pics && pics.length > 0 ?
@@ -56,7 +78,9 @@ const isOnline = 0 // PLACEHOLDER
         :
         (
           <div className='flex items-center justify-center h-96 bg-slate-700 md:rounded-t-lg'>
-            <UserCircleIcon className='w-[80%] text-white'/>
+            <UserCircleIcon
+              className='w-[80%] text-white'
+            />
           </div>
         )}
 
@@ -67,28 +91,56 @@ const isOnline = 0 // PLACEHOLDER
 
         <EyeIcon
           className='text-white w-8 inline mr-4 hover:text-blue-400 hover:scale-110 hover:animate-pulse active:text-fuchsia-400'
-          onClick={() => setIsCollapsed(!isCollapsed)}
+          // onClick={() => setIsCollapsed(!isCollapsed)}
+          onClick={onViewProfile}
         />
       </div>
 
       <Collapse isOpened={!isCollapsed} >
         <div className="flex flex-col p-4 bg-white md:rounded-b-lg border border-3 border-black">
         {/* Gotta work on RANKING and LOCATION */}
-          <p><span className='text-slate-700 font-semibold'>Rated:</span> {rated}</p>
-          <p><span className='text-slate-700 font-semibold'>Age:</span> {age}</p>
-          <p><span className='text-slate-700 font-semibold'>Gender:</span> {genderElem}</p>
-          <p><span className='text-slate-700 font-semibold'>Prefers:</span> {prefersElem}</p>
-          <p><span className='text-slate-700 font-semibold'>Distance:</span> 69 km. away</p>
-          <p className='flex flex-wrap'><span className='text-slate-700 font-semibold'>Tags:</span> {tags.map(t => (
-          <span key={Math.random()} className='mx-1 px-2 bg-slate-300 rounded-lg shadow-md break-keep'>
-            {t}
-          </span>))}</p>
-          {!online &&
-          (<p><span className='text-slate-700 font-semibold'>Last Seen: </span> {last_seen}</p>)}
-          <UserProfileControls 
-              youLikeUser={true}
-              userLikesYou={true}
-            />
+          <p>
+            <span className='text-slate-700 font-semibold'>Full Name:</span> 
+            {` ${firstname} ${lastname}`}
+          </p>
+
+          <p>
+            <span className='text-slate-700 font-semibold'>Age:</span> {age}
+            <span className='text-slate-700 font-semibold ml-8'>Gender:</span> {genderElem}
+            <span className='text-slate-700 font-semibold ml-8'>Rated:</span> {rated || 69}
+          </p>
+
+          <p>
+            <span className='text-slate-700 font-semibold'>Prefers:</span> {prefersElem}
+          </p>
+
+          <p>
+            <span className='text-slate-700 font-semibold'>Distance:</span> 69 km. away
+          </p>
+
+          <p className='flex flex-wrap'>
+            <span className='text-slate-700 font-semibold'>Tags:</span>
+            {tags.map(t => (
+              <span key={Math.random()} className='mx-1 px-2 bg-slate-300 rounded-lg shadow-md break-keep'>{t}</span>
+            ))}
+          </p>
+
+          {!online && (<p>
+            <span className='text-slate-700 font-semibold'>Last Seen: </span>
+            {last_seen}</p>
+          )}
+
+          <p>
+            <span className='text-slate-700 font-semibold'>Bio: </span>{bio}
+          </p>
+
+          <ProfileControls
+            youLikeUser={false}
+            userLikesYou={false}
+            notify={props.notify}
+            toUser={id}     // the user in the profile card
+            fromUser={uid}  // the logged-in user
+          />
         </div>
       </Collapse>
     </li>

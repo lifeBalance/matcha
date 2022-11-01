@@ -126,6 +126,11 @@ const authSlice = createSlice({
     setIsProfiled: (state, action) => {
       // console.log(action) // testing
       state.isProfiled = action.payload
+
+      // Persist state to Local storage
+      const matcha = JSON.parse(localStorage.getItem('matcha'))
+      matcha.isProfiled = action.payload
+      localStorage.setItem('matcha', JSON.stringify(matcha))
     },
     setIsConfirmed: (state, action) => {
       // console.log(action) // testing
@@ -261,8 +266,8 @@ const authSlice = createSlice({
         state.accessToken     = action.payload.access_token
         state.uid             = action.payload.uid          // ??
         state.profilePic      = action.payload.profile_pic  // ??
-        state.profiled        = action.payload.profiled     // ??
-        state.confirmed       = action.payload.confirmed    // ??
+        state.isProfiled      = action.payload.profiled     // ??
+        state.isConfirmed     = action.payload.confirmed    // ??
 
         // Grab the Local Storage item
         const matcha = localStorage.getItem('matcha')

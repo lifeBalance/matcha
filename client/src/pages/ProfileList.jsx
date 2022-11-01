@@ -12,7 +12,7 @@ import UserMiniCard from '../components/UserMiniCard'
 import { useSelector, useDispatch } from 'react-redux'
 import { logout, loginAfterReload } from '../store/authSlice'
 
-function ProfileList() {
+function ProfileList(props) {
   const {
     isProfiled,
     isConfirmed,
@@ -54,6 +54,7 @@ function ProfileList() {
   } = useGetProfileList()
 
   // console.log(profiles)  // testing
+  // console.log(props)  // testing
 
   // If the user is not logged in, we just return the Hero content
   if (!isLoggedIn) return (<Hero />)
@@ -69,6 +70,7 @@ function ProfileList() {
         <UserMiniCard
           key={profile.id}
           profile={profile}
+          notify={props.notify}
         />
       ))}
     </ul>)

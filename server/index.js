@@ -53,6 +53,7 @@ const settingsRoutes = require('./src/routes/settings')
 const confirmRoutes = require('./src/routes/confirm')
 const refreshRoutes = require('./src/routes/refresh')
 const resetRoutes = require('./src/routes/reset')
+const likesRoutes = require('./src/routes/likes')
 
 const testsRoutes = require('./src/routes/tests')
 
@@ -63,6 +64,7 @@ app.use('/api', settingsRoutes)   // create/update OWN Profile
 app.use('/api', confirmRoutes)    // for confirming account
 app.use('/api', refreshRoutes)    // for silently refreshing tokens
 app.use('/api', resetRoutes)      // for resetting passwords
+app.use('/api', likesRoutes)      // for likes/unlikes
 
 app.use('/api', testsRoutes) // testing stuff
 
@@ -85,6 +87,11 @@ io.on('connection', socket => {
     console.log(data.message, data.room, data.socketId)
     // ... send the event (and 'msg' content) back to the proper room.
     socket.to(data.room).emit('msg', {message: data.message, own: false})
+  })
+  socket.on('notify', data => {
+    console.log(data.type, data.room, data.content)
+    // Send the event (and content) back to the proper room (user).
+    socket.to(data.room).emit('notify', data)
   })
 
   // Create a room based on the 'create-room' event sent from client

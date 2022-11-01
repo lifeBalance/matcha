@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { unescape } from 'lodash'
 
 // components
-import UserProfileControls from '../components/UserProfileControls'
+import UserProfileControls from '../components/ProfileControls'
 import { Carousel } from 'flowbite-react'
 
 //icons

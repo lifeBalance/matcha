@@ -17,13 +17,22 @@ import ProfileList from './pages/ProfileList'
 import Profile from './pages/Profile'
 import PageNotFound from './pages/PageNotFound'
 
+// components
+import Layout from './components/UI/Layout'
+
 // redux
 import { useDispatch, useSelector } from 'react-redux'
 import {
   loginAfterReload,
   setLiveLocation
 } from './store/authSlice'
-import Layout from './components/UI/Layout'
+
+import {
+  addNotif
+} from './store/notifSlice'
+
+// socket.io
+import socketIO from 'socket.io-client'
 
 function App() {
   // redux
@@ -33,7 +42,10 @@ function App() {
     isLoggingIn,
     isLoggedIn,
     profilePic,
+    uid
   } = useSelector(slices => slices.auth)
+
+  const [socket, setSocket] = React.useState(null)
 
   /* Let's set the LIVE LOCATION global state as soon as the APP 
     component loads, so that we'll have it available to be sent when the 
@@ -62,7 +74,35 @@ function App() {
     if (isLoggingIn) return
     const matcha = localStorage.getItem('matcha')
     if (!isLoggedIn && matcha) dispatch(loginAfterReload(matcha))
+
+    // Only if the user is logged in, we connect to the socket!
+    if (isLoggedIn) {
+      const tmp = socketIO.connect('http://localhost')
+      setSocket(tmp)
+
+      // Clean up connection when component unmounts.
+      return () => tmp.disconnect()
+    }
   }, [isLoggingIn, isLoggedIn])
+
+  React.useEffect(() => {
+    if (!socket || !isLoggedIn) return   // bail if socket is not ready yet!
+
+    socket.on('connected', () => {
+      // setSocketId(socket.id)
+      socket.emit('join-room', uid)
+    })
+
+    socket.on('notify', data => {
+      console.log(data)
+      // mb here dispatch notification?
+      dispatch(addNotif(data))
+    })
+  }, [socket])
+
+  function notify(data) {
+    socket.emit('notify', data)
+  }
 
   return (
     <BrowserRouter>
@@ -70,7 +110,7 @@ function App() {
         <Routes>
           <Route
             path='/'
-            element={<ProfileList />}
+            element={<ProfileList notify={notify} />}
           />
 
           <Route

@@ -99,16 +99,20 @@ exports.readAllProfiles = async (req, res, next) => {
 
     // console.log('PROFILE LIST 1: '+JSON.stringify(profileList)) // testing
     const profiles = []
-    for (const prof of profileList) {
-    //   let profPic = await PicModel.readProfilePicUrl({ id: prof.id })
-      // mb sort pics here so that the profile pic comes first!
-      const tagLabels = prof.tags.map(tag => allTags[tag - 1].label)
+    if (profileList) {
+      for (const prof of profileList) {
+      //   let profPic = await PicModel.readProfilePicUrl({ id: prof.id })
+        // mb sort pics here so that the profile pic comes first!
+        let tagLabels = []
+        if (prof.tags)
+          tagLabels = prof.tags.map(tag => allTags[tag - 1].label)
 
-      profiles.push({
-        ...prof,
-        tags: tagLabels,
-        last_seen: timeAgo.format(Date.now() - prof.last_seen / 1000)
-      })
+        profiles.push({
+          ...prof,
+          tags: tagLabels,
+          last_seen: timeAgo.format(Date.now() - prof.last_seen / 1000)
+        })
+      }
     }
     // console.log('PROFILE LIST 2: '+JSON.stringify(profiles)) // testing
 
