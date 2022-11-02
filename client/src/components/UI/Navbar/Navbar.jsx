@@ -42,7 +42,7 @@ function Navbar(props) {
           <MenuItem title='test' route='test' />
           {isLoggedIn ? 
             (<>
-              <NavLink to='/notifications'>
+              <NavLink to='/notifs'>
                 <BellIcon className='text-gray-400 hover:text-yellow-400 hover:cursor-pointer w-10' />
               </NavLink>
 

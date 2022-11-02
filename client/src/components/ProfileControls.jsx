@@ -37,7 +37,7 @@ function UserProfileControls(props) {
   function notify(data) {
     props.notify({
       from: data.fromUser,
-      room: data.toUser,
+      to:   data.toUser,
       type: data.like
     })
     dispatch(addNotif(data))

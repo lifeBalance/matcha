@@ -39,16 +39,19 @@ function UserMiniCard(props) {
   const { uid } = useSelector(slices => slices.auth)
   // console.log(props)  // testing
 
+  /*  Better pass this fn to a useViews hook, so that only
+    in case of successful Response, a notification is sent. */
   function onViewProfile(e) {
     setIsCollapsed(!isCollapsed)
 
     if (isCollapsed) {
       // emit 'viewed_profile'
-      console.log(e.currentTarget)
+      // console.log(e.currentTarget)
       props.notify({
-        room: id,
-        from: uid,
-        type: 'view'
+        type:     'view',
+        from:     uid,
+        to:       id,
+        content:  null
       })
     }
   }

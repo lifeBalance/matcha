@@ -12,11 +12,15 @@ const notifSlice = createSlice({
       console.log(action) // testing
       state.notifications = [...state.notifications, action.payload]
     },
+    deleteNotif: (state, action) => {
+      console.log(action)
+    }
   },
 })
 
 export const {
-  addNotif
+  addNotif,
+  deleteNotif
 } = notifSlice.actions
 
 export default notifSlice.reducer

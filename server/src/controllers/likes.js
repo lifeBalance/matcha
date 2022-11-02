@@ -1,5 +1,6 @@
 const LikeModel = require('../models/Like')
 const MatchModel = require('../models/Match')
+const NotifModel = require('../models/Notif')
 
 
 // Log in the user, send tokens if credentials match, else...
@@ -33,23 +34,39 @@ exports.like = async (req, res, next) => {
       liker: req.body.liker,
       liked: req.body.liked
     })
-
+    
     // Check if there's a row with the inverted like (a match!)
     const match = await LikeModel.readLike({
       liker: req.body.liked,
       liked: req.body.liker,
     })
 
-    let notif_type = 'like' // default value of the notification
+    // Default value of the notification
+    let notif_type = 2
+
     console.log('Match? '+match) // testing
     if (match) {
       await MatchModel.writeMatch({
         liker: req.body.liker,
         liked: req.body.liked
       })
-      notif_type = 'match'
-    }
-    // Send the access_token in the response body
+      notif_type = 3
+
+      // Write the match notification to both users!
+      const notif = await NotifModel.writeTwoNotifs({
+        to:   req.body.liker,
+        from: req.body.liked,
+        type: notif_type
+      })
+    } else {
+      // Write the like notification
+      const notif = await NotifModel.writeNotif({
+        to:   req.body.liker,
+        from: req.body.liked,
+        type: notif_type
+      })
+  }
+
     res.status(200).json({
       type:       'SUCCESS',
       message:    'Successfully liked!',

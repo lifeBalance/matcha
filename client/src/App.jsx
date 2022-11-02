@@ -16,6 +16,7 @@ import Confirm from './pages/Confirm'
 import ProfileList from './pages/ProfileList'
 import Profile from './pages/Profile'
 import PageNotFound from './pages/PageNotFound'
+import Notifs from './pages/Notifs'
 
 // components
 import Layout from './components/UI/Layout'
@@ -92,12 +93,6 @@ function App() {
       // setSocketId(socket.id)
       socket.emit('join-room', uid)
     })
-
-    socket.on('notify', data => {
-      console.log(data)
-      // mb here dispatch notification?
-      dispatch(addNotif(data))
-    })
   }, [socket])
 
   function notify(data) {
@@ -141,6 +136,11 @@ function App() {
           <Route
             path='/forgot'
             element={<RequestPassword />}
+          />
+
+          <Route
+            path='/notifs'
+            element={<Notifs />}
           />
 
           <Route path='reset/:email/:token' element={<ResetPassword />} />

@@ -59,7 +59,7 @@ function MobileMenu() {
             onClick={() => dispatch(closeMobileMenu())}
           >
             <BellIcon className='inline text-yellow-400 w-6 hover:cursor-pointer -mt-1 mr-2' />
-            notifications
+            notifs
           </Link>
 
           <Link
