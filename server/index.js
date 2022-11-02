@@ -55,6 +55,7 @@ const refreshRoutes = require('./src/routes/refresh')
 const resetRoutes = require('./src/routes/reset')
 const likesRoutes = require('./src/routes/likes')
 const notifsRoutes = require('./src/routes/notifs')
+const viewsRoutes = require('./src/routes/views')
 
 const testsRoutes = require('./src/routes/tests')
 
@@ -67,6 +68,7 @@ app.use('/api', refreshRoutes)    // for silently refreshing tokens
 app.use('/api', resetRoutes)      // for resetting passwords
 app.use('/api', likesRoutes)      // for likes/unlikes
 app.use('/api', notifsRoutes)      // for likes/unlikes
+app.use('/api', viewsRoutes)      // for likes/unlikes
 
 app.use('/api', testsRoutes) // testing stuff
 
@@ -91,7 +93,7 @@ io.on('connection', socket => {
     socket.to(data.room).emit('msg', {message: data.message, own: false})
   })
   socket.on('notify', data => {
-    console.log(data.type, data.from, data.to, data.content)
+    console.log(data.id, data.type, data.from, data.to, data.username, data.profilePic)
     // Send the event (and content) back to the proper room (user).
     socket.to(data.to).emit('notify', data)
   })

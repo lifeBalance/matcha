@@ -1,7 +1,7 @@
 const LikeModel = require('../models/Like')
 const MatchModel = require('../models/Match')
 const NotifModel = require('../models/Notif')
-
+const ProfileModel = require('../models/Profile')
 
 // Log in the user, send tokens if credentials match, else...
 exports.like = async (req, res, next) => {
@@ -29,12 +29,19 @@ exports.like = async (req, res, next) => {
       })
     }
 
+    const liker = await ProfileModel.readOne({
+      id: req.uid
+    })
+
+    // Find the profile pic
+    const profilePic = liker.pics.find(pic => pic.profile === 1)
+
     // Write the like
     const result = await LikeModel.writeLike({
       liker: req.body.liker,
       liked: req.body.liked
     })
-    
+
     // Check if there's a row with the inverted like (a match!)
     const match = await LikeModel.readLike({
       liker: req.body.liked,
@@ -42,38 +49,82 @@ exports.like = async (req, res, next) => {
     })
 
     // Default value of the notification
-    let notif_type = 2
+    let notif_type = 'like'
 
     console.log('Match? '+match) // testing
     if (match) {
+      const liked = await ProfileModel.readOne({
+        id: req.body.liked
+      })
+
+      // Find the profile pic
+      const profilePic2 = liked.pics.find(pic => pic.profile === 1)
+
       await MatchModel.writeMatch({
+        // order doesn't matter here; a match is a match ;-)
         liker: req.body.liker,
         liked: req.body.liked
       })
-      notif_type = 3
+      notif_type = 'match'
 
-      // Write the match notification to both users!
-      const notif = await NotifModel.writeTwoNotifs({
-        to:   req.body.liker,
-        from: req.body.liked,
-        type: notif_type
+      // Write the match notification to the liker user!
+      const notif = await NotifModel.writeNotif({
+        recipient:   req.body.liked,
+        content: {
+          from:       req.body.liker,
+          username:   liker.username,
+          profilePic: profilePic,
+          type:       'match'
+        }
+      })
+
+      // Write the match notification to the liked user!
+      const notifId = await NotifModel.writeNotif({
+        recipient:   req.body.liker,
+        content: {
+          from:       liked.id,
+          username:   liked.username,
+          profilePic: profilePic2,
+          type:       'match'
+        }
+      })
+      res.status(200).json({
+        type:       'SUCCESS',
+        message:    'Successfully liked!',
+        notif: {
+          id:         notifId,
+          type:       'match',
+          from:       liker.id,
+          to:         req.body.to,
+          username:   liker.username,
+          profilePic
+        }
       })
     } else {
-      // Write the like notification
-      const notif = await NotifModel.writeNotif({
-        to:   req.body.liker,
-        from: req.body.liked,
-        type: notif_type
+      // Write the match notification to the liked user!
+      const notifId = await NotifModel.writeNotif({
+        recipient:   req.body.liked,
+        content: {
+          from:       liker.id,
+          username:   liker.username,
+          profilePic: profilePic,
+          type:       'like'
+        }
       })
-  }
 
-    res.status(200).json({
-      type:       'SUCCESS',
-      message:    'Successfully liked!',
-      toUser:     req.body.liked,
-      fromUser:   req.body.liker,
-      notif_type: notif_type
-    })
+      res.status(200).json({
+        type:       'SUCCESS',
+        message:    'Successfully liked!',
+        notif: {
+          id:         notifId,
+          to:         req.body.to,
+          from:       liker.id,
+          username:   liker.username,
+          profilePic,
+          type:       'like' // could be 'like' or 'match'
+        }
+      })
+    }
   } catch(error) {
     console.log(error)
     next(error)

@@ -4,6 +4,7 @@ import axios from 'axios'
 // redux
 import { useDispatch } from 'react-redux'
 import { refresh } from '../store/authSlice'
+import { addNotif } from '../store/notifSlice'
 
 const sendRequest = axios.create({
   baseURL: '/api',
@@ -36,13 +37,13 @@ function useLikes() {
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const dispatch = useDispatch()
 
-  const submitLike = React.useCallback(async function (args) {
+  const submitView = React.useCallback(async function (args) {
     setIsSubmitting(true)
     console.log(args) // testing
 
     try {
       const resp = await sendRequest({
-        url: '/likes',
+        url: '/views',
         method: args.method,
         headers: {
           'Authorization': `Bearer ${args.accessToken}`
@@ -57,11 +58,11 @@ function useLikes() {
       if (resp.data.type === 'ERROR') {
         setSubmitError(true)
         // console.log(resp.data.message) // testing
+        // args.callback(resp.data)
       } else {
         console.log(resp.data.notif) // testing
         setSubmitError(false)
         args.callback(resp.data.notif)
-        // args.callback(resp.data)
       }
     } catch (error) {
       // console.log(error) // testing
@@ -75,7 +76,7 @@ function useLikes() {
   return {
     isSubmitting,
     submitError,
-    submitLike
+    submitView
   }
 }
 

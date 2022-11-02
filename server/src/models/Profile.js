@@ -10,7 +10,20 @@ module.exports = class Profile {
   static async readOne({ id }) {
     const sql =`
     SELECT
-    id, username, firstname, lastname, age, gender, prefers, bio
+    id,
+    username,
+    firstname,
+    lastname,
+    age,
+    gender,
+    prefers,
+    bio,
+    (SELECT JSON_ARRAYAGG(JSON_OBJECT(
+      'url', pic_urls.url,
+      'profile', pic_urls.profile_pic))
+        FROM pic_urls
+        WHERE pic_urls.user_id = users.id
+    ) AS pics
     FROM users WHERE id = ?`
 
     const [arr, fields] = await pool.execute(sql, [id])
@@ -42,5 +55,18 @@ module.exports = class Profile {
     const [arr, fields] = await pool.execute(sql, [id])
     // console.log('Profile Model: '+JSON.stringify(arr))
     return arr // it could be an empty array
+  }
+
+  static async increaseViews(data) {
+    const sql = `
+    UPDATE users
+    SET views = views + 1
+    WHERE id = ?`
+    const [fields, _] = await pool.execute(sql, [
+      data.uid
+    ])
+
+    // console.log('fields: '+ JSON.stringify(fields)) // testing
+    return (fields.affectedRows === 1) ? true : false
   }
 }

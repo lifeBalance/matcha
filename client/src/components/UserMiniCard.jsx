@@ -1,7 +1,11 @@
 import React from 'react'
 
 // redux
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+// import { addNotif } from '../store/notifSlice' 
+
+// hooks
+import useViews from '../hooks/useViews'
 
 // components
 import { Collapse } from 'react-collapse'
@@ -36,24 +40,46 @@ function UserMiniCard(props) {
   // console.log(JSON.stringify(props.profile)) // testing
   const [isCollapsed, setIsCollapsed] = React.useState(true)
 
-  const { uid } = useSelector(slices => slices.auth)
+  // redux
+  // const dispatch = useDispatch()
+  const {
+    uid,
+    accessToken
+  } = useSelector(slices => slices.auth)
   // console.log(props)  // testing
 
-  /*  Better pass this fn to a useViews hook, so that only
-    in case of successful Response, a notification is sent. */
-  function onViewProfile(e) {
-    setIsCollapsed(!isCollapsed)
+  const {
+    isSubmitting,
+    submitError,
+    submitView
+  } = useViews()
 
+  function notify(data) {
+    props.notify({
+      id:         data.id,
+      from:       data.fromUser,
+      to:         data.toUser,
+      type:       data.type,
+      username:   data.username,
+      profilePic: data.profilePic
+    })
+  }
+  
+  /*  Only in case of successful Response,
+  a notification is sent. */
+  function handleViewProfile() {
     if (isCollapsed) {
-      // emit 'viewed_profile'
-      // console.log(e.currentTarget)
-      props.notify({
-        type:     'view',
-        from:     uid,
-        to:       id,
-        content:  null
+      submitView({
+        accessToken,
+        method: 'post',
+        data: {
+          from: uid,
+          to:   id
+        },
+        callback: notify
       })
     }
+    setIsCollapsed(!isCollapsed)
   }
 
   let genderElem = 'Non-binary'
@@ -95,7 +121,7 @@ function UserMiniCard(props) {
         <EyeIcon
           className='text-white w-8 inline mr-4 hover:text-blue-400 hover:scale-110 hover:animate-pulse active:text-fuchsia-400'
           // onClick={() => setIsCollapsed(!isCollapsed)}
-          onClick={onViewProfile}
+          onClick={handleViewProfile}
         />
       </div>
 

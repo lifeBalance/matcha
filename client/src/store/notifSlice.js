@@ -1,19 +1,16 @@
-import { createSlice } from '@reduxjs/toolkit'
-
-const initialState = {
-  notifications: []
-}
+import { createSlice, current } from '@reduxjs/toolkit'
 
 const notifSlice = createSlice({
   name: 'notif',
-  initialState,
+  initialState: [],
   reducers: {
     addNotif: (state, action) => {
-      console.log(action) // testing
-      state.notifications = [...state.notifications, action.payload]
+      // console.log(action) // testing
+      state.push(action.payload)
+      // console.log(current(state)) // testing
     },
-    deleteNotif: (state, action) => {
-      console.log(action)
+    deleteNotifs: (state, action) => {
+      return initialState
     }
   },
 })

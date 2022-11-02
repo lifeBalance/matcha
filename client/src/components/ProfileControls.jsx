@@ -1,10 +1,13 @@
 import React from 'react'
 
-import { Tooltip } from 'flowbite-react'
-
 // redux
 import { useSelector, useDispatch } from 'react-redux'
-import { addNotif } from '../store/notifSlice' 
+
+// hooks
+import useLikes from '../hooks/useLikes'
+
+// components
+import { Tooltip } from 'flowbite-react'
 
 //icons
 import {
@@ -14,8 +17,6 @@ import {
   NoSymbolIcon,
 } from '@heroicons/react/24/solid'
 
-import useLikes from '../hooks/useLikes'
-
 function UserProfileControls(props) {
   const {
     youLikeUser,
@@ -23,7 +24,6 @@ function UserProfileControls(props) {
   } = props
 
   // redux
-  const dispatch = useDispatch()
   const {
     accessToken
   } = useSelector((slices) => slices.auth)
@@ -36,18 +36,16 @@ function UserProfileControls(props) {
 
   function notify(data) {
     props.notify({
-      from: data.fromUser,
-      to:   data.toUser,
-      type: data.like
+      id:         data.id,
+      from:       data.fromUser,
+      to:         data.toUser,
+      type:       data.type,
+      username:   data.username,
+      profilePic: data.profilePic
     })
-    dispatch(addNotif(data))
   }
 
   function handleLikes(likeVal) {
-    if (!props.fromUser || !props.toUser) {
-      console.log('Woops, no ids bro');
-      return
-    }
     submitLike({
       accessToken,
       method: likeVal ? 'post' : 'delete',

@@ -24,9 +24,8 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 CREATE TABLE IF NOT EXISTS `notifications` (
     `id` INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
-    `to_uid` INT UNSIGNED NOT NULL,
-    `from_uid` INT UNSIGNED NOT NULL,
-    `type` INT UNSIGNED NOT NULL
+    `recipient_uid` INT UNSIGNED NOT NULL,
+    `content` JSON NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS `pic_urls` (
