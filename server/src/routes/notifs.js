@@ -12,6 +12,6 @@ const { authorize } = require('../middlewares/authorize')
 router.get('/notifs', authorize, notifsController.getNotifs)
 
 // DELETE => /api/notifs (for unliking users)
-// router.delete('/notifs', authorize, notifsController.delete)
+router.delete('/notifs', authorize, notifsController.deleteNotif)
 
 module.exports = router

@@ -1,27 +1,17 @@
 import React from 'react'
-import { useNavigate, Link, Navigate } from 'react-router-dom'
-
-// hooks
-import useGetNotifs from '../hooks/useGetNotifs'
+import { useNavigate } from 'react-router-dom'
 
 // components
-import Modal from '../components/UI/Modal'
 import Notification from '../components/Notification'
-
-//icons
-import { HandRaisedIcon, QuestionMarkCircle } from '../components/Icons/icons'
 
 // redux
 import { useSelector, useDispatch } from 'react-redux'
-import {
-  deleteNotif
-} from '../store/notifSlice'
-
+import { resetNewNotifs } from '../store/notifSlice'
 
 /**
  * REACT COMPONENT
  */
-function Notifs() {
+function NotifList() {
   // Redux
   const dispatch = useDispatch()
   const {
@@ -33,12 +23,8 @@ function Notifs() {
   } = useSelector(slices => slices.auth)
 
   const {
-    notifs,
-    setNotifs,
-    getNotifList,
-    isLoadingNotifs,
-    errorLoadingNotifs,
-  } = useGetNotifs()
+    notifications
+  } = useSelector(slices => slices.notif)
 
   const navigate = useNavigate()
 
@@ -46,11 +32,9 @@ function Notifs() {
     if (!isLoggedIn) {
       return navigate('/', { replace: true })
     }
-    getNotifList({
-      accessToken,
-      // callback: setNotifsState
-    })
-    console.log(notifs);
+
+    // reset NEW notifications counter
+    dispatch(resetNewNotifs())
   }, [])
 
   return (
@@ -58,7 +42,7 @@ function Notifs() {
         <h1 className='text-white text-3xl text-center font-bold my-6 pb-4'>Notifications</h1>
 
         <ul className='space-y-2'>
-          {notifs?.length && notifs.map(n => (
+          {notifications?.length > 0 && notifications.map(n => (
             <Notification notif={n} />
           ))}
         </ul>
@@ -66,4 +50,4 @@ function Notifs() {
   )
 }
 
-export default Notifs
+export default NotifList

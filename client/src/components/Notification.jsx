@@ -1,51 +1,84 @@
 import React from 'react'
 
+// hooks
+import useDeleteNotifs from '../hooks/useDeleteNotifs'
+
 //icons
 import {
-  UserCircleIcon,
-} from '@heroicons/react/24/solid'
-
-import {
-  EyeIcon,
+  XCircleIcon,
 } from '@heroicons/react/24/outline'
 
+// redux
+import { useSelector } from 'react-redux'
+
 function Notification(props) {
+  // Redux
+  const {
+    isLoggedIn,
+    isLoggingIn,
+    isProfiled,
+    errorLoggingIn,
+    accessToken
+  } = useSelector(slices => slices.auth)
+
   const {
     id,
-    type,
-    to_uid,
-    from_uid
+    content
   } = props.notif
-  console.log(props.notif);
+
+  const {
+    requestDeleteNotif,
+    isDeletingNotif,
+    errorDeletingNotif
+  } = useDeleteNotifs()
 
   /*  Better pass this fn to a useViews hook, so that only
     in case of successful Response, a notification is sent. */
-  function onCloseNotif(e) {
-    console.log('closing notif')
+  function handleDeleteNotif(e) {
+    requestDeleteNotif({
+      accessToken,
+      notif_id:   id
+    })
   }
 
-  let typeElem
-  switch (type) {
-    case 0:
-      typeElem = `${from_uid} unliked you!`
+  let msg
+  switch (content.type) {
+    case 'unlike':
+      msg = `unliked you!`
       break;
-    case 1:
-      typeElem = `${from_uid} checked your profile!`
+    case 'view':
+      msg = `checked your profile!`
       break;
-    case 2:
-      typeElem = `${from_uid} liked you!`
+    case 'like':
+      msg = `liked you!`
       break;
-    case 3:
-      typeElem = `${from_uid} liked you back!`
+    case 'match':
+      msg = `liked you back!`
       break;
   }
 
   return (
     <li
-      className='rounded-lg flex w-full bg-white p-4'
+      className='rounded-lg flex bg-white p-4 pr-12 relative items-center'
       data-id={id}
+      key={id}
     >
-      {typeElem}
+      <XCircleIcon
+        className='absolute top-2 right-2 w-8 h-8 text-slate-400 hover:text-red-600 hover:scale-110' 
+        onClick={handleDeleteNotif}
+      />
+
+      <img
+        className='rounded-full w-20 h-20'
+        src={content.profilePic}
+        alt={`${content.username} profile pic`}
+        onClick={handleDeleteNotif}
+      />
+
+      <p className='pl-4 text-slate-700 text-lg'>
+        <span className='font-bold'>{content.username} </span>
+        {msg}
+      </p>
     </li>
   )
 }

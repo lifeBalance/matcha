@@ -20,7 +20,7 @@ module.exports = class Notif {
         1: A fields OBJECT (metadata about the query result). */
     const [arr, fields] = await pool.execute(sql, [recipient])
 
-    console.log('ARR: '+ JSON.stringify(arr)) // testing
+    // console.log('ARR: '+ JSON.stringify(arr)) // testing
     return arr
   }
 
@@ -50,7 +50,8 @@ module.exports = class Notif {
     WHERE id = ?`
 
     const [fields, _] = await pool.execute(sql, [notif_id])
-    // console.log('FIELDS: ' + JSON.stringify(fields))   // testing
-    // console.log('_: ' + JSON.stringify(_))   // testing
+    console.log('FIELDS: ' + JSON.stringify(fields))   // testing
+    console.log('_: ' + JSON.stringify(_))   // testing
+    return fields.affectedRows
   }
 }

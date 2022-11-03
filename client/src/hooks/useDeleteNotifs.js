@@ -5,14 +5,14 @@ import axios from 'axios'
 import { useDispatch } from 'react-redux'
 import { refresh } from '../store/authSlice'
 import {
-  setNotifs
+  deleteNotif
 } from '../store/notifSlice'
 
-const fetchNotifs = axios.create({
+const requestDelNotif = axios.create({
   baseURL: '/api',
 })
 
-fetchNotifs.interceptors.response.use(
+requestDelNotif.interceptors.response.use(
   response => {
     if (response.data.type === 'ERROR' &&
         response.data.message === 'jwt expired')
@@ -34,28 +34,26 @@ fetchNotifs.interceptors.response.use(
   error => Promise.reject(error)
 )
 
-function useGetNotifList() {
-  // const [notifs, setNotifs] = React.useState([])
-  const [isLoadingNotifs, setIsLoadingNotifs] = React.useState(false)
-  const [errorLoadingNotifs, setErrorLoadingNotifs] = React.useState(false)
+function useDeleteNotifs() {
+  const [isDeletingNotif, setIsDeletingNotif] = React.useState(false)
+  const [errorDeletingNotif, setErrorDeletingNotif] = React.useState(false)
   const dispatch = useDispatch()
 
-  async function getNotifList(args) {
-    setIsLoadingNotifs(true)
+  async function requestDeleteNotif(args) {
+    setIsDeletingNotif(true)
 
     try {
       /*  Next line is crucial to protect the App from 
         errors caused by the user Reloading the Browser. */
       if (!args.accessToken) return
 
-      const response = await fetchNotifs({
+      const response = await requestDelNotif({
         url: '/notifs',
-        method: 'get',
-        // params: { page: args.page },
+        method: 'delete',
         headers: {
           'Authorization': `Bearer ${args.accessToken}`
         },
-        data: { notif_id: args.id },
+        data: { notif_id: args.notif_id },
         /*  Hang the following function in the 'config' object in
            order to make it available in the interceptor. */
         refreshTokens: () => dispatch(refresh({
@@ -63,27 +61,24 @@ function useGetNotifList() {
         })),
       })
 
-      if (response.data.notifs) {
-        console.log(response.data.notifs);
-        dispatch(setNotifs(response.data.notifs))
-        // setNotifs(response.data.notifs)
-        // args.callback(response.data.notifs)
+      if (response.data.type === 'SUCCESS') {
+        console.log(response.data.notif_id);
+        // args.callback(response.data.notif_id)
+        dispatch(deleteNotif(response.data.notif_id))
       }
     } catch (error) {
-      return setErrorLoadingNotifs(error.response?.data)
+      return setErrorDeletingNotif(error.response?.data)
       // return setErrorLoadingProfiles(error.response.data.error.message)
     } finally {
-      setIsLoadingNotifs(false)
+      setIsDeletingNotif(false)
     }
   }
 
   return {
-    // notifs,
-    // setNotifs,
-    getNotifList,
-    isLoadingNotifs,
-    errorLoadingNotifs,
+    requestDeleteNotif,
+    isDeletingNotif,
+    errorDeletingNotif
   }
 }
 
-export default useGetNotifList
+export default useDeleteNotifs

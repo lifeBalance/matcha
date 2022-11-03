@@ -38,7 +38,7 @@ function useLikes() {
 
   const submitLike = React.useCallback(async function (args) {
     setIsSubmitting(true)
-    console.log(args) // testing
+    // console.log(args) // testing
 
     try {
       const resp = await sendRequest({
@@ -58,7 +58,7 @@ function useLikes() {
         setSubmitError(true)
         // console.log(resp.data.message) // testing
       } else {
-        console.log(resp.data.notif) // testing
+        // console.log(resp.data.notif) // testing
         setSubmitError(false)
         args.callback(resp.data.notif)
         // args.callback(resp.data)

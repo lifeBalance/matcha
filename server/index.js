@@ -92,10 +92,19 @@ io.on('connection', socket => {
     // ... send the event (and 'msg' content) back to the proper room.
     socket.to(data.room).emit('msg', {message: data.message, own: false})
   })
+
   socket.on('notify', data => {
-    console.log(data.id, data.type, data.from, data.to, data.username, data.profilePic)
-    // Send the event (and content) back to the proper room (user).
-    socket.to(data.to).emit('notify', data)
+    console.log('notify event: '+JSON.stringify(data)) // testing
+
+    // In case of match, we gotta notify both users!
+    if (data.content.type === 'match') {
+      io.to(data.recipient_uid)
+        .to(data.content.from)
+        .emit('notify', data)
+    } else {
+      // Send the event (and content) back to the proper room (user).
+      socket.to(data.recipient_uid).emit('notify', data)
+    }
   })
 
   // Create a room based on the 'create-room' event sent from client

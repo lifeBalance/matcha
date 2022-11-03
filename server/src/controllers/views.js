@@ -29,10 +29,10 @@ exports.postView = async (req, res, next) => {
       var notifId = await NotifModel.writeNotif({
         recipient:   req.body.to,
         content: {
+          type:       'view',
           from:       req.uid,
           username:   viewer.username,
-          profilePic: profilePic,
-          type:       'view'
+          profilePic: profilePic.url,
         }
       })
     }
@@ -42,12 +42,14 @@ exports.postView = async (req, res, next) => {
         type:     'SUCCESS',
         message:  'Successfully viewed!',
         notif:    {
-          id:         notifId,
-          type:       'view',
-          from:       req.uid,
-          to:         req.body.to,
-          username:   viewer.username,
-          profilePic
+          id:             notifId,
+          recipient_uid:  req.body.to,
+          content: {
+            type:         'view',
+            from:         req.uid,
+            username:     viewer.username,
+            profilePic:   profilePic.url
+          }
         }
       })
     }

@@ -54,17 +54,6 @@ function UserMiniCard(props) {
     submitView
   } = useViews()
 
-  function notify(data) {
-    props.notify({
-      id:         data.id,
-      from:       data.fromUser,
-      to:         data.toUser,
-      type:       data.type,
-      username:   data.username,
-      profilePic: data.profilePic
-    })
-  }
-  
   /*  Only in case of successful Response,
   a notification is sent. */
   function handleViewProfile() {
@@ -72,11 +61,8 @@ function UserMiniCard(props) {
       submitView({
         accessToken,
         method: 'post',
-        data: {
-          from: uid,
-          to:   id
-        },
-        callback: notify
+        data: { from: uid, to: id },
+        callback: props.notify
       })
     }
     setIsCollapsed(!isCollapsed)

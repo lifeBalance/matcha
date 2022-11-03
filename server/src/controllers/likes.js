@@ -34,7 +34,7 @@ exports.like = async (req, res, next) => {
     })
 
     // Find the profile pic
-    const profilePic = liker.pics.find(pic => pic.profile === 1)
+    const likerProfilePic = liker.pics.find(pic => pic.profile === 1)
 
     // Write the like
     const result = await LikeModel.writeLike({
@@ -58,7 +58,7 @@ exports.like = async (req, res, next) => {
       })
 
       // Find the profile pic
-      const profilePic2 = liked.pics.find(pic => pic.profile === 1)
+      const likedProfilePic = liked.pics.find(pic => pic.profile === 1)
 
       await MatchModel.writeMatch({
         // order doesn't matter here; a match is a match ;-)
@@ -71,9 +71,9 @@ exports.like = async (req, res, next) => {
       const notif = await NotifModel.writeNotif({
         recipient:   req.body.liked,
         content: {
-          from:       req.body.liker,
+          from:       liker.id,
           username:   liker.username,
-          profilePic: profilePic,
+          profilePic: likerProfilePic.url,
           type:       'match'
         }
       })
@@ -84,20 +84,24 @@ exports.like = async (req, res, next) => {
         content: {
           from:       liked.id,
           username:   liked.username,
-          profilePic: profilePic2,
+          profilePic: likedProfilePic.url,
           type:       'match'
         }
       })
+
+      // The response contains the necessary intel to inform both users!
       res.status(200).json({
         type:       'SUCCESS',
-        message:    'Successfully liked!',
+        message:    'Successfully matched!',
         notif: {
-          id:         notifId,
-          type:       'match',
-          from:       liker.id,
-          to:         req.body.to,
-          username:   liker.username,
-          profilePic
+          id:               notifId,
+          type:             'match',
+          from:             liker.id,
+          to:               liked.id,
+          from_username:    liker.username,
+          from_profilePic:  likerProfilePic.url,
+          to_username:      liked.username,
+          to_profilePic:    likedProfilePic.url
         }
       })
     } else {
@@ -107,7 +111,7 @@ exports.like = async (req, res, next) => {
         content: {
           from:       liker.id,
           username:   liker.username,
-          profilePic: profilePic,
+          profilePic: likerProfilePic.url,
           type:       'like'
         }
       })
@@ -117,11 +121,11 @@ exports.like = async (req, res, next) => {
         message:    'Successfully liked!',
         notif: {
           id:         notifId,
-          to:         req.body.to,
+          type:       'like',
           from:       liker.id,
+          to:         req.body.to,
           username:   liker.username,
-          profilePic,
-          type:       'like' // could be 'like' or 'match'
+          profilePic: likerProfilePic.url
         }
       })
     }

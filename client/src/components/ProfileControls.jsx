@@ -35,13 +35,28 @@ function UserProfileControls(props) {
   } = useLikes()
 
   function notify(data) {
+    if (data.type === 'match') {
+      return props.notify({
+        id:               data.id,
+        type:             data.type,
+        from:             data.from,
+        to:               data.to,
+        from_username:    data.from_username,
+        from_profilePic:  data.from_profilePic,
+        to_username:      data.to_username,
+        to_profilePic:    data.to_profilePic
+      })
+    }
+
     props.notify({
       id:         data.id,
-      from:       data.fromUser,
-      to:         data.toUser,
-      type:       data.type,
-      username:   data.username,
-      profilePic: data.profilePic
+      to:         data.to,
+      content: {
+        type:       data.content.type,
+        from:       data.content.from,
+        username:   data.content.username,
+        profilePic: data.content.profilePic
+      }
     })
   }
 
