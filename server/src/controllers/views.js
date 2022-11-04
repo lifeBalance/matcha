@@ -5,8 +5,10 @@ const ProfileModel = require('../models/Profile')
 exports.postView = async (req, res, next) => {
   try {
     if (!req.body.to) {
-      // console.log(`to: ${req.body.to}`);
-      return
+      return res.status(200).json({
+        type:     'ERROR',
+        message:  'no view recipient'
+      })
     }
 
     const viewAdded = await ProfileModel.increaseViews({

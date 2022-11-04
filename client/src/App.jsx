@@ -28,10 +28,7 @@ import {
   setLiveLocation
 } from './store/authSlice'
 
-import {
-  addNotif,
-  increaseNewNotifs
-} from './store/notifSlice'
+import { increaseNewNotifs } from './store/notifSlice'
 
 // socket.io
 import socketIO from 'socket.io-client'
@@ -97,7 +94,6 @@ function App() {
     // When we receive notification, we add it to global state
     socket.on('notify', data => {
       // console.log(data) // testing
-      dispatch(addNotif(data))
       dispatch(increaseNewNotifs())
     })
   }, [socket])

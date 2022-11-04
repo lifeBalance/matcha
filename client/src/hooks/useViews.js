@@ -4,7 +4,6 @@ import axios from 'axios'
 // redux
 import { useDispatch } from 'react-redux'
 import { refresh } from '../store/authSlice'
-import { addNotif } from '../store/notifSlice'
 
 const sendRequest = axios.create({
   baseURL: '/api',
@@ -15,8 +14,6 @@ sendRequest.interceptors.response.use(
     if (response.data.type === 'ERROR' &&
         response.data.message === 'jwt expired')
     {
-      // console.log('JWTs were Silently Refreshed!') // testing
-      // console.log(response) // testing
       return response.config.refreshTokens()
         .then(resp => {
           response.config.headers = {
@@ -26,7 +23,6 @@ sendRequest.interceptors.response.use(
         })
         .catch(e => console.log(e))
     }
-    // If all goes smooth, the interceptor just returns the response.
     return response
   },
   error => Promise.reject(error)
