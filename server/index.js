@@ -4,15 +4,25 @@ const path = require('path')
 
 // Add a Node HTTP server so that we can also use it with socket.io
 const http = require('http')
-const server = http.createServer(app)
-const { Server } = require("socket.io")
+const httpServer = http.createServer(app)
 
-const io = new Server(server, {
+const io = require('socket.io')(httpServer, {
   cors: {
     origin: 'http://localhost:5173',
     methods: ['GET', 'POST']
   }
 })
+
+/*
+// Another way of wiring up socket.io to the HTTP server:
+const { Server } = require('socket.io')
+const io = new Server(httpServer, {
+  cors: {
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST']
+  }
+})
+*/
 
 /**
 **  Middleware
@@ -93,18 +103,11 @@ io.on('connection', socket => {
     socket.to(data.room).emit('msg', {message: data.message, own: false})
   })
 
+  // USELESS CODE BELOW!!
   socket.on('notify', data => {
     console.log('notify event: '+JSON.stringify(data)) // testing
-
-    // In case of match, we gotta notify both users!
-    if (data.content.type === 'match') {
-      io.to(data.content.to)
-        .to(data.content.from)
-        .emit('notify', data)
-    } else {
-      // Send the event (and content) back to the proper room (user).
-      socket.to(data.recipient_uid).emit('notify', data)
-    }
+    /* Right now the server doesn't receive 'notify' events because
+      we're notifying the users DIRECTLY from the controllers. */
   })
 
   // Create a room based on the 'create-room' event sent from client
@@ -124,6 +127,8 @@ io.on('connection', socket => {
   })
 })
 
-server.listen(3000, () => {
+httpServer.listen(3000, () => {
   console.log('App running on port 3000');
 })
+
+exports.io = io

@@ -2,10 +2,14 @@ const LikeModel = require('../models/Like')
 const MatchModel = require('../models/Match')
 const NotifModel = require('../models/Notif')
 const ProfileModel = require('../models/Profile')
+const io = require('../../index')
 
 // Log in the user, send tokens if credentials match, else...
 exports.like = async (req, res, next) => {
   try {
+    // console.log(io)
+    // io.io.to(req.uid).emit('notify', 'aua')
+    // return
     console.log(`LIKES: UID${req.uid}`) // testing
     console.log(`LIKES: BODY - ${JSON.stringify(req.body)}`) // testing
 
@@ -87,6 +91,22 @@ exports.like = async (req, res, next) => {
           profilePic: likedProfilePic.url,
           type:       'match'
         }
+      })
+
+      io.io.to(liked.id).emit('notify', {
+        id:         notifId,
+        type:       'match',
+        from:       liker.id,
+        username:   liker.username,
+        profilePic: likerProfilePic.url
+      })
+
+      io.io.to(liker.id).emit('notify', {
+        id:         notifId,
+        type:       'match',
+        from:       liked.id,
+        username:   liked.username,
+        profilePic: likedProfilePic.url
       })
 
       // The response contains the necessary intel to inform both users!

@@ -92,16 +92,8 @@ function App() {
     })
 
     // When we receive notification, we add it to global state
-    socket.on('notify', data => {
-      // console.log(data) // testing
-      dispatch(increaseNewNotifs())
-    })
+    socket.on('notify', () => dispatch(increaseNewNotifs()))
   }, [socket])
-
-  function notify(data) {
-    console.log(data) // testing
-    socket.emit('notify', data)
-  }
 
   return (
     <BrowserRouter>
@@ -109,7 +101,7 @@ function App() {
         <Routes>
           <Route
             path='/'
-            element={<ProfileList notify={notify} />}
+            element={<ProfileList />}
           />
 
           <Route

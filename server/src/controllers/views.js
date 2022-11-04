@@ -1,5 +1,6 @@
 const NotifModel = require('../models/Notif')
 const ProfileModel = require('../models/Profile')
+const io = require('../../index')
 
 // Log in the user, send tokens if credentials match, else...
 exports.postView = async (req, res, next) => {
@@ -40,19 +41,17 @@ exports.postView = async (req, res, next) => {
     }
 
     if (notifId) {
+      io.io.to(req.body.to).emit('notify', {
+        id:         notifId,
+        type:       'view',
+        from:       req.uid,
+        username:   viewer.username,
+        profilePic: profilePic.url
+      })
+
       return res.status(200).json({
         type:     'SUCCESS',
-        message:  'Successfully viewed!',
-        notif:    {
-          id:             notifId,
-          recipient_uid:  req.body.to,
-          content: {
-            type:         'view',
-            from:         req.uid,
-            username:     viewer.username,
-            profilePic:   profilePic.url
-          }
-        }
+        message:  'Successfully viewed!'
       })
     }
   } catch(error) {

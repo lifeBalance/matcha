@@ -35,7 +35,7 @@ function useLikes() {
 
   const submitView = React.useCallback(async function (args) {
     setIsSubmitting(true)
-    console.log(args) // testing
+    // console.log(args) // testing
 
     try {
       const resp = await sendRequest({
@@ -58,7 +58,7 @@ function useLikes() {
       } else {
         // console.log(resp.data.notif) // testing
         setSubmitError(false)
-        args.callback(resp.data.notif)
+        args.callback() // Close the EYE icon :-)
       }
     } catch (error) {
       // console.log(error) // testing

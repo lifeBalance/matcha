@@ -8,7 +8,6 @@ function Notification(props) {
     id,
     content
   } = props.notif
-  console.log(props);
 
   let msg
   switch (content.type) {
@@ -19,10 +18,10 @@ function Notification(props) {
       msg = `checked your profile!`
       break;
     case 'like':
-      msg = `liked you!`
+      msg = `likes you!`
       break;
     case 'match':
-      msg = `liked you back!`
+      msg = `likes you back!`
       break;
   }
 

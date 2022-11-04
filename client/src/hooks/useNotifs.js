@@ -58,7 +58,7 @@ function useNotifs(params) {
 
   async function getNotifList(args) {
     setIsLoadingNotifList(true)
-    console.log(args);
+
     try {
       /*  Next line is crucial to protect the App from 
         errors caused by the user Reloading the Browser. */
@@ -84,8 +84,6 @@ function useNotifs(params) {
 
   async function deleteNotif(args) {
     try {
-      console.log(args);
-
       /*  Next line is crucial to protect the App from 
         errors caused by the user Reloading the Browser. */
       if (!args.accessToken) return

@@ -1,8 +1,7 @@
 import React from 'react'
 
 // redux
-import { useSelector, useDispatch } from 'react-redux'
-// import { addNotif } from '../store/notifSlice' 
+import { useSelector } from 'react-redux'
 
 // hooks
 import useViews from '../hooks/useViews'
@@ -54,10 +53,6 @@ function UserMiniCard(props) {
     submitView
   } = useViews()
 
-  function mankipatch(data) {
-    props.notify(data)
-    setIsCollapsed(false)
-  }
   /*  Only in case of successful Response,
   a notification is sent. */
   function handleViewProfile() {
@@ -66,7 +61,7 @@ function UserMiniCard(props) {
         accessToken,
         method: 'post',
         data: { from: uid, to: id },
-        callback: mankipatch
+        callback: setIsCollapsed(false)
       })
     } else
       setIsCollapsed(true)
@@ -156,7 +151,6 @@ function UserMiniCard(props) {
           <ProfileControls
             youLikeUser={false}
             userLikesYou={false}
-            notify={props.notify}
             toUser={id}     // the user in the profile card
             fromUser={uid}  // the logged-in user
           />
