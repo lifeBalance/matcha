@@ -21,9 +21,6 @@ import NotifList from './pages/NotifList'
 // components
 import Layout from './components/UI/Layout'
 
-// hooks
-import useGetNotifs from './hooks/useGetNotifs'
-
 // redux
 import { useDispatch, useSelector } from 'react-redux'
 import {
@@ -44,20 +41,11 @@ function App() {
   const dispatch = useDispatch()
 
   const {
-    accessToken,
     isLoggingIn,
     isLoggedIn,
     profilePic,
     uid
   } = useSelector(slices => slices.auth)
-
-  const {
-    notifs,
-    setNotifs,
-    getNotifList,
-    isLoadingNotifs,
-    errorLoadingNotifs,
-  } = useGetNotifs()
 
   const [socket, setSocket] = React.useState(null)
 
@@ -94,8 +82,6 @@ function App() {
       const tmp = socketIO.connect('http://localhost')
       setSocket(tmp)
 
-      getNotifList({ accessToken })
-
       // Clean up connection when component unmounts.
       return () => tmp.disconnect()
     }
@@ -105,22 +91,19 @@ function App() {
     if (!socket || !isLoggedIn) return   // bail if socket is not ready yet!
 
     socket.on('connected', () => {
-      // setSocketId(socket.id)
       socket.emit('join-room', uid)
     })
 
     // When we receive notification, we add it to global state
     socket.on('notify', data => {
-      console.log(data);
+      // console.log(data) // testing
       dispatch(addNotif(data))
       dispatch(increaseNewNotifs())
-      // socket.emit('join-room', uid)
     })
   }, [socket])
 
   function notify(data) {
     console.log(data) // testing
-    // return // testing
     socket.emit('notify', data)
   }
 

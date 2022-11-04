@@ -94,14 +94,16 @@ exports.like = async (req, res, next) => {
         type:       'SUCCESS',
         message:    'Successfully matched!',
         notif: {
-          id:               notifId,
-          type:             'match',
-          from:             liker.id,
-          to:               liked.id,
-          from_username:    liker.username,
-          from_profilePic:  likerProfilePic.url,
-          to_username:      liked.username,
-          to_profilePic:    likedProfilePic.url
+          id:                 notifId,
+          content: {
+            type:             'match',
+            from:             liker.id,
+            to:               liked.id,
+            from_username:    liker.username,
+            from_profilePic:  likerProfilePic.url,
+            to_username:      liked.username,
+            to_profilePic:    likedProfilePic.url
+          }
         }
       })
     } else {

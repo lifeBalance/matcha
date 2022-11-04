@@ -98,7 +98,7 @@ io.on('connection', socket => {
 
     // In case of match, we gotta notify both users!
     if (data.content.type === 'match') {
-      io.to(data.recipient_uid)
+      io.to(data.content.to)
         .to(data.content.from)
         .emit('notify', data)
     } else {

@@ -45,13 +45,11 @@ module.exports = class Notif {
     /* DELETE returns an ARRAY with two elements:
         0: A fields OBJECT (metadata about the query result).
         1: A null/undefined OBJECT. */
-    const sql = `
-    DELETE FROM notifications
-    WHERE id = ?`
+    const sql = `DELETE FROM notifications WHERE id = ?`
 
     const [fields, _] = await pool.execute(sql, [notif_id])
-    console.log('FIELDS: ' + JSON.stringify(fields))   // testing
-    console.log('_: ' + JSON.stringify(_))   // testing
+    // console.log('FIELDS: ' + JSON.stringify(fields))   // testing
+    // console.log('_: ' + JSON.stringify(_))   // testing
     return fields.affectedRows
   }
 }

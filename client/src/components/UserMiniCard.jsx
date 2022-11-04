@@ -54,6 +54,10 @@ function UserMiniCard(props) {
     submitView
   } = useViews()
 
+  function mankipatch(data) {
+    props.notify(data)
+    setIsCollapsed(false)
+  }
   /*  Only in case of successful Response,
   a notification is sent. */
   function handleViewProfile() {
@@ -62,10 +66,10 @@ function UserMiniCard(props) {
         accessToken,
         method: 'post',
         data: { from: uid, to: id },
-        callback: props.notify
+        callback: mankipatch
       })
-    }
-    setIsCollapsed(!isCollapsed)
+    } else
+      setIsCollapsed(true)
   }
 
   let genderElem = 'Non-binary'
