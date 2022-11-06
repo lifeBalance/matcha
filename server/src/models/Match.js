@@ -7,23 +7,39 @@ const pool = require('../db/dbPool')
 module.exports = class Match {
   constructor(data) {}
 
-  static async readMatch(data) {
-    const { liker, liked } = data
+  // static async readAllMatches(data) {
+  //   const { uid } = data
+
+  //   const sql = `
+  //   SELECT *
+  //   FROM matches
+  //   WHERE liker = ? OR liked = ?`
+
+  //   /* SELECT returns an ARRAY with two elements:
+  //       0: An ARRAY with the rows (could be an empty array).
+  //       1: A fields OBJECT (metadata about the query result). */
+  //   const [arr, fields] = await pool.execute(sql, [uid, uid])
+
+  //   console.log('ARR: '+ JSON.stringify(arr)) // testing
+  //   return arr
+  // }
+  static async readAllMatches(data) {
+    const { uid } = data
 
     const sql = `
-    SELECT *
+    SELECT id, IF(liker = ${uid}, liked, liker) AS uid
     FROM matches
-    WHERE liker = ? AND liked = ?
-    OR liked = ? AND liker = ?`
+    WHERE liker = ${uid} OR liked = ${uid}`
 
     /* SELECT returns an ARRAY with two elements:
         0: An ARRAY with the rows (could be an empty array).
         1: A fields OBJECT (metadata about the query result). */
-    const [arr, fields] = await pool.execute(sql, [liker, liked, liked, liker])
+    const [arr, fields] = await pool.execute(sql, [])
 
-    // console.log('ARR: '+ JSON.stringify(arr)) // testing
-    return arr.length > 0 ? true : false
+    console.log('ARR: '+ JSON.stringify(arr)) // testing
+    return arr
   }
+
 
   static async writeMatch(data) {
     const { liker, liked } = data

@@ -66,6 +66,7 @@ const resetRoutes = require('./src/routes/reset')
 const likesRoutes = require('./src/routes/likes')
 const notifsRoutes = require('./src/routes/notifs')
 const viewsRoutes = require('./src/routes/views')
+const chatsRoutes = require('./src/routes/chats')
 
 const testsRoutes = require('./src/routes/tests')
 
@@ -77,8 +78,9 @@ app.use('/api', confirmRoutes)    // for confirming account
 app.use('/api', refreshRoutes)    // for silently refreshing tokens
 app.use('/api', resetRoutes)      // for resetting passwords
 app.use('/api', likesRoutes)      // for likes/unlikes
-app.use('/api', notifsRoutes)      // for likes/unlikes
-app.use('/api', viewsRoutes)      // for likes/unlikes
+app.use('/api', notifsRoutes)      // for notifications
+app.use('/api', viewsRoutes)      // for views
+app.use('/api', chatsRoutes)      // for chats
 
 app.use('/api', testsRoutes) // testing stuff
 

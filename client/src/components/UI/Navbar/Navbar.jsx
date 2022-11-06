@@ -54,7 +54,7 @@ function Navbar(props) {
                 </div>
               </NavLink>
 
-              <NavLink to='/matches'>
+              <NavLink to='/chats'>
                 <HeartIcon className='text-gray-400 hover:text-red-400 hover:cursor-pointer w-10' />
               </NavLink>
 

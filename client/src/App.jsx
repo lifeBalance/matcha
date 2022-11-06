@@ -17,6 +17,8 @@ import ProfileList from './pages/ProfileList'
 import Profile from './pages/Profile'
 import PageNotFound from './pages/PageNotFound'
 import NotifList from './pages/NotifList'
+import ChatList from './pages/ChatList'
+import Chat from './pages/Chat'
 
 // components
 import Layout from './components/UI/Layout'
@@ -137,6 +139,16 @@ function App() {
           <Route
             path='/notifs'
             element={<NotifList />}
+          />
+
+          <Route
+            path='/chats'
+            element={<ChatList />}
+          />
+
+          <Route
+            path='/chats/:id'
+            element={<Chat />}
           />
 
           <Route path='reset/:email/:token' element={<ResetPassword />} />
