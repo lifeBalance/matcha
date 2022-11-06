@@ -1,19 +1,32 @@
 import React from 'react'
 
 // Redux
-import { useSelector } from 'react-redux'
-
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useSelector, useDispatch } from 'react-redux'
+import { resetNewMsgs, setConvoAsSeen } from '../store/notifSlice'
+import { useNavigate, useLocation, useParams } from 'react-router-dom'
 
 import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
 import useChat from '../hooks/useChat'
 
 function Chat() {
+  // react-router
   const navigate = useNavigate()
   const location = useLocation()
+  const params = useParams()
+
   // Scroll to bottom trick.
   const bottomRef = React.useRef(null)
-
+  
+  // redux
+  const dispatch = useDispatch()
+  const {
+    isLoggedIn,
+    accessToken,
+    uid: clientUid
+  } = useSelector(slices => slices.auth)
+  const {
+    updatedConvos
+  } = useSelector(slices => slices.notif)
 
   const {
     id,
@@ -22,11 +35,7 @@ function Chat() {
     username
   } = location.state
 
-  const {
-    isLoggedIn,
-    accessToken,
-    uid: clientUid
-  } = useSelector(slices => slices.auth)
+  const chatId = params.id
 
   const {
     messageList,
@@ -35,22 +44,37 @@ function Chat() {
   } = useChat()
 
   const [messageInput, setMessageInput] = React.useState('')
-  // import 'newMessages' global state
 
   React.useEffect(() => {
     if (!isLoggedIn) navigate('/', { replace: true })
 
     // check if newMessages has item with same id as chat
+    if (updatedConvos.includes(chatId)) {
+      getMessageList({
+        accessToken,
+        interlocutor: id,
+        url:          location.pathname
+      })
+    }
+  }, [updatedConvos])
+
+  React.useEffect(() => {
     getMessageList({
       accessToken,
       interlocutor: id,
       url:          location.pathname
     })
   }, [])
-
+  
   React.useEffect(() => {
+    dispatch(resetNewMsgs())
+    dispatch(setConvoAsSeen(id.toString()))
     bottomRef.current?.scrollIntoView({behavior: 'smooth'});
   }, [messageList])
+  
+  React.useEffect(() => {
+    dispatch(setConvoAsSeen(id.toString()))
+  }, [])
 
   function handleSendMessage() {
     sendMessage({

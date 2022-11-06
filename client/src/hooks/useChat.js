@@ -105,8 +105,10 @@ function useChat() {
         refreshTokens: () => dispatch(refresh({ accessToken: args.accessToken })),
       })
       console.log(response.data);
-      if (response.data.type === 'SUCCESS')
+      if (response.data.type === 'SUCCESS') {
         setMessageList(prev => [...prev, response.data.msg])
+        args.cb()
+      }
     } catch (error) {
       return setErrorSendingMsg(error.response?.data)
     } finally {

@@ -18,14 +18,15 @@ import {
   ArrowRightOnRectangleIcon,
   ArrowLeftOnRectangleIcon,
   BellIcon,
-  HeartIcon
+  HeartIcon,
+  ChatBubbleLeftRightIcon
 } from '@heroicons/react/24/outline'
 
 function Navbar(props) {
   const dispatch = useDispatch()
   const location = useLocation()
   const isOpen = useSelector(slices => slices.burger.burgerIsOpen)
-  const { newNotifs } = useSelector(slices => slices.notif)
+  const { newNotifs, newMsgs } = useSelector(slices => slices.notif)
   const { isLoggedIn, profilePic } = useSelector(slices => slices.auth)
 
   // console.log('Navbar: '+profilePic)  // testing
@@ -55,7 +56,14 @@ function Navbar(props) {
               </NavLink>
 
               <NavLink to='/chats'>
-                <HeartIcon className='text-gray-400 hover:text-red-400 hover:cursor-pointer w-10' />
+                <div className="relative">
+                <ChatBubbleLeftRightIcon className='text-gray-400 hover:text-red-400 hover:cursor-pointer w-10' />
+                  {newMsgs > 0 && <div className="absolute w-6 h-6 bg-red-600 rounded-full left-7 -top-2 flex">
+                    <span className='text-white ml-[5px] -mt-[2px] font-bold'>
+                      {newMsgs}
+                    </span>
+                  </div>}
+                </div>
               </NavLink>
 
               <NavLink to='/settings'>

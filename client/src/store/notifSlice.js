@@ -6,7 +6,7 @@ const notifSlice = createSlice({
     notifications: [],
     newNotifs: 0,
     newMsgs: 0,       // for the navigation bar
-    changedConvos: [],
+    updatedConvos: [],
     isLoadingNotifs: false,
     /* 'matchesChanged' is just a "trigger", meaning that it's not 
       its boolean value what matters, but its CHANGE in state. */
@@ -32,11 +32,21 @@ const notifSlice = createSlice({
     resetNewNotifs: (state, action) => {
       state.newNotifs = 0
     },
-    resetNewConvos: (state, action) => {
-      state.newConvos = 0
+    resetNewMsgs: (state, action) => {
+      state.newMsgs = 0
     },
     refetchConvos: (state, action) => {
       state.matchesChanged = !state.matchesChanged
+    },
+    updateConvo: (state, action) => {
+      console.log('notifSlice: updateConvo '+action.payload)
+      if (!state.updatedConvos.includes(action.payload))
+      state.updatedConvos.push(action.payload)
+    },
+    setConvoAsSeen: (state, action) => {
+      console.log('notifSlice: setConvoAsSeen '+action.payload + ' type: '+ typeof action.payload)
+      console.log(current(state.updatedConvos))
+      state.updatedConvos = state.updatedConvos.filter(i => i !== action.payload)
     },
   },
 })
@@ -47,8 +57,10 @@ export const {
   resetNewNotifs,
   setNewMsgs,
   increaseNewMsgs,
-  resetNewConvos,
-  refetchConvos
+  resetNewMsgs,
+  refetchConvos,
+  updateConvo,
+  setConvoAsSeen
 } = notifSlice.actions
 
 export default notifSlice.reducer

@@ -1,4 +1,7 @@
 const ChatModel = require('../models/Chat')
+const NotifModel = require('../models/Notif')
+const ProfileModel = require('../models/Profile')
+
 const io = require('../../index')
 
 exports.getChats = async (req, res, next) => {
@@ -78,10 +81,30 @@ exports.writeMessage = async (req, res, next) => {
     })
     console.log(`chats controller - msgId: ${msgId}`) // testing
     
+    // Let's pull data from the sender to write notification intel to DB
+    const sender = await ProfileModel.readOne({
+      id: req.uid
+    })
+    const senderProfilePic = sender.pics.find(pic => pic.profile === 1)
+
+    // Write the message notification to the message recipient!
+    // const notif = await NotifModel.writeNotif({
+    //   recipient:   req.body.to,
+    //   type:       'message',
+    //   content: {
+    //     from:       req.uid,
+    //     username:   sender.username,
+    //     profilePic: senderProfilePic.url,
+    //     chatId:     req.params.id
+    //   }
+    // })
     // Emit notification to interlocutor
     io.io.to(req.body.to).emit('notify', {
+      type:   'message',
+      chatId: req.params.id,
       msgId:  msgId,
-      msg:    msg
+      msg:    msg,
+      to:     req.body.to
     })
 
     return res.status(200).json({

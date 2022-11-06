@@ -25,11 +25,13 @@ import Layout from './components/UI/Layout'
 
 // redux
 import { useDispatch, useSelector } from 'react-redux'
+import { loginAfterReload, setLiveLocation } from './store/authSlice'
 import {
-  loginAfterReload,
-  setLiveLocation
-} from './store/authSlice'
-import { increaseNewNotifs, refetchConvos } from './store/notifSlice'
+  increaseNewMsgs,
+  increaseNewNotifs,
+  refetchConvos,
+  updateConvo
+} from './store/notifSlice'
 
 // socket.io
 import socketIO from 'socket.io-client'
@@ -94,10 +96,16 @@ function App() {
 
     // When we receive notification, we add it to global state
     socket.on('notify', n => {
-      dispatch(increaseNewNotifs())
-
-      if (n.type === 'match' || n.type === 'unmatch')
+      console.log(n);   
+      if (n.type === 'match' || n.type === 'unmatch') {
+        dispatch(increaseNewNotifs())
         dispatch(refetchConvos())
+      } else if (n.type === 'message') {
+        dispatch(increaseNewMsgs())
+        dispatch(updateConvo(n.chatId))
+      } else {
+        dispatch(increaseNewNotifs())
+      }
     })
   }, [socket])
 
