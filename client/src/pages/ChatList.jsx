@@ -19,7 +19,7 @@ function ChatList() {
   const dispatch = useDispatch()
   const { isLoggedIn, accessToken } = useSelector(slices => slices.auth)
   const {
-    newConvos,
+    matchesChanged,
   } = useSelector(slices => slices.notif)
 
   // hooks
@@ -32,13 +32,12 @@ function ChatList() {
   const navigate = useNavigate()
 
   /* The useEffect below should re-fetch the chat list if 
-  there's a new 'match' notification. */
+  there's have been a new 'match/unmatch' notification. */
   React.useEffect(() => {
     if (!isLoggedIn) return navigate('/', { replace: true })
 
-    // if ()
     getChatList({ accessToken, refresh })
-  }, [])
+  }, [matchesChanged])
 
   // Create 
 

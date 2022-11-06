@@ -29,8 +29,7 @@ import {
   loginAfterReload,
   setLiveLocation
 } from './store/authSlice'
-
-import { increaseNewNotifs } from './store/notifSlice'
+import { increaseNewNotifs, refetchConvos } from './store/notifSlice'
 
 // socket.io
 import socketIO from 'socket.io-client'
@@ -94,7 +93,12 @@ function App() {
     })
 
     // When we receive notification, we add it to global state
-    socket.on('notify', () => dispatch(increaseNewNotifs()))
+    socket.on('notify', n => {
+      dispatch(increaseNewNotifs())
+
+      if (n.type === 'match' || n.type === 'unmatch')
+        dispatch(refetchConvos())
+    })
   }, [socket])
 
   return (

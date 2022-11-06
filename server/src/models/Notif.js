@@ -25,15 +25,21 @@ module.exports = class Notif {
   }
 
   static async writeNotif(data) {
-    const { recipient, content } = data
+    const { recipient, type, content } = data
 
     /* INSERT returns an ARRAY with two elements:
         0: A fields OBJECT (metadata about the query result).
         1: A null/undefined OBJECT. */
     const sql = `
-    INSERT INTO notifications (recipient_uid, content) VALUES (?, ?)`
+    INSERT INTO notifications
+    (recipient_uid, type, content)
+    VALUES (?, ?, ?)`
 
-    const [fields, _] = await pool.execute(sql, [recipient, content])
+    const [fields, _] = await pool.execute(sql, [
+      recipient,
+      type,
+      content
+    ])
     // console.log('FIELDS: ' + JSON.stringify(fields))   // testing
     // console.log('_: ' + JSON.stringify(_))   // testing
     return fields.insertId // the id of the notification
@@ -48,6 +54,20 @@ module.exports = class Notif {
     const sql = `DELETE FROM notifications WHERE id = ?`
 
     const [fields, _] = await pool.execute(sql, [notif_id])
+    // console.log('FIELDS: ' + JSON.stringify(fields))   // testing
+    // console.log('_: ' + JSON.stringify(_))   // testing
+    return fields.affectedRows
+  }
+
+  static async deleteAllNotifs(data) {
+    const { uid } = data
+
+    /* DELETE returns an ARRAY with two elements:
+        0: A fields OBJECT (metadata about the query result).
+        1: A null/undefined OBJECT. */
+    const sql = `DELETE FROM notifications WHERE recipient_uid = ?`
+
+    const [fields, _] = await pool.execute(sql, [uid])
     // console.log('FIELDS: ' + JSON.stringify(fields))   // testing
     // console.log('_: ' + JSON.stringify(_))   // testing
     return fields.affectedRows

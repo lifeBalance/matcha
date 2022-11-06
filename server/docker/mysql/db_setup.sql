@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS `users` (
 CREATE TABLE IF NOT EXISTS `notifications` (
     `id` INT UNSIGNED PRIMARY KEY AUTO_INCREMENT NOT NULL,
     `recipient_uid` INT UNSIGNED NOT NULL,
+    `type` VARCHAR(255) NOT NULL,
     `content` JSON NOT NULL
 );
 

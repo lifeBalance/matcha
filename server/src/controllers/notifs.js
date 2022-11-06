@@ -39,9 +39,15 @@ exports.deleteNotif = async (req, res, next) => {
       })
     }
 
-    const success = await NotifModel.deleteNotif({
-      notif_id: req.body.notif_id
-    })
+    if (req.body.notif_id === 'all') {
+      var success = await NotifModel.deleteAllNotifs({
+        uid: req.uid
+      })
+    } else {
+      var success = await NotifModel.deleteNotif({
+        notif_id: req.body.notif_id
+      })
+    }
 
     if (success) {
       res.status(200).json({
@@ -53,7 +59,7 @@ exports.deleteNotif = async (req, res, next) => {
     } else {
       res.status(200).json({
         type: 'ERROR',
-        message: 'we could not delete the notif'
+        message: 'we could not delete the notif/s'
       })
     }
   } catch (error) {

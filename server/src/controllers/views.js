@@ -30,9 +30,9 @@ exports.postView = async (req, res, next) => {
     if (viewAdded) {
       // Write also the notification to the DB
       var notifId = await NotifModel.writeNotif({
-        recipient:   req.body.to,
+        recipient:    req.body.to,
+        type:         'view',
         content: {
-          type:       'view',
           from:       req.uid,
           username:   viewer.username,
           profilePic: profilePic.url,

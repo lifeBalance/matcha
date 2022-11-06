@@ -11,6 +11,9 @@ const fetchNotifs = axios.create({
 const reqDeleteNotif = axios.create({
   baseURL: '/api',
 })
+const reqDeleteAllNotifs = axios.create({
+  baseURL: '/api',
+})
 
 fetchNotifs.interceptors.response.use(
   response => {

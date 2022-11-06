@@ -6,11 +6,12 @@ import { XCircleIcon } from '@heroicons/react/24/outline'
 function Notification(props) {
   const {
     id,
+    type,
     content
   } = props.notif
 
   let msg
-  switch (content.type) {
+  switch (type) {
     case 'unlike':
       msg = `unliked you!`
       break;
@@ -21,7 +22,7 @@ function Notification(props) {
       msg = `likes you!`
       break;
     case 'match':
-      msg = `likes you back!`
+      msg = `is a match!`
       break;
   }
 

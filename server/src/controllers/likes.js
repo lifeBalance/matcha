@@ -52,9 +52,6 @@ exports.like = async (req, res, next) => {
       liked: req.body.liker,
     })
 
-    // Default value of the notification
-    let notif_type = 'like'
-
     console.log('Match? '+match) // testing
     if (match) {
       const liked = await ProfileModel.readOne({
@@ -74,22 +71,22 @@ exports.like = async (req, res, next) => {
       // Write the match notification to the liker user!
       const notif = await NotifModel.writeNotif({
         recipient:   req.body.liked,
+        type:       'match',
         content: {
           from:       liker.id,
           username:   liker.username,
-          profilePic: likerProfilePic.url,
-          type:       'match'
+          profilePic: likerProfilePic.url
         }
       })
 
       // Write the match notification to the liked user!
       const notifId = await NotifModel.writeNotif({
         recipient:   req.body.liker,
+        type:       'match',
         content: {
           from:       liked.id,
           username:   liked.username,
-          profilePic: likedProfilePic.url,
-          type:       'match'
+          profilePic: likedProfilePic.url
         }
       })
 
@@ -130,12 +127,21 @@ exports.like = async (req, res, next) => {
       // Write the match notification to the liked user!
       const notifId = await NotifModel.writeNotif({
         recipient:   req.body.liked,
+        type:       'like',
         content: {
           from:       liker.id,
           username:   liker.username,
-          profilePic: likerProfilePic.url,
-          type:       'like'
+          profilePic: likerProfilePic.url
         }
+      })
+
+      // Send real time notif to the liked user!
+      io.io.to(req.body.liked).emit('notify', {
+        id:         notifId,
+        type:       'match',
+        from:       liker.id,
+        username:   liker.username,
+        profilePic: likerProfilePic.url
       })
 
       res.status(200).json({

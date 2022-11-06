@@ -5,9 +5,12 @@ const notifSlice = createSlice({
   initialState: {
     notifications: [],
     newNotifs: 0,
-    newConvos: [],
-    newMsgs: 0,
+    newMsgs: 0,       // for the navigation bar
+    changedConvos: [],
     isLoadingNotifs: false,
+    /* 'matchesChanged' is just a "trigger", meaning that it's not 
+      its boolean value what matters, but its CHANGE in state. */
+    matchesChanged: false
   },
   reducers: {
     setNewNotifs: (state, action) => {
@@ -32,6 +35,9 @@ const notifSlice = createSlice({
     resetNewConvos: (state, action) => {
       state.newConvos = 0
     },
+    refetchConvos: (state, action) => {
+      state.matchesChanged = !state.matchesChanged
+    },
   },
 })
 
@@ -42,6 +48,7 @@ export const {
   setNewMsgs,
   increaseNewMsgs,
   resetNewConvos,
+  refetchConvos
 } = notifSlice.actions
 
 export default notifSlice.reducer
