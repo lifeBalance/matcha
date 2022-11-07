@@ -3,7 +3,6 @@ import { createSlice, current } from '@reduxjs/toolkit'
 const notifSlice = createSlice({
   name: 'notif',
   initialState: {
-    notifications: [],
     newNotifs: 0,
     newMsgs: 0,       // for the navigation bar
     updatedConvos: [],
@@ -13,24 +12,20 @@ const notifSlice = createSlice({
     matchesChanged: false
   },
   reducers: {
-    setNewNotifs: (state, action) => {
-      state.newNotifs = action.payload
+    increaseNewNotifs: (state, action) => {
+      state.newNotifs += 1
       // console.log(current(state)) // testing
+    },
+    resetNewNotifs: (state, action) => {
+      state.newNotifs = 0
     },
     setNewMsgs: (state, action) => {
       state.newMsgs = action.payload
       // console.log(current(state)) // testing
     },
-    increaseNewNotifs: (state, action) => {
-      state.newNotifs += 1
-      // console.log(current(state)) // testing
-    },
     increaseNewMsgs: (state, action) => {
       state.newMsgs += 1
       // console.log(current(state)) // testing
-    },
-    resetNewNotifs: (state, action) => {
-      state.newNotifs = 0
     },
     resetNewMsgs: (state, action) => {
       state.newMsgs = 0
@@ -39,20 +34,19 @@ const notifSlice = createSlice({
       state.matchesChanged = !state.matchesChanged
     },
     updateConvo: (state, action) => {
-      console.log('notifSlice: updateConvo '+action.payload)
+      // console.log('notifSlice: updateConvo '+action.payload) // testing
       if (!state.updatedConvos.includes(action.payload))
       state.updatedConvos.push(action.payload)
     },
     setConvoAsSeen: (state, action) => {
       console.log('notifSlice: setConvoAsSeen '+action.payload + ' type: '+ typeof action.payload)
-      console.log(current(state.updatedConvos))
+      // console.log(current(state.updatedConvos)) // testing
       state.updatedConvos = state.updatedConvos.filter(i => i !== action.payload)
     },
   },
 })
 
 export const {
-  setNewNotifs,
   increaseNewNotifs,
   resetNewNotifs,
   setNewMsgs,
