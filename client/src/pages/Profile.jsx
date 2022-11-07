@@ -46,7 +46,8 @@ function Profile() {
       gender:       data.profile.gender,
       preferences:  data.profile.prefers,
       bio:          unescape(data.profile.bio),
-      pics:         data.profile.pics,
+      youLikeUser:  data.profile.you_like_user,
+      pics:         data.profile.pics
     })
   }
 
@@ -133,8 +134,7 @@ function Profile() {
         </p>
 
         <UserProfileControls 
-          youLikeUser={true}
-          userLikesYou={true}
+          youLikeUser={user.youLikeUser}
         />
       </div>
     </div>

@@ -25,6 +25,9 @@ function Notification(props) {
     case 'match':
       msg = `is a match!`
       break;
+    case 'unmatch':
+      msg = `unmatched your ass!`
+      break;
   }
 
   return (

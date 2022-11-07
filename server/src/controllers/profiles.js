@@ -2,10 +2,12 @@ const ProfileModel = require('../models/Profile')
 const SettingsModel = require('../models/Settings')
 const PicModel = require('../models/Pic')
 const TagModel = require('../models/Tag')
+const LikeModel = require('../models/Like')
 
 // To format "time ago" in a user-friendly way :-)
 const TimeAgo = require('javascript-time-ago')
 const en = require('javascript-time-ago/locale/en')
+const { readAllLikedBy } = require('../models/Like')
 TimeAgo.addDefaultLocale(en)
 
 // Return a Single Resource(a profile identified by an ID)
@@ -24,6 +26,9 @@ exports.readOneProfile = async (req, res, next) => {
   // console.log('ID of user requesting profile: ' + req.uid) // testing
   // console.log('ID of requested profile: ' + req.params.id) // testing
 
+  // Pull array of all the users liked by current user
+  const allLikedUsers = await readAllLikedBy({ uid: req.uid })
+
   /**
    *  We check the user REQUESTING the profile is not blocked (or has not 
    * blocked?) by the user with the REQUESTED PROFILE.
@@ -39,7 +44,7 @@ exports.readOneProfile = async (req, res, next) => {
       id: req.params.id
     })
     // console.log('PROFILE PIC: '+profilePicUrl) // testing
-
+    console.log('all liked users: '+JSON.stringify(allLikedUsers)) // testing
 
     return res.status(200).json({
       type: 'SUCCESS',
@@ -53,6 +58,7 @@ exports.readOneProfile = async (req, res, next) => {
         prefers: profile.prefers,
         bio: profile.bio,
         profile_pic_url: profilePicUrl,
+        you_like_user: allLikedUsers.map(u => u.liked).includes(profile.id),
         pics: pics
       }
     })

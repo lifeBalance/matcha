@@ -7,26 +7,20 @@ const io = require('../../index')
 // Log in the user, send tokens if credentials match, else...
 exports.like = async (req, res, next) => {
   try {
-    // console.log(io)
-    // io.io.to(req.uid).emit('notify', 'aua')
-    // return
-    console.log(`LIKES: UID${req.uid}`) // testing
-    console.log(`LIKES: BODY - ${JSON.stringify(req.body)}`) // testing
-
-    if (!req.body?.liker || !req.body?.liked) {
+    if (!req?.body?.liker || !req?.body?.liked || !req?.uid) {
       return res.status(200).json({
         type:       'ERROR',
-        message:    'bad request (no body in request)'
+        message:    'bad request'
       })
     }
 
-    // Check if the like already exists
-    const exists = await LikeModel.readLike({
+    // Check if the like already exists (we want NO duplicates)
+    const likeExists = await LikeModel.readLike({
       liker: req.body.liker,
       liked: req.body.liked
     })
 
-    if (exists) {
+    if (likeExists) {
       return res.status(200).json({
         type:       'ERROR',
         message:    'bad request (like already exists)'
@@ -41,7 +35,7 @@ exports.like = async (req, res, next) => {
     const likerProfilePic = liker.pics.find(pic => pic.profile === 1)
 
     // Write the like
-    const result = await LikeModel.writeLike({
+    const ret = await LikeModel.writeLike({
       liker: req.body.liker,
       liked: req.body.liked
     })
@@ -52,7 +46,6 @@ exports.like = async (req, res, next) => {
       liked: req.body.liker,
     })
 
-    console.log('Match? '+match) // testing
     if (match) {
       const liked = await ProfileModel.readOne({
         id: req.body.liked
@@ -66,7 +59,6 @@ exports.like = async (req, res, next) => {
         liker: req.body.liker,
         liked: req.body.liked
       })
-      notif_type = 'match'
 
       // Write the match notification to the liker user!
       const notif = await NotifModel.writeNotif({
@@ -110,18 +102,7 @@ exports.like = async (req, res, next) => {
       res.status(200).json({
         type:       'SUCCESS',
         message:    'Successfully matched!',
-        notif: {
-          id:                 notifId,
-          content: {
-            type:             'match',
-            from:             liker.id,
-            to:               liked.id,
-            from_username:    liker.username,
-            from_profilePic:  likerProfilePic.url,
-            to_username:      liked.username,
-            to_profilePic:    likedProfilePic.url
-          }
-        }
+        like:       true
       })
     } else {
       // Write the match notification to the liked user!
@@ -147,14 +128,7 @@ exports.like = async (req, res, next) => {
       res.status(200).json({
         type:       'SUCCESS',
         message:    'Successfully liked!',
-        notif: {
-          id:         notifId,
-          type:       'like',
-          from:       liker.id,
-          to:         req.body.to,
-          username:   liker.username,
-          profilePic: likerProfilePic.url
-        }
+        like:       true
       })
     }
   } catch(error) {
@@ -165,9 +139,61 @@ exports.like = async (req, res, next) => {
 
 exports.unlike = async (req, res, next) => {
   try {
+    // Check we have the necessary ingredients
+    if (!req?.body?.liker || !req?.body?.liked || !req?.uid) {
+      return res.status(200).json({
+        type:       'ERROR',
+        message:    'bad request'
+      })
+    }
+
+    // Then delete the like
+    await LikeModel.deleteLike({
+      liker: req.body.liker,
+      liked: req.body.liked
+    })
+
+    // Check if there's a match for the couple of users
+    const matchId = await MatchModel.readMatchId({
+      liker: req.body.liker,
+      liked: req.body.liked,
+    })
+
+    // If there's a match, delete it...
+    if (matchId) {
+      await MatchModel.deleteMatchById({ matchId })
+
+      // Pull the "unliker" from the DB
+      const liker = await ProfileModel.readOne({ id: req.body.liker })
+
+      // Extract the "unliker" profile picture
+      const likerProfilePic = liker.pics.find(pic => pic.profile === 1)
+
+      // Write the notification to the DB
+      const notifId = await NotifModel.writeNotif({
+        recipient:   req.body.liked,
+        type:       'unmatch',
+        content: {
+          from:       liker.id,
+          username:   liker.username,
+          profilePic: likerProfilePic.url
+        }
+      })
+
+      // And notify the "unliked" user that has been unmatched
+      io.io.to(req.body.liked).emit('notify', {
+        id:         notifId,
+        type:       'match',
+        from:       liker.id,
+        username:   liker.username,
+        profilePic: likerProfilePic.url
+      })
+    }
+
     res.status(200).json({
-      type: 'SUCCESS',
-      message: 'successfully liked out'
+      type:     'SUCCESS',
+      message:  'successfully unliked',
+      like:     false
     })
   } catch (error) {
     console.log(error)

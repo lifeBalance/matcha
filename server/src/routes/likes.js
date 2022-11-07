@@ -12,6 +12,6 @@ const { authorize } = require('../middlewares/authorize')
 router.post('/likes', authorize, likesController.like)
 
 // DELETE => /api/likes (for unliking users)
-// router.delete('/likes', authorize, likesController.unlike)
+router.delete('/likes', authorize, likesController.unlike)
 
 module.exports = router

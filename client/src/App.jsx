@@ -96,7 +96,7 @@ function App() {
 
     // When we receive notification, we add it to global state
     socket.on('notify', n => {
-      console.log(n);   
+      // console.log(n) // testing
       if (n.type === 'match' || n.type === 'unmatch') {
         dispatch(increaseNewNotifs())
         dispatch(refetchConvos())

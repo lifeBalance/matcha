@@ -32,13 +32,13 @@ sendRequest.interceptors.response.use(
 )
 
 function useLikes() {
+  const [like, setLike] = React.useState(null)
   const [submitError, setSubmitError] = React.useState(false)
   const [isSubmitting, setIsSubmitting] = React.useState(false)
   const dispatch = useDispatch()
 
   const submitLike = React.useCallback(async function (args) {
     setIsSubmitting(true)
-    // console.log(args) // testing
 
     try {
       const resp = await sendRequest({
@@ -58,9 +58,10 @@ function useLikes() {
         setSubmitError(true)
         // console.log(resp.data.message) // testing
       } else {
-        // console.log(resp.data.notif) // testing
+        // console.log(resp.data) // testing
         setSubmitError(false)
-        args.callback(resp.data.notif)
+        setLike(resp.data.like)
+        // args.callback(resp.data.notif)
         // args.callback(resp.data)
       }
     } catch (error) {
@@ -73,6 +74,8 @@ function useLikes() {
   }, [])
 
   return {
+    like,
+    setLike,
     isSubmitting,
     submitError,
     submitLike
