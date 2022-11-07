@@ -18,6 +18,7 @@ module.exports = class Profile {
     gender,
     prefers,
     bio,
+    location,
     (SELECT JSON_ARRAYAGG(JSON_OBJECT(
       'url', pic_urls.url,
       'profile', pic_urls.profile_pic))
@@ -46,6 +47,7 @@ module.exports = class Profile {
       users.online,
       users.last_seen,
       users.tags,
+      users.location,
       (SELECT JSON_ARRAYAGG(JSON_OBJECT('url', pic_urls.url, 'profile', pic_urls.profile_pic))
         FROM pic_urls
         WHERE pic_urls.user_id = users.id) AS pics

@@ -24,8 +24,7 @@ function Profile() {
   const {
     isLoggedIn,
     isLoggingIn,
-    accessToken,
-    uid
+    accessToken
   } = useSelector((slices) => slices.auth)
   const navigate = useNavigate()
   const {
@@ -38,6 +37,7 @@ function Profile() {
 
   function setProfile(data) {
     setUser({
+      profileId:    data.profile.id,
       userName:     data.profile.username,
       firstName:    data.profile.firstname,
       lastName:     data.profile.lastname,
@@ -47,7 +47,8 @@ function Profile() {
       preferences:  data.profile.prefers,
       bio:          unescape(data.profile.bio),
       youLikeUser:  data.profile.you_like_user,
-      pics:         data.profile.pics
+      pics:         data.profile.pics,
+      distance:     data.profile.distance
     })
   }
 
@@ -133,7 +134,8 @@ function Profile() {
           {user.bio}
         </p>
 
-        <UserProfileControls 
+        <UserProfileControls
+          profileId={user.profileId}
           youLikeUser={user.youLikeUser}
         />
       </div>

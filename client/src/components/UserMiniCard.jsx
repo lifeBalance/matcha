@@ -34,7 +34,8 @@ function UserMiniCard(props) {
     prefers,
     pics,
     tags,
-    bio
+    bio,
+    you_like_user
   } = props.profile
   // console.log(JSON.stringify(props.profile)) // testing
   const [isCollapsed, setIsCollapsed] = React.useState(true)
@@ -105,7 +106,6 @@ function UserMiniCard(props) {
 
         <EyeIcon
           className='text-white w-8 inline mr-4 hover:text-blue-400 hover:scale-110 hover:animate-pulse active:text-fuchsia-400'
-          // onClick={() => setIsCollapsed(!isCollapsed)}
           onClick={handleViewProfile}
         />
       </div>
@@ -149,10 +149,8 @@ function UserMiniCard(props) {
           </p>
 
           <ProfileControls
-            youLikeUser={false}
-            userLikesYou={false}
-            toUser={id}     // the user in the profile card
-            fromUser={uid}  // the logged-in user
+            youLikeUser={you_like_user}
+            profileId={id}
           />
         </div>
       </Collapse>

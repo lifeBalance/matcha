@@ -45,10 +45,7 @@ function UserProfileControls(props) {
     submitLike({
       accessToken,
       method: likeVal ? 'post' : 'delete',
-      data: {
-        liker:  uid,
-        liked:  parseInt(params.id)
-      }
+      data: { profileId:  props.profileId }
     })
   }
 // console.log('likey: '+like);

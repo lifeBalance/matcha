@@ -40,10 +40,10 @@ function useGetProfile() {
 
     try {
       const resp = await sendRequest({
-        url: args.url,
-        method: 'get',
-        headers: { 'Authorization': `Bearer ${args.accessToken}` },
-        refreshTokens: () => dispatch(refresh({ accessToken: args.accessToken }))
+        url:            args.url,
+        method:         'get',
+        headers:        { 'Authorization': `Bearer ${args.accessToken}` },
+        refreshTokens:  () => dispatch(refresh({ accessToken: args.accessToken }))
       })
 
       // console.log(resp.data) // testing

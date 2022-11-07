@@ -46,20 +46,23 @@ exports.readOneProfile = async (req, res, next) => {
     // console.log('PROFILE PIC: '+profilePicUrl) // testing
     console.log('all liked users: '+JSON.stringify(allLikedUsers)) // testing
 
+    const youLikeUser = allLikedUsers.map(u => u.liked).includes(profile.id)
+
     return res.status(200).json({
       type: 'SUCCESS',
       message: 'there you go champ',
       profile: {
-        username: profile.username,
-        firstname: profile.firstname,
-        lastname: profile.lastname,
-        age: profile.age,
-        gender: profile.gender,
-        prefers: profile.prefers,
-        bio: profile.bio,
-        profile_pic_url: profilePicUrl,
-        you_like_user: allLikedUsers.map(u => u.liked).includes(profile.id),
-        pics: pics
+        id:               profile.id,
+        username:         profile.username,
+        firstname:        profile.firstname,
+        lastname:         profile.lastname,
+        age:              profile.age,
+        gender:           profile.gender,
+        prefers:          profile.prefers,
+        bio:              profile.bio,
+        profile_pic_url:  profilePicUrl,
+        you_like_user:    youLikeUser,
+        pics:             pics
       }
     })
   } catch (error) {
@@ -107,16 +110,31 @@ exports.readAllProfiles = async (req, res, next) => {
     const profiles = []
     if (profileList) {
       for (const prof of profileList) {
-      //   let profPic = await PicModel.readProfilePicUrl({ id: prof.id })
-        // mb sort pics here so that the profile pic comes first!
+        // Pull array of all the users liked by current user
+        const allLikedUsers = await readAllLikedBy({ uid: req.uid })
+
+        // Compute distance from current user using geolib package!
+        // const distance = getDistance(
+        //   {
+        //     latitude: prof.location.lat,
+        //     longitude: prof.location.lng
+        //   },
+        //   {
+        //     latitude: settings.location.lat,
+        //     longitude: settings.location.lng
+        //   }
+        // )
+
         let tagLabels = []
         if (prof.tags)
           tagLabels = prof.tags.map(tag => allTags[tag - 1].label)
 
         profiles.push({
           ...prof,
-          tags: tagLabels,
-          last_seen: timeAgo.format(Date.now() - prof.last_seen / 1000)
+          tags:           tagLabels,
+          last_seen:      timeAgo.format(Date.now() - prof.last_seen / 1000),
+          you_like_user:  allLikedUsers.map(u => u.liked).includes(prof.id),
+          location:       1234 // fake location for now...
         })
       }
     }
