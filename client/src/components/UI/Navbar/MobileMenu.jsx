@@ -11,6 +11,7 @@ import {
   UserPlusIcon,
   UsersIcon,
   BellIcon,
+  ChatBubbleLeftRightIcon,
   HeartIcon
 } from '@heroicons/react/24/outline'
 
@@ -54,7 +55,7 @@ function MobileMenu() {
           </Link>
 
           <Link
-            to='/'
+            to='/notifs'
             className='hover:text-pink-500 pt-6 pl-4'
             onClick={() => dispatch(closeMobileMenu())}
           >
@@ -63,12 +64,12 @@ function MobileMenu() {
           </Link>
 
           <Link
-            to='/'
+            to='/chats'
             className='hover:text-pink-500 pt-6 pl-4'
             onClick={() => dispatch(closeMobileMenu())}
           >
-            <HeartIcon className='inline text-red-400 w-6 -mt-1 mr-2' />
-            matches
+            <ChatBubbleLeftRightIcon className='inline text-red-400 w-6 -mt-1 mr-2' />
+            chats
           </Link>
 
           <Link

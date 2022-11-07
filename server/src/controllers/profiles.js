@@ -48,6 +48,24 @@ exports.readOneProfile = async (req, res, next) => {
 
     const youLikeUser = allLikedUsers.map(u => u.liked).includes(profile.id)
 
+    // Tags
+    const allTags = await TagModel.readAll()
+    let tagLabels = []
+    if (profile.tags)
+      tagLabels = profile.tags.map(tag => allTags[tag - 1].label)
+
+    // Compute distance from current user using geolib package!
+    // const distance = getDistance(
+    //   {
+    //     latitude: prof.location.lat,
+    //     longitude: prof.location.lng
+    //   },
+    //   {
+    //     latitude: settings.location.lat,
+    //     longitude: settings.location.lng
+    //   }
+    // )
+
     return res.status(200).json({
       type: 'SUCCESS',
       message: 'there you go champ',
@@ -62,7 +80,9 @@ exports.readOneProfile = async (req, res, next) => {
         bio:              profile.bio,
         profile_pic_url:  profilePicUrl,
         you_like_user:    youLikeUser,
-        pics:             pics
+        tags:             tagLabels,
+        pics:             pics,
+        distance:         1234 // fake location for now...
       }
     })
   } catch (error) {
@@ -134,7 +154,7 @@ exports.readAllProfiles = async (req, res, next) => {
           tags:           tagLabels,
           last_seen:      timeAgo.format(Date.now() - prof.last_seen / 1000),
           you_like_user:  allLikedUsers.map(u => u.liked).includes(prof.id),
-          location:       1234 // fake location for now...
+          distance:       1234 // fake location for now...
         })
       }
     }

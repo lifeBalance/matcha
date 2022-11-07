@@ -74,7 +74,8 @@ function Navbar(props) {
             </>)
             :
             (<>
-              {location.pathname !== '/login' && <NavLink to='login'>
+              {location.pathname !== '/login' &&
+              <NavLink to='login'>
                 <ArrowLeftOnRectangleIcon className='text-gray-400 hover:text-green-400 hover:cursor-pointer w-10' />
               </NavLink>}
             </>)

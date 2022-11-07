@@ -18,6 +18,7 @@ module.exports = class Profile {
     gender,
     prefers,
     bio,
+    tags,
     location,
     (SELECT JSON_ARRAYAGG(JSON_OBJECT(
       'url', pic_urls.url,
