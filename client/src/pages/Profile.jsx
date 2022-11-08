@@ -43,7 +43,7 @@ function Profile() {
       lastName:     data.profile.lastname,
       online:       data.profile.online,
       lastSeen:     data.profile.last_seen,
-      rated:        69, // hardcode for now
+      rated:        data.profile.rated,
       age:          data.profile.age,
       gender:       data.profile.gender,
       preferences:  data.profile.prefers,
@@ -51,7 +51,7 @@ function Profile() {
       youLikeUser:  data.profile.you_like_user,
       tags:         data.profile.tags,
       pics:         data.profile.pics,
-      distance:     data.profile.distance
+      location:     data.profile.location
     })
   }
 
@@ -66,13 +66,17 @@ function Profile() {
     })
   }, [isLoggingIn, isLoggedIn, accessToken])
 
-  let gender = ' 🙅 (Non-binary)'
-  if (user?.gender === 0) gender = '🍑 (Female)'
-  else if (user?.gender === 1) gender = '🍆 (Male)'
+  function report(str) {
+    console.log(`user has been ${str}`)
+  }
 
-  let preferences = '🍆 and 🍑 (Males and Females 😏)'
-  if (user?.preferences === 0) preferences = '🍑 (Females)'
-  else if (user?.preferences === 1) preferences = '🍆 (Males)'
+  let gender = 'Non-binary'
+  if (user?.gender === 0) gender = 'Female'
+  else if (user?.gender === 1) gender = 'Male'
+
+  let preferences = 'Males and Females'
+  if (user?.preferences === 0) preferences = 'Females'
+  else if (user?.preferences === 1) preferences = 'Males'
 
   // CONTENT
   if (isLoading && !error)
@@ -106,60 +110,63 @@ function Profile() {
         )}
       </div>
 
-      <div className={`flex justify-between bg-black`}>
-        <p className='text-white text-center font-bold p-4 flex items-center'>
-          <span className={`w-4 h-4 inline-block rounded-full mr-1 ${user.online ? 'bg-green-500' : 'bg-slate-500'}`}></span>{user.userName}
+      <div className='flex justify-between bg-black items-center'>
+        <p className='text-white text-center font-bold text-xl p-4 flex items-center'>
+          <span className={`w-4 h-4 inline-block rounded-full mt-1 mr-1 ${user.online ? 'bg-green-500' : 'bg-slate-500'}`}></span>{user.userName}
         </p>
+
+        <p
+          className='text-slate-500 mr-3 underline hover:text-red-500 hover:cursor-pointer '
+          onClick={() => report('reported')}
+        >report user</p>
       </div>
 
-      <div className="bg-black rounded-b-lg">
-        <div className='bg-white rounded-lg p-4 text-xl text-gray-700 space-y-3 flex flex-col max-w-sm md:border md:border-3 md:border-black border-none'>
-          <p>
-            <span className='font-semibold'>Full name:</span> {user.firstName}{' '}
-            {user.lastName}
-          </p>
+      <div className='bg-white rounded-lg p-4 text-xl text-gray-700 space-y-3 flex flex-col max-w-sm md:border md:border-3 md:border-black border-none'>
+        <p>
+          <span className='font-semibold'>Full name:</span> {user.firstName}{' '}
+          {user.lastName}
+        </p>
 
-          <p>
-            <span className='font-semibold'>Age: </span>
-            {user.age}
-          </p>
+        <p>
+          <span className='font-semibold'>Age: </span>
+          {user.age}
+        </p>
 
-          <p>
-            <span className='font-semibold'>Gender:</span>
-            {gender}
-          </p>
+        <p>
+          <span className='font-semibold'>Gender: </span>
+          {gender}
+        </p>
 
-          <p>
-            <span className='font-semibold'>Rated: </span>{user.rated} ⭐
-          </p>
+        <p>
+          <span className='font-semibold'>Rate: </span>{user.rated}%
+        </p>
 
-          <p>
-            <span className='font-semibold'>Prefers: </span>
-            {preferences}
-          </p>
+        <p>
+          <span className='font-semibold'>Prefers: </span>
+          {preferences}
+        </p>
 
-          <p>
-            <span className='font-semibold'>Distance: </span>
-            {user.distance} Km. away from you
-          </p>
+        <p>
+          <span className='font-semibold'>Location: </span>
+          {user.location} Km. away from you
+        </p>
 
-          <p className='flex flex-wrap'>
-            <span className='text-slate-700 font-semibold'>Tags:</span>
-            {user.tags.map(t => (
-              <span key={Math.random()} className='mx-1 px-2 bg-slate-300 rounded-lg shadow-md break-keep'>{t}</span>
-            ))}
-          </p>
+        <p className='flex flex-wrap'>
+          <span className='text-slate-700 font-semibold'>Tags:</span>
+          {user.tags.map(t => (
+            <span key={Math.random()} className='mx-1 px-2 bg-slate-300 rounded-lg shadow-md break-keep'>{t}</span>
+          ))}
+        </p>
 
-          <p className=''>
-            <span className='font-semibold'>Bio: </span>
-            {user.bio}
-          </p>
+        <p className=''>
+          <span className='font-semibold'>Bio: </span>
+          {user.bio}
+        </p>
 
-          <UserProfileControls
-            profileId={user.profileId}
-            youLikeUser={user.youLikeUser}
-          />
-        </div>
+        <UserProfileControls
+          profileId={user.profileId}
+          youLikeUser={user.youLikeUser}
+        />
       </div>
     </div>
   )

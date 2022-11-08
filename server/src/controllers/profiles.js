@@ -3,11 +3,12 @@ const SettingsModel = require('../models/Settings')
 const PicModel = require('../models/Pic')
 const TagModel = require('../models/Tag')
 const LikeModel = require('../models/Like')
+const MatchModel = require('../models/Match')
+const geolib = require('geolib')
 
 // To format "time ago" in a user-friendly way :-)
 const TimeAgo = require('javascript-time-ago')
 const en = require('javascript-time-ago/locale/en')
-const { readAllLikedBy } = require('../models/Like')
 TimeAgo.addDefaultLocale(en)
 
 // Return a Single Resource(a profile identified by an ID)
@@ -26,20 +27,20 @@ exports.readOneProfile = async (req, res, next) => {
   // console.log('ID of user requesting profile: ' + req.uid) // testing
   // console.log('ID of requested profile: ' + req.params.id) // testing
 
-  // Pull array of all the users liked by current user
-  const allLikedUsers = await readAllLikedBy({ uid: req.uid })
+  try {
+    // Pull the profile of the current user
+    const currentUser = await ProfileModel.readOne({ id: req.uid })
+    // Pull the profile of the desired user
+    const profile = await ProfileModel.readOne({ id: req.params.id })
+
+    // console.log(JSON.stringify(profile)) // testing
+    // Pull array of all the users liked by current user
+    const allLikedUsers = await LikeModel.readAllLikedBy({ uid: req.uid })
 
   /**
    *  We check the user REQUESTING the profile is not blocked (or has not 
    * blocked?) by the user with the REQUESTED PROFILE.
    */
-  try {
-    const profile = await ProfileModel.readOne({ id: req.params.id })
-    // console.log(JSON.stringify(profile)) // testing
-
-    const pics = await PicModel.readAll({ id: req.params.id })
-    // console.log('PICS: '+JSON.stringify(pics)) // testing
-
     const profilePicUrl = await PicModel.readProfilePicUrl({
       id: req.params.id
     })
@@ -55,16 +56,20 @@ exports.readOneProfile = async (req, res, next) => {
       tagLabels = profile.tags.map(tag => allTags[tag - 1].label)
 
     // Compute distance from current user using geolib package!
-    // const distance = getDistance(
-    //   {
-    //     latitude: prof.location.lat,
-    //     longitude: prof.location.lng
-    //   },
-    //   {
-    //     latitude: settings.location.lat,
-    //     longitude: settings.location.lng
-    //   }
-    // )
+    const distance = geolib.getDistance(
+      {
+        latitude: profile.location.lat,
+        longitude: profile.location.lng
+      },
+      {
+        latitude: currentUser.location.lat,
+        longitude: currentUser.location.lng
+      }
+    )
+
+    // Compute the user's rating as ratio of matches/liked users
+    const matches = await MatchModel.readAllMatches({ uid: req.uid })
+    const rated = matches.length * 100 / allLikedUsers.length 
 
     return res.status(200).json({
       type: 'SUCCESS',
@@ -74,6 +79,9 @@ exports.readOneProfile = async (req, res, next) => {
         username:         profile.username,
         firstname:        profile.firstname,
         lastname:         profile.lastname,
+        online:           profile.online,
+        last_seen:        profile.last_seen,
+        rated:            rated.toFixed(1),
         age:              profile.age,
         gender:           profile.gender,
         prefers:          profile.prefers,
@@ -81,8 +89,8 @@ exports.readOneProfile = async (req, res, next) => {
         profile_pic_url:  profilePicUrl,
         you_like_user:    youLikeUser,
         tags:             tagLabels,
-        pics:             pics,
-        distance:         1234 // fake location for now...
+        pics:             profile.pics.map(p => p.url),
+        location:         (distance / 1000).toFixed(1)
       }
     })
   } catch (error) {
@@ -90,7 +98,6 @@ exports.readOneProfile = async (req, res, next) => {
     next(error)
   }
 }
-
 
 // Return a Collection of Resources
 exports.readAllProfiles = async (req, res, next) => {
@@ -131,19 +138,23 @@ exports.readAllProfiles = async (req, res, next) => {
     if (profileList) {
       for (const prof of profileList) {
         // Pull array of all the users liked by current user
-        const allLikedUsers = await readAllLikedBy({ uid: req.uid })
+        const allLikedUsers = await LikeModel.readAllLikedBy({ uid: req.uid })
 
         // Compute distance from current user using geolib package!
-        // const distance = getDistance(
-        //   {
-        //     latitude: prof.location.lat,
-        //     longitude: prof.location.lng
-        //   },
-        //   {
-        //     latitude: settings.location.lat,
-        //     longitude: settings.location.lng
-        //   }
-        // )
+        const distance = geolib.getDistance(
+          {
+            latitude: prof.location.lat,
+            longitude: prof.location.lng
+          },
+          {
+            latitude: settings.location.lat,
+            longitude: settings.location.lng
+          }
+        )
+
+        // Compute the user's rating as ratio of matches/liked users
+        const matches = await MatchModel.readAllMatches({ uid: req.uid })
+        const rated = allLikedUsers.length * 100 / matches.length
 
         let tagLabels = []
         if (prof.tags)
@@ -154,7 +165,8 @@ exports.readAllProfiles = async (req, res, next) => {
           tags:           tagLabels,
           last_seen:      timeAgo.format(Date.now() - prof.last_seen / 1000),
           you_like_user:  allLikedUsers.map(u => u.liked).includes(prof.id),
-          distance:       1234 // fake location for now...
+          location:       (distance / 1000).toFixed(2),
+          rated:          rated.toFixed(1)
         })
       }
     }

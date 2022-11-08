@@ -36,7 +36,7 @@ function UserMiniCard(props) {
     tags,
     bio,
     you_like_user,
-    distance
+    location
   } = props.profile
   // console.log(JSON.stringify(props.profile)) // testing
   const [isCollapsed, setIsCollapsed] = React.useState(true)
@@ -121,8 +121,8 @@ function UserMiniCard(props) {
 
           <p>
             <span className='text-slate-700 font-semibold'>Age:</span> {age}
-            <span className='text-slate-700 font-semibold ml-8'>Gender:</span> {genderElem}
-            <span className='text-slate-700 font-semibold ml-8'>Rated:</span> {rated || 69}
+            <span className='text-slate-700 font-semibold ml-6'>Gender:</span> {genderElem}
+            <span className='text-slate-700 font-semibold ml-6'>Rate:</span> {rated}%
           </p>
 
           <p>
@@ -130,7 +130,7 @@ function UserMiniCard(props) {
           </p>
 
           <p>
-            <span className='text-slate-700 font-semibold'>Distance:</span> {distance} km. away
+            <span className='text-slate-700 font-semibold'>Location:</span> {location} km. away
           </p>
 
           <p className='flex flex-wrap'>
