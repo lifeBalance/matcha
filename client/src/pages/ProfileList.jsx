@@ -48,6 +48,7 @@ function ProfileList(props) {
   // Profile list state
   const {
     profiles,
+    setProfiles,
     getProfileList,
     isLoadingProfiles,
     errorLoadingProfiles
@@ -70,7 +71,7 @@ function ProfileList(props) {
         <UserMiniCard
           key={profile.id}
           profile={profile}
-          notify={props.notify}
+          setProfiles={setProfiles}
         />
       ))}
     </ul>)

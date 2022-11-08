@@ -113,7 +113,6 @@ function UserMiniCard(props) {
 
       <Collapse isOpened={!isCollapsed} >
         <div className="flex flex-col p-4 bg-white md:rounded-b-lg border border-3 border-black space-y-2">
-        {/* Gotta work on RANKING and LOCATION */}
           <p>
             <span className='text-slate-700 font-semibold'>Full Name:</span> 
             {` ${firstname} ${lastname}`}
@@ -130,7 +129,7 @@ function UserMiniCard(props) {
           </p>
 
           <p>
-            <span className='text-slate-700 font-semibold'>Location:</span> {location} km. away
+            <span className='text-slate-700 font-semibold'>Location:</span> {location} km away from you
           </p>
 
           <p className='flex flex-wrap'>
@@ -149,14 +148,16 @@ function UserMiniCard(props) {
             <span className='text-slate-700 font-semibold'>Bio: </span>{bio}
           </p>
 
+          <p className='-mt-4'>report</p>
           <ProfileControls
             youLikeUser={you_like_user}
             profileId={id}
+            setProfiles={props.setProfiles}
           />
         </div>
       </Collapse>
     </li>
   )
 }
-// new Date(last_seen * 1000).toLocaleString()
+
 export default UserMiniCard

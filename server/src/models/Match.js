@@ -81,11 +81,11 @@ module.exports = class Match {
         1: A null/undefined OBJECT. */
     const sql = `
     DELETE FROM matches
-    WHERE liker = ? AND liked = ?
-    OR liked = ? AND liker = ?`
+    WHERE liker = ${liker} AND liked = ${liked}
+    OR liked = ${liker} AND liker = ${liked}`
 
-    const [fields, _] = await pool.execute(sql, [liker, liked, liked, liker])
-    // console.log('FIELDS: ' + JSON.stringify(fields))   // testing
-    // console.log('_: ' + JSON.stringify(_))   // testing
+    const [fields, _] = await pool.execute(sql, [])
+    console.log('FIELDS: ' + JSON.stringify(fields))   // testing
+    console.log('_: ' + JSON.stringify(_))   // testing
   }
 }

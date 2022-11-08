@@ -69,7 +69,7 @@ exports.readOneProfile = async (req, res, next) => {
 
     // Compute the user's rating as ratio of matches/liked users
     const matches = await MatchModel.readAllMatches({ uid: req.uid })
-    const rated = matches.length * 100 / allLikedUsers.length 
+    const rated = matches.length === 0 ? 0 : allLikedUsers.length * 100 / matches.length
 
     return res.status(200).json({
       type: 'SUCCESS',
@@ -154,7 +154,7 @@ exports.readAllProfiles = async (req, res, next) => {
 
         // Compute the user's rating as ratio of matches/liked users
         const matches = await MatchModel.readAllMatches({ uid: req.uid })
-        const rated = allLikedUsers.length * 100 / matches.length
+        const rated = matches.length === 0 ? 0 : allLikedUsers.length * 100 / matches.length
 
         let tagLabels = []
         if (prof.tags)

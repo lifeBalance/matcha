@@ -67,22 +67,24 @@ const likesRoutes = require('./src/routes/likes')
 const notifsRoutes = require('./src/routes/notifs')
 const viewsRoutes = require('./src/routes/views')
 const chatsRoutes = require('./src/routes/chats')
+const blocksRoutes = require('./src/routes/blocks')
 
 const testsRoutes = require('./src/routes/tests')
 
-app.use('/api', accountsRoutes)   // create/update Accounts (Signup, new email/password)
-app.use('/api', loginsRoutes)     // logging in and out
-app.use('/api', profilesRoutes)   // check own and other users profiles
-app.use('/api', settingsRoutes)   // create/update OWN Profile
-app.use('/api', confirmRoutes)    // for confirming account
-app.use('/api', refreshRoutes)    // for silently refreshing tokens
-app.use('/api', resetRoutes)      // for resetting passwords
-app.use('/api', likesRoutes)      // for likes/unlikes
-app.use('/api', notifsRoutes)      // for notifications
-app.use('/api', viewsRoutes)      // for views
-app.use('/api', chatsRoutes)      // for chats
+app.use('/api', accountsRoutes) // create/update Accounts (Signup, new email/password)
+app.use('/api', loginsRoutes)   // logging in and out
+app.use('/api', profilesRoutes) // check own and other users profiles
+app.use('/api', settingsRoutes) // create/update OWN Profile
+app.use('/api', confirmRoutes)  // for confirming account
+app.use('/api', refreshRoutes)  // for silently refreshing tokens
+app.use('/api', resetRoutes)    // for resetting passwords
+app.use('/api', likesRoutes)    // for likes/unlikes
+app.use('/api', notifsRoutes)   // for notifications
+app.use('/api', viewsRoutes)    // for views
+app.use('/api', chatsRoutes)    // for chats
+app.use('/api', blocksRoutes)   // for blocking users
 
-app.use('/api', testsRoutes) // testing stuff
+app.use('/api', testsRoutes)    // testing stuff
 
 // To serve the React build
 app.get('/*', function (req, res) {

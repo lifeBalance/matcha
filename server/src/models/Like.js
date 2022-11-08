@@ -81,7 +81,23 @@ module.exports = class Like {
         0: A fields OBJECT (metadata about the query result).
         1: A null/undefined OBJECT. */
     const sql = `DELETE FROM likes
-    WHERE liker = ? ANd liked = ?`
+    WHERE liker = ? AND liked = ?`
+
+    const [fields, _] = await pool.execute(sql, [liker, liked])
+    // console.log('FIELDS: ' + JSON.stringify(fields))   // testing
+    // console.log('_: ' + JSON.stringify(_))   // testing
+  }
+
+  static async deleteLikeNoOrder(data) {
+    const { liker, liked } = data
+
+    /* DELETE returns an ARRAY with two elements:
+        0: A fields OBJECT (metadata about the query result).
+        1: A null/undefined OBJECT. */
+    const sql = `DELETE FROM likes
+    WHERE liker = ${liker} AND liked = ${liked}
+      OR liker = ${liked} AND liked = ${liker}
+    `
 
     const [fields, _] = await pool.execute(sql, [liker, liked])
     // console.log('FIELDS: ' + JSON.stringify(fields))   // testing

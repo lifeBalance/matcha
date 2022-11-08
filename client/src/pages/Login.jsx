@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNavigate, Link, Navigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 // hooks
 import useInput from '../hooks/useInput'

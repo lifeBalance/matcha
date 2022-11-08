@@ -72,6 +72,7 @@ function useGetProfileList(params) {
 
   return {
     profiles,
+    setProfiles,
     getProfileList,
     isLoadingProfiles,
     errorLoadingProfiles,

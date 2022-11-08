@@ -66,10 +66,6 @@ function Profile() {
     })
   }, [isLoggingIn, isLoggedIn, accessToken])
 
-  function report(str) {
-    console.log(`user has been ${str}`)
-  }
-
   let gender = 'Non-binary'
   if (user?.gender === 0) gender = 'Female'
   else if (user?.gender === 1) gender = 'Male'
@@ -114,11 +110,6 @@ function Profile() {
         <p className='text-white text-center font-bold text-xl p-4 flex items-center'>
           <span className={`w-4 h-4 inline-block rounded-full mt-1 mr-1 ${user.online ? 'bg-green-500' : 'bg-slate-500'}`}></span>{user.userName}
         </p>
-
-        <p
-          className='text-slate-500 mr-3 underline hover:text-red-500 hover:cursor-pointer '
-          onClick={() => report('reported')}
-        >report user</p>
       </div>
 
       <div className='bg-white rounded-lg p-4 text-xl text-gray-700 space-y-3 flex flex-col max-w-sm md:border md:border-3 md:border-black border-none'>
@@ -148,7 +139,7 @@ function Profile() {
 
         <p>
           <span className='font-semibold'>Location: </span>
-          {user.location} Km. away from you
+          {user.location} km away from you
         </p>
 
         <p className='flex flex-wrap'>
