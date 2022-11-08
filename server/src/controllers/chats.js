@@ -1,4 +1,5 @@
 const ChatModel = require('../models/Chat')
+const MatchModel = require('../models/Match')
 const NotifModel = require('../models/Notif')
 const ProfileModel = require('../models/Profile')
 
@@ -58,10 +59,24 @@ exports.getMessageList = async (req, res, next) => {
 
 exports.writeMessage = async (req, res, next) => {
   try {
-    if (!req.uid) {
+    console.log(`req.uid: ${req.uid}, req.body.to: ${req.body.to}`)
+    if (!req.uid || !req.body.to) {
       return res.status(200).json({
         type:     'ERROR',
         message:  'no uid in token'
+      })
+    }
+    const matchId = await MatchModel.readMatchId({
+      liker:  req.uid,
+      liked:  req.body.to
+    })
+    console.log(`matchId: ${matchId}`)
+
+    if (!matchId) {
+      // sent response so that client redirects to main page
+      return res.status(200).json({
+        type:     'ERROR',
+        message:  'no such chat'
       })
     }
 
@@ -87,17 +102,6 @@ exports.writeMessage = async (req, res, next) => {
     })
     const senderProfilePic = sender.pics.find(pic => pic.profile === 1)
 
-    // Write the message notification to the message recipient!
-    // const notif = await NotifModel.writeNotif({
-    //   recipient:   req.body.to,
-    //   type:       'message',
-    //   content: {
-    //     from:       req.uid,
-    //     username:   sender.username,
-    //     profilePic: senderProfilePic.url,
-    //     chatId:     req.params.id
-    //   }
-    // })
     // Emit notification to interlocutor
     io.io.to(req.body.to).emit('notify', {
       type:   'message',

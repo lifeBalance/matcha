@@ -108,6 +108,9 @@ function useChat() {
       if (response.data.type === 'SUCCESS') {
         setMessageList(prev => [...prev, response.data.msg])
         args.cb()
+      } else {
+        if (response.data.message === 'no such chat')
+          args.setModalIsOpen(true)
       }
     } catch (error) {
       return setErrorSendingMsg(error.response?.data)

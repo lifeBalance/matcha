@@ -1,5 +1,6 @@
 const LikeModel = require('../models/Like')
 const MatchModel = require('../models/Match')
+const ChatModel = require('../models/Chat')
 const NotifModel = require('../models/Notif')
 const ProfileModel = require('../models/Profile')
 const io = require('../../index')
@@ -27,10 +28,10 @@ exports.like = async (req, res, next) => {
       })
     }
 
+    // Pull info from the liker from DB (to write the notification)
     const liker = await ProfileModel.readOne({
       id: req.uid
     })
-
     // Find the profile pic
     const likerProfilePic = liker.pics.find(pic => pic.profile === 1)
 
@@ -141,7 +142,6 @@ exports.like = async (req, res, next) => {
 
 exports.unlike = async (req, res, next) => {
   try {
-    console.log(`likes controller: ${req.body.profileId}`);
     // Check we have the necessary ingredients
     if (!req?.uid || !req?.body?.profileId) {
       return res.status(200).json({
@@ -149,7 +149,6 @@ exports.unlike = async (req, res, next) => {
         message:    'bad request'
       })
     }
-    console.log('kuku');
 
     // Then delete the like
     await LikeModel.deleteLike({
@@ -166,6 +165,9 @@ exports.unlike = async (req, res, next) => {
     // If there's a match, delete it...
     if (matchId) {
       await MatchModel.deleteMatchById({ matchId })
+
+      // And delete also the chat linked to that match (if any)
+      await ChatModel.deleteChatById({ chatId: matchId })
 
       // Pull the "unliker" from the DB to notify the unliked
       const liker = await ProfileModel.readOne({ id: req.uid })

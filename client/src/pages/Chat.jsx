@@ -1,14 +1,23 @@
 import React from 'react'
 
+// components
+import Modal from '../components/UI/Modal'
+
 // Redux
 import { useSelector, useDispatch } from 'react-redux'
 import { resetNewMsgs, setConvoAsSeen } from '../store/notifSlice'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
 
-import { PaperAirplaneIcon } from '@heroicons/react/24/outline'
+import {
+  PaperAirplaneIcon,
+  RocketLaunchIcon
+} from '@heroicons/react/24/outline'
+
 import useChat from '../hooks/useChat'
 
 function Chat() {
+  const [modalIsOpen, setModalIsOpen] = React.useState(false)
+
   // react-router
   const navigate = useNavigate()
   const location = useLocation()
@@ -77,23 +86,38 @@ function Chat() {
   }, [])
 
   function handleSendMessage() {
+    // If the text area is empty (or just whitespace) clear it and return.
+    if (messageInput.trim() === '') {
+      setMessageInput('')
+      return
+    }
+
     sendMessage({
       url: location.pathname,
       to:  uid,
       msg: messageInput,
       cb:  () => setMessageInput(''),
-      accessToken
+      accessToken,
+      setModalIsOpen
     })
+  }
+
+  function closeModalHandler() {
+    setModalIsOpen(false)
+    navigate('/', { replace: true })
   }
 
   return (
     <div className='flex flex-col space-y-3 mx-2'>
+      {modalIsOpen &&
+        (<Modal closeModal={closeModalHandler}>
+          <RocketLaunchIcon className='inline w-6 text-green-500 -mt-2'/>That match is gone dawg!
+        </Modal>)
+      }
       <div className='flex mt-4 p-2 border border-white rounded-lg'>
-        {/* Placeholder user profile pic (later dynamic) */}
         <img src={url} className='w-14 rounded-full mr-4' />
 
         <div className='flex flex-col'>
-          {/* Placeholder username (later dynamic) */}
           <h1 className='text-white text-lg font-bold ml-1'>{username}</h1>
 
           <div className='flex'>
