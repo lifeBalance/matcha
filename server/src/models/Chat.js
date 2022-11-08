@@ -86,4 +86,13 @@ console.log(`msg: ${JSON.stringify(msg)}`);
       of just pic URLs, which could be empty, if there are no pics. */
     return arr
   }
+  static async deleteChatById(data) {
+    const { chatId } = data
+
+    const sql = `DELETE FROM chat_lines WHERE chat_id = ?`
+
+    const [fields, _] = await pool.execute(sql, [chatId])
+    console.log('FIELDS: ' + JSON.stringify(fields))   // testing
+    console.log('_: ' + JSON.stringify(_))   // testing
+  }
 }

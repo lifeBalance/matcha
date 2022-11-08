@@ -1,6 +1,7 @@
 const BlockModel = require('../models/Block')
 const LikeModel = require('../models/Like')
 const MatchModel = require('../models/Match')
+const ChatModel = require('../models/Chat')
 
 exports.blockUser = async (req, res, next) => {
   try {
@@ -11,11 +12,19 @@ exports.blockUser = async (req, res, next) => {
       })
     }
 
-    // Delete match if any
-    await MatchModel.deleteMatch({
+    // Get the match id if any
+    const matchId = await MatchModel.readMatchId({
       liker: req.uid,
       liked: req.body.profileId
     })
+
+    if (matchId) {
+      // Delete match with that id
+      await MatchModel.deleteMatchById({ matchId })
+
+      // Delete chat if any
+      await ChatModel.deleteChatById({ chatId: matchId })
+    }
 
     // Delete like if any
     await LikeModel.deleteLikeNoOrder({
