@@ -1,6 +1,7 @@
 const express = require('express')
 const app = express()
 const path = require('path')
+const dayjs = require('dayjs')
 
 // Add a Node HTTP server so that we can also use it with socket.io
 const http = require('http')
@@ -86,48 +87,75 @@ app.use('/api', blocksRoutes)   // for blocking users
 
 app.use('/api', testsRoutes)    // testing stuff
 
+// Model to set the 'online' state.
+const AccountModel = require('./src/models/Account')
+
 // To serve the React build
 app.get('/*', function (req, res) {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+/* In order to set the 'login' state properly, we need to maintain an 
+  array of { userId, socketId } objects. At log out, we need to use 
+  it to get the userId from the socketId (available at disconnect). */
+let users = []
+
+const addUser = (userId, socketId) => {
+  !users.some(user => user.userId === userId) &&
+  users.push({ userId, socketId })
+}
+
+const removeUser = (socketId) => {
+  users = users.filter((user) => user.socketId !== socketId);
+}
+
 // The chat
 io.on('connection', socket => {
-  // When a user connects to the socket logs it to the shell.
-  console.log(`user connected (${socket.id})`)
-  // console.log(socket) // testing
+  // console.log(`user connected (${socket.id})`) // testing
 
   // Send a 'connected' event when the connection is available.
   io.emit('connected', socket.id)
 
   // When a user sends a 'msg' event to the socket...
   socket.on('msg', data => {
-    console.log(data.message, data.room, data.socketId)
+    // console.log(data.message, data.room, data.socketId) // testing
     // ... send the event (and 'msg' content) back to the proper room.
     socket.to(data.room).emit('msg', {message: data.message, own: false})
   })
 
-  // USELESS CODE BELOW!!
-  socket.on('notify', data => {
-    console.log('notify event: '+JSON.stringify(data)) // testing
-    /* Right now the server doesn't receive 'notify' events because
-      we're notifying the users DIRECTLY from the controllers. */
-  })
-
   // Create a room based on the 'create-room' event sent from client
   socket.on('join-room', num => {
-    console.log(`request to join room: ${num}`) // testing
-
+    // Join the user to the room
     socket.join(num)
-    console.log(`room ${num} was joined by ${socket.id}`) // testing
+    // console.log(`request to join room: ${num}`) // testing
 
+    // Set the user 'login' state to 1, in DB.
+    AccountModel.setOnline({ uid: num })
+
+    // Store the socket/room pair in the 'users' array.
+    addUser(num, socket.id)
+
+    // Notify the users that she's joined a room (named after her uid).
     socket.emit('room-joined', num) // notify the user the room is done
+
+    // console.log(`Rooms/users after login: ${JSON.stringify(users)}`)
   })
   
   // When a user disconnects from the socket, logs it too.
-  socket.on('disconnect', socket => {
-    console.log(`user disconnected (${socket})`) // testing
-    // console.log(socket) // testing
+  socket.on('disconnect', () => {
+    // Find socket/room pair in the 'users' array.
+    const uid = users.find(u => u.socketId === socket.id).userId
+
+    // Set the user 'login' state to 0, in DB (using the room id, aka user id).
+    AccountModel.setOffline({
+      uid:        uid,
+      last_seen:  dayjs().valueOf()
+    })
+    
+    // Remove the socket/room pair in the 'users' array.
+    removeUser(socket.id)
+
+    // console.log(`Rooms/users after logout: ${JSON.stringify(users)}`)
   })
 })
 

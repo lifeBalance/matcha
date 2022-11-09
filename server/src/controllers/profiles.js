@@ -7,9 +7,9 @@ const MatchModel = require('../models/Match')
 const geolib = require('geolib')
 
 // To format "time ago" in a user-friendly way :-)
-const TimeAgo = require('javascript-time-ago')
-const en = require('javascript-time-ago/locale/en')
-TimeAgo.addDefaultLocale(en)
+const dayjs = require('dayjs')
+var relativeTime = require('dayjs/plugin/relativeTime')
+dayjs.extend(relativeTime)
 
 // Return a Single Resource(a profile identified by an ID)
 exports.readOneProfile = async (req, res, next) => {
@@ -71,6 +71,9 @@ exports.readOneProfile = async (req, res, next) => {
     const matches = await MatchModel.readAllMatches({ uid: req.uid })
     const rated = matches.length === 0 ? 0 : allLikedUsers.length * 100 / matches.length
 
+    // Last seen in a user-friendly way
+    const ago = dayjs().to(dayjs(profile.last_seen))
+
     return res.status(200).json({
       type: 'SUCCESS',
       message: 'there you go champ',
@@ -80,7 +83,7 @@ exports.readOneProfile = async (req, res, next) => {
         firstname:        profile.firstname,
         lastname:         profile.lastname,
         online:           profile.online,
-        last_seen:        profile.last_seen,
+        last_seen:        ago,
         rated:            rated.toFixed(1),
         age:              profile.age,
         gender:           profile.gender,
@@ -102,9 +105,6 @@ exports.readOneProfile = async (req, res, next) => {
 // Return a Collection of Resources
 exports.readAllProfiles = async (req, res, next) => {
   try {
-    // Package for user-friendly 'last_seen' date formatting.
-    const timeAgo = new TimeAgo('en-US')
-
     // Don't forget to check if the user requesting profiles is profiled!
     const settings = await SettingsModel.readSettings({ id: req.uid })
     // console.log('PROFILES controller: ' + JSON.stringify(settings)) // testing
@@ -160,10 +160,12 @@ exports.readAllProfiles = async (req, res, next) => {
         if (prof.tags)
           tagLabels = prof.tags.map(tag => allTags[tag - 1].label)
 
+        const ago = dayjs().to(dayjs(prof.last_seen))
+
         profiles.push({
           ...prof,
           tags:           tagLabels,
-          last_seen:      timeAgo.format(Date.now() - prof.last_seen / 1000),
+          last_seen:      ago,
           you_like_user:  allLikedUsers.map(u => u.liked).includes(prof.id),
           location:       (distance / 1000).toFixed(2),
           rated:          rated.toFixed(1)

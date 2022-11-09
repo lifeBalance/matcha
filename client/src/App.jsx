@@ -83,7 +83,7 @@ function App() {
       setSocket(tmp)
 
       // Clean up connection when component unmounts.
-      return () => tmp.disconnect()
+      return () => tmp.disconnect('kuku')
     }
   }, [isLoggingIn, isLoggedIn])
 

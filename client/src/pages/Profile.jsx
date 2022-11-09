@@ -166,6 +166,11 @@ function Profile() {
           ))}
         </p>
 
+        {!user.online && <p className=''>
+          <span className='font-semibold'>Last seen: </span>
+          {user.lastSeen}
+        </p>}
+
         <p className=''>
           <span className='font-semibold'>Bio: </span>
           {user.bio}
