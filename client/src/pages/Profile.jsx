@@ -1,5 +1,5 @@
 import React from 'react'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation, useParams } from 'react-router-dom'
 
 // lodash is available thanks to the 'vite-plugin-imp' (a Vite's plugin)
 import { unescape } from 'lodash'
@@ -15,6 +15,7 @@ import {
 
 // hooks
 import useGetProfile from '../hooks/useGetProfile'
+import useViews from '../hooks/useViews'
 
 // redux
 import { useSelector } from 'react-redux'
@@ -34,6 +35,22 @@ function Profile() {
   } = useGetProfile()
 
   let location = useLocation()
+  const params = useParams()
+  
+  const {
+    isSubmitting,
+    submitError,
+    submitView
+  } = useViews()
+  
+  React.useEffect(() => {
+    console.log(`visiting profile ${params.id} (${typeof params.id})`);
+    submitView({
+      accessToken,
+      // backend expects the 'to' property to be a number...
+      data: { to: parseInt(params.id) }
+    })
+  }, [])
 
   function setProfile(data) {
     setUser({

@@ -42,12 +42,7 @@ function UserMiniCard(props) {
   const [isCollapsed, setIsCollapsed] = React.useState(true)
 
   // redux
-  // const dispatch = useDispatch()
-  const {
-    uid,
-    accessToken
-  } = useSelector(slices => slices.auth)
-  // console.log(props)  // testing
+  const { accessToken } = useSelector(slices => slices.auth)
 
   const {
     isSubmitting,
@@ -61,8 +56,7 @@ function UserMiniCard(props) {
     if (isCollapsed) {
       submitView({
         accessToken,
-        method: 'post',
-        data: { from: uid, to: id },
+        data: { to: id },
         callback: setIsCollapsed(false)
       })
     } else

@@ -5,10 +5,11 @@ const io = require('../../index')
 // Log in the user, send tokens if credentials match, else...
 exports.postView = async (req, res, next) => {
   try {
-    if (!req.body.to) {
+    console.log(`req.body.to: ${req.body.to} req.uid: ${req.uid}`);
+    if (!req.body.to || !req.uid) {
       return res.status(200).json({
         type:     'ERROR',
-        message:  'no view recipient'
+        message:  'bad request'
       })
     }
 

@@ -40,7 +40,7 @@ function useLikes() {
     try {
       const resp = await sendRequest({
         url: '/views',
-        method: args.method,
+        method: 'post',
         headers: {
           'Authorization': `Bearer ${args.accessToken}`
         },
@@ -58,7 +58,10 @@ function useLikes() {
       } else {
         // console.log(resp.data.notif) // testing
         setSubmitError(false)
-        args.callback() // Close the EYE icon :-)
+
+
+        if (typeof args.callback === 'function')
+          args.callback() // Open the EYE icon :-)
       }
     } catch (error) {
       // console.log(error) // testing

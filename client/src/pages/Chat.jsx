@@ -38,9 +38,9 @@ function Chat() {
   } = useSelector(slices => slices.notif)
 
   const {
-    id,
-    uid,
-    url, // the pic url
+    id,   // the chat/match id
+    uid,  // the profile id
+    url,  // the profile pic url
     username
   } = location.state
 
@@ -118,7 +118,10 @@ function Chat() {
         <img src={url} className='w-14 rounded-full mr-4' />
 
         <div className='flex flex-col'>
-          <h1 className='text-white text-lg font-bold ml-1'>{username}</h1>
+          <h1
+            className='text-white hover:underline hover:underline-offset-2 hover:text-blue-600 text-lg font-bold ml-1 hover:cursor-pointer'
+            onClick={() => navigate(`/profiles/${uid}`, {replace: true})}
+          >{username}</h1>
 
           <div className='flex'>
             <span className='bg-green-500 rounded-full w-4 h-4 block mt-1 mr-1'></span>
