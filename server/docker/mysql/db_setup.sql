@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `users` (
     `location` JSON DEFAULT NULL,
     `tags` JSON DEFAULT NULL,
     `online` BOOLEAN NOT NULL DEFAULT 0,
-    `last_seen` INT UNSIGNED DEFAULT NULL,
+    `last_seen` BIGINT UNSIGNED DEFAULT NULL,
     `views` INT UNSIGNED DEFAULT 0
 );
 

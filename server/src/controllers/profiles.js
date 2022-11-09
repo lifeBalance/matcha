@@ -122,7 +122,7 @@ exports.readAllProfiles = async (req, res, next) => {
     /* Here we have to add things such as pagination, filters, etc. */
     const page = parseInt(req.query.page)
 
-    // console.log('PAGE: '+page+' UID: '+req.uid)          // testing
+    console.log('PAGE: '+page+' UID: '+req.uid)          // testing
 
     // Read all profiles, except the one of the user making the request!!!
     const profileList = await ProfileModel.readAll({
@@ -131,7 +131,7 @@ exports.readAllProfiles = async (req, res, next) => {
     })
 
     const allTags = await TagModel.readAll()
-    // console.log('ALL TAGS: '+JSON.stringify(allTags)) // testing
+    console.log('ALL TAGS: '+JSON.stringify(allTags)) // testing
 
     // console.log('PROFILE LIST 1: '+JSON.stringify(profileList)) // testing
     const profiles = []

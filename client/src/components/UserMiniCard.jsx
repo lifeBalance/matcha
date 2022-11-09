@@ -142,7 +142,6 @@ function UserMiniCard(props) {
             <span className='text-slate-700 font-semibold'>Bio: </span>{bio}
           </p>
 
-          <p className='-mt-4'>report</p>
           <ProfileControls
             youLikeUser={you_like_user}
             profileId={id}

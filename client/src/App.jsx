@@ -4,8 +4,6 @@ import React from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
 // pages
-import Test from './pages/Test' // for testing!
-
 import SignUp from './pages/SignUp'
 import Login from './pages/Login'
 import Settings from './pages/Settings'
@@ -170,11 +168,6 @@ function App() {
 
           {/* To Confirm the account by clicking on the aforementioned link */}
           <Route path='confirm/:useremail/:usertoken' element={<Confirm />} />
-
-          <Route
-            path='test'
-            element={<Test />}
-          />
 
           <Route
             path='/404'

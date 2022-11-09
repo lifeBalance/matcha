@@ -41,7 +41,6 @@ function Navbar(props) {
         <Logo styles='text-6xl font-bold font-logo text-white min-w-fit' />
 
         <div className='hidden md:flex md:space-x-8 text-white items-center'>
-          <MenuItem title='test' route='test' />
           {isLoggedIn ? 
             (<>
               <NavLink to='/notifs'>

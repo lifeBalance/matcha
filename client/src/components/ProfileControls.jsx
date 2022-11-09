@@ -60,7 +60,6 @@ function UserProfileControls(props) {
 
     if (location.pathname === '/') {
       props.setProfiles(prev => {
-        console.log(prev)
         return prev.filter(u => u.id !== props.profileId)
       })
     } else {

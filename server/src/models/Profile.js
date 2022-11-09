@@ -35,7 +35,10 @@ module.exports = class Profile {
   }
 
   static async readAll(data) {
-    const { id } = data
+    const { id, page } = data
+    console.log(`id: ${id} - page: ${page}`);
+    const limit = 10
+    const offset = (page - 1) * limit
     const sql = 
     `
     SELECT
@@ -55,7 +58,9 @@ module.exports = class Profile {
         FROM pic_urls
         WHERE pic_urls.user_id = users.id) AS pics
       FROM users
-    WHERE users.id != ?`
+      WHERE users.id != ?
+      LIMIT ${limit} OFFSET ${offset}
+    `
 
     const [arr, fields] = await pool.execute(sql, [id])
     // console.log('Profile Model: '+JSON.stringify(arr))
