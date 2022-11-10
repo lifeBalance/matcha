@@ -32,6 +32,7 @@ fetchProfiles.interceptors.response.use(
 )
 
 function useGetProfileList(params) {
+  const [page, setPage] = React.useState(1)   // For paginated results
   const [profiles, setProfiles] = React.useState([])
   const [isLoadingProfiles, setIsLoadingProfiles] = React.useState(false)
   const [errorLoadingProfiles, setErrorLoadingProfiles] = React.useState(false)
@@ -71,6 +72,8 @@ function useGetProfileList(params) {
   }
 
   return {
+    page,
+    setPage,
     profiles,
     setProfiles,
     getProfileList,

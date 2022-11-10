@@ -8,11 +8,14 @@ import useGetProfileList from '../hooks/useGetProfileList'
 import Hero from '../components/Hero'
 import UserMiniCard from '../components/UserMiniCard'
 
+// icons
+import { ArrowPathIcon } from '@heroicons/react/24/outline'
+
 // redux
 import { useSelector, useDispatch } from 'react-redux'
 import { logout, loginAfterReload } from '../store/authSlice'
 
-function ProfileList(props) {
+function ProfileList() {
   const {
     isProfiled,
     isConfirmed,
@@ -20,13 +23,21 @@ function ProfileList(props) {
     isLoggingIn,
     accessToken
   } = useSelector((slices) => slices.auth)
-
-  // For paginated results
-  const [page, setPage] = React.useState(1)
   
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
+  // Profile list state
+  const {
+    page,
+    setPage,
+    profiles,
+    setProfiles,
+    getProfileList,
+    isLoadingProfiles,
+    errorLoadingProfiles
+  } = useGetProfileList()
+  
   /* If the user is logged in but not profiled, we redirect to Settings form */
   React.useEffect(() => {
     if (isLoggingIn) return
@@ -44,16 +55,6 @@ function ProfileList(props) {
     }
   }, [isLoggingIn, isLoggedIn, isProfiled, isConfirmed, accessToken, page])
 
-
-  // Profile list state
-  const {
-    profiles,
-    setProfiles,
-    getProfileList,
-    isLoadingProfiles,
-    errorLoadingProfiles
-  } = useGetProfileList()
-
   // console.log(profiles)  // testing
   // console.log(props)  // testing
 
@@ -62,8 +63,13 @@ function ProfileList(props) {
 
   let content // a variable to take logic out from the JSX
 
-  if (isLoadingProfiles) content = <p>Loading...</p>
-  else if (profiles && profiles.length > 0 && !errorLoadingProfiles && !isLoadingProfiles)
+  // Spinner
+  if (isLoadingProfiles) content = 
+  (<div className='flex justify-center items-center py-20'>
+    <ArrowPathIcon className='inline w-30 text-white animate-spin' />
+  </div>)
+
+  else if (profiles && profiles.length > 0 && !errorLoadingProfiles)
     content = (
     <ul className='space-y-3 mb-3'>
       {/* console.log(JSON.stringify(profiles)) */}
@@ -84,7 +90,10 @@ function ProfileList(props) {
 
       <button
         className='justify-center bg-transparent border-white border-2 rounded-lg hover:bg-white hover:bg-opacity-20 text-white px-4 py-2 mb-2 mx-2'
-        onClick={() => setPage((prevState) => prevState + 1)}
+        onClick={(e) => {
+          e.stopPropagation()
+          setPage(prevState => prevState + 1)
+        }}
       >
         Load More...
       </button>

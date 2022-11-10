@@ -35,14 +35,6 @@ function MobileMenu() {
       className='absolute top-20 botton-0 left-0 flex flex-col self-end w-full min-h-screen py-1 px-12 pt-8 space-y-9 divide-y-2 divide-pink-500 text-white uppercase bg-black bg-opacity-75 z-10 backdrop-blur-sm'
       onClick={() => dispatch(closeMobileMenu())}
     >
-      <Link
-        to='/test'
-        className='hover:text-pink-500 pt-6 pl-4'
-        onClick={() => dispatch(closeMobileMenu())}
-      >
-        test
-      </Link>
-
       {isLoggedIn ? (
         <>
           <Link
