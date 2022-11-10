@@ -46,10 +46,12 @@ function Navbar(props) {
               <NavLink to='/notifs'>
                 <div className="relative">
                   <BellIcon className='text-gray-400 hover:text-yellow-400 hover:cursor-pointer w-10' />
-                  {newNotifs > 0 && <div className="absolute w-6 h-6 bg-red-600 rounded-full left-5 -top-2 flex">
-                    <span className='text-white ml-[5px] -mt-[2px] font-bold'>
-                      {newNotifs}
-                    </span>
+                  {newNotifs > 0 && <div className="absolute left-5 -top-2">
+                    <div className={`bg-red-600 rounded-full ${newNotifs > 9 ?'px-1' : 'px-2'}`}>
+                      <span className='text-white text-sm font-bold'>
+                        {newNotifs}
+                      </span>
+                    </div>
                   </div>}
                 </div>
               </NavLink>
@@ -57,10 +59,12 @@ function Navbar(props) {
               <NavLink to='/chats'>
                 <div className="relative">
                 <ChatBubbleLeftRightIcon className='text-gray-400 hover:text-red-400 hover:cursor-pointer w-10' />
-                  {newMsgs > 0 && <div className="absolute w-6 h-6 bg-red-600 rounded-full left-7 -top-2 flex">
-                    <span className='text-white ml-[5px] -mt-[2px] font-bold'>
-                      {newMsgs}
-                    </span>
+                  {newMsgs > 0 && <div className="absolute left-7 -top-2">
+                    <div className={`bg-red-600 rounded-full ${newMsgs > 9 ?'px-1' : 'px-2'}`}>
+                      <span className='text-white text-sm font-bold'>
+                        {newMsgs}
+                      </span>
+                    </div>
                   </div>}
                 </div>
               </NavLink>
