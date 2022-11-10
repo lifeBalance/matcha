@@ -134,24 +134,26 @@ io.on('connection', socket => {
     // Notify the users that she's joined a room (named after her uid).
     socket.emit('room-joined', num) // notify the user the room is done
 
-    // console.log(`Rooms/users after login: ${JSON.stringify(users)}`)
+    // console.log(`Rooms/users after online: ${JSON.stringify(users)}`)
   })
   
   // When a user disconnects from the socket, logs it too.
   socket.on('disconnect', () => {
     // Find socket/room pair in the 'users' array.
-    const uid = users.find(u => u.socketId === socket.id).userId
+    const user = users.find(u => u.socketId === socket.id)
 
     // Set the user 'login' state to 0, in DB (using the room id, aka user id).
-    AccountModel.setOffline({
-      uid:        uid,
-      last_seen:  dayjs().valueOf()
-    })
+    if (user) {
+      AccountModel.setOffline({
+        uid:        user.userId,
+        last_seen:  dayjs().valueOf()
+      })
+    }
     
     // Remove the socket/room pair in the 'users' array.
     removeUser(socket.id)
 
-    // console.log(`Rooms/users after logout: ${JSON.stringify(users)}`)
+    // console.log(`Rooms/users after not online: ${JSON.stringify(users)}`)
   })
 })
 

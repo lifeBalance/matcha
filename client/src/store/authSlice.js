@@ -212,6 +212,7 @@ const authSlice = createSlice({
           uid:            action.payload.uid,
           accessToken:    action.payload.access_token,
           isProfiled:     action.payload.profiled,
+          isLoggedIn:     true,    // ??
           isConfirmed:    action.payload.confirmed,
           profilePic:     action.payload.profile_pic,
           location:       action.payload.location,
@@ -268,6 +269,7 @@ const authSlice = createSlice({
         state.profilePic      = action.payload.profile_pic  // ??
         state.isProfiled      = action.payload.profiled     // ??
         state.isConfirmed     = action.payload.confirmed    // ??
+        state.isLoggedIn      = true    // ??
 
         // Grab the Local Storage item
         const matcha = localStorage.getItem('matcha')
