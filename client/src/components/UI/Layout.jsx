@@ -8,7 +8,7 @@ function Layout(props) {
   return (
     <div className='bg-gradient-to-br from-pink-400 via-red-400 to-yellow-400 min-h-screen flex flex-col'>
       <Navbar profilePic={props.profilePic} />
-        <div className="mx-auto flex">
+        <div className="mx-auto">
           {props.children}
         </div>
       <Footer />

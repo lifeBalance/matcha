@@ -74,11 +74,12 @@ function ProfileList() {
     <ul className='space-y-3 mb-3'>
       {/* console.log(JSON.stringify(profiles)) */}
       {profiles.map(profile => (
-        <UserMiniCard
-          key={profile.id}
-          profile={profile}
-          setProfiles={setProfiles}
-        />
+        <li key={profile.id}>
+          <UserMiniCard
+            profile={profile}
+            setProfiles={setProfiles}
+          />
+        </li>
       ))}
     </ul>)
   else if (!profiles && errorLoadingProfiles)
@@ -87,16 +88,17 @@ function ProfileList() {
   return (
     <div className='flex flex-col pt-6'>
       {content}
-
-      <button
-        className='justify-center bg-transparent border-white border-2 rounded-lg hover:bg-white hover:bg-opacity-20 text-white px-4 py-2 mb-2 mx-2'
-        onClick={(e) => {
-          e.stopPropagation()
-          setPage(prevState => prevState + 1)
-        }}
-      >
-        Load More...
-      </button>
+      <div className="px-2">
+        <button
+          className='justify-center bg-transparent border-white border-2 rounded-lg hover:bg-white hover:bg-opacity-20 text-white px-4 py-2 mb-2 w-full'
+          onClick={(e) => {
+            e.stopPropagation()
+            setPage(prevState => prevState + 1)
+          }}
+          >
+          Load More...
+        </button>
+      </div>
     </div>
   )
 }

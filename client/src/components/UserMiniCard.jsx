@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux'
 import useViews from '../hooks/useViews'
 
 // components
-import { Collapse } from 'react-collapse'
+import { UnmountClosed } from 'react-collapse'
 import { Carousel } from 'flowbite-react'
 import ProfileControls from './ProfileControls'
 
@@ -72,7 +72,7 @@ function UserMiniCard(props) {
   else if (prefers === 1) prefersElem = 'Males'
 
   return (
-    <li className='md:rounded-lg flex flex-col w-[360px] md:w-96 bg-black'>
+    <div className='md:rounded-lg flex flex-col w-[360px] md:w-96 bg-black'>
         {pics && pics.length > 0 ?
         (<div className='h-96' >
           <Carousel slide={false}>
@@ -105,7 +105,7 @@ function UserMiniCard(props) {
         />
       </div>
 
-      <Collapse isOpened={!isCollapsed} >
+      <UnmountClosed isOpened={!isCollapsed} >
         <div className="flex flex-col p-4 bg-white md:rounded-b-lg border border-3 border-black space-y-2">
           <p>
             <span className='text-slate-700 font-semibold'>Full Name:</span> 
@@ -148,8 +148,8 @@ function UserMiniCard(props) {
             setProfiles={props.setProfiles}
           />
         </div>
-      </Collapse>
-    </li>
+      </UnmountClosed>
+    </div>
   )
 }
 

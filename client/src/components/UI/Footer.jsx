@@ -1,8 +1,8 @@
 import React from 'react'
 
-function Footer(props) {
+function Footer() {
   return (
-    <footer className='bg-black mt-auto min-h-10 p-10'>
+    <footer className='bg-black mt-auto p-10'>
       <div className="max-w-6xl flex flex-col-reverse justify-between items-center mx-auto py-3 xl:px-0 md:px-8 px-4 text-white text-center md:flex-row md:justify-between">
         <p className='pt-4 md:place-self-end'>
           &copy;2022
