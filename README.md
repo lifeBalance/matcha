@@ -12,7 +12,8 @@ In an SPA, a page refresh almost never occurs; instead, all necessary HTML, Java
 
 So the **big picture** for this project can be described in two parts:
 
-* A **backend** [web API](https://en.wikipedia.org/wiki/Web_API), made from scratch using PHP.
+* ~~A **backend** [web API](https://en.wikipedia.org/wiki/Web_API), made from scratch using PHP~~.
+* A **backend** [web API](https://en.wikipedia.org/wiki/Web_API), made using [Express.js](http://expressjs.com/) (tried to keep it RESTful, but I may have let [Mr. Fielding](https://en.wikipedia.org/wiki/Roy_Fielding) down 😓).
 * A JS framework in the **frontend** to take care of the rest. This time I went with [React](https://reactjs.org/).
 
 ## Contents
@@ -29,7 +30,8 @@ Below I grouped in sections the **personal notes** I took while working on this 
 - [ ] Implement **advance search/filters**.
 - [ ] Infinite scroll would be nice; at least fix the scroll up, when new users are added to state.
 - [ ] Give it a go to https, so we can use `Secure` and `SameSite=None`; also for setting properly the **refresh token** in the hard cookie.
-- [ ] Update these notes.
+- [ ] Eliminate duplication in the **models** (Account, Settings, Profiles basically deal with the same thing).
+- [ ] Update these notes!
 
 ---
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
