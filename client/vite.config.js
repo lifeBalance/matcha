@@ -10,7 +10,7 @@ export default defineConfig({
     proxy: {
       '/api/': {
         target: 'http://127.0.0.1:80',
-        // target: 'https://127.0.0.1',
+        // target: 'https://127.0.0.1:3000',
         // secure: false
       }
     },

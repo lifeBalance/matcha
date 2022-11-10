@@ -2,10 +2,17 @@ const express = require('express')
 const app = express()
 const path = require('path')
 const dayjs = require('dayjs')
+const fs = require('fs')
 
 // Add a Node HTTP server so that we can also use it with socket.io
 const http = require('http')
 const httpServer = http.createServer(app)
+
+// const https = require('https')
+// const httpsServer = https.createServer({
+//   key: fs.readFileSync(path.resolve(__dirname, './ssl/ssl-cert-snakeoil.key')),
+//   cert: fs.readFileSync(path.resolve(__dirname, './ssl/ssl-cert-snakeoil.pem'))
+// }, app)
 
 const io = require('socket.io')(httpServer, {
   cors: {
@@ -160,5 +167,8 @@ io.on('connection', socket => {
 httpServer.listen(3000, () => {
   console.log('App running on port 3000');
 })
+// httpsServer.listen(3000, () => {
+//   console.log('App running on port 3000');
+// })
 
 exports.io = io
