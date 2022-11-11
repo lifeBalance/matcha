@@ -115,13 +115,13 @@ function SearchBox({ searchBoxProps }) {
 
           <div
             className="flex items-center justify-between text-white px-6"
-            onChange={() => setAscendingOrder(prevState => !prevState)}
           >
             <div className='space-x-2'>
               <input
                 type="radio"
                 id='ascending'
                 checked={ascendingOrder}
+                onChange={() => setAscendingOrder(prevState => !prevState)}
               />
               <label htmlFor="ascending">Ascending</label>
             </div>
@@ -131,6 +131,7 @@ function SearchBox({ searchBoxProps }) {
                 type="radio"
                 id='descending'
                 checked={!ascendingOrder}
+                onChange={() => setAscendingOrder(prevState => !prevState)}
               />
               <label htmlFor="descending">Descending</label>
             </div>

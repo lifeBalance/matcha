@@ -81,6 +81,7 @@ function UserMiniCard(props) {
                 key={Math.random()}
                 src={pic.url}
                 className='object-cover h-96'
+                crossOrigin='anonymous'
               />
             ))}
           </Carousel>

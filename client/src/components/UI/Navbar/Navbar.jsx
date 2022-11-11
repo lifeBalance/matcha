@@ -33,7 +33,7 @@ function Navbar(props) {
   let imgElem = !profilePic ?
     <UserCircleIcon className='w-12 hover:text-blue-400' />
     :
-    <img src={profilePic} alt="" className='rounded-full h-12 w-12 object-cover' />
+    <img src={profilePic} alt="" className='rounded-full h-12 w-12 object-cover' crossOrigin='anonymous' />
 
   return (
     <nav className='bg-black'>
