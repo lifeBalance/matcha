@@ -175,11 +175,12 @@ exports.readAllProfiles = async (req, res, next) => {
     // console.log('PROFILE LIST 2: '+JSON.stringify(profiles)) // testing
 
     res.status(200).json({
-      type: 'SUCCESS',
-      message: 'there you go champ',
-      profiles: profiles,
-      profiled: settings.profiled, // We need this in both cases
-      confirmed: settings.confirmed
+      type:       'SUCCESS',
+      message:    'there you go champ',
+      tags:       allTags,
+      profiles:   profiles,
+      profiled:   settings.profiled, // We need this in both cases
+      confirmed:  settings.confirmed
     })
   } catch(error) {
     console.log(error)

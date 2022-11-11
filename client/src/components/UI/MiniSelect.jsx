@@ -13,7 +13,9 @@ function Select(props) {
       <select
         id={props.id}
         value={props.value}
-        className='bg-white text-black border border-gray-300 text-2xl rounded-md focus:ring-blue-500 focus:border-blue-500 block w-full px-3 py-1 capitalize'
+        className='bg-white text-black border border-gray-300 rounded-md
+        focus:ring-blue-500 focus:border-blue-500 block w-full px-3 py-1
+        capitalize'
         onChange={props.onChangeHandler}
       >
         {props.options.map(option => (

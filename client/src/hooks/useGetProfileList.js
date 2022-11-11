@@ -57,12 +57,14 @@ function useGetProfileList(params) {
            order to make it available in the interceptor. */
         refreshTokens: () => dispatch(refresh({ accessToken: args.accessToken })),
       })
-      // console.log('profiled? ' + JSON.stringify(response.data.profiled)); // testing
-      // console.log('typeof ' + typeof(response.data.profiled)); // testing
-      // console.log('data ' + JSON.stringify(response.data)); // testing
+      // console.log('profiled? ' + JSON.stringify(response.data.profiled)) // testing
+      // console.log('typeof ' + typeof(response.data.profiled)) // testing
+      // console.log('tags ' + JSON.stringify(response.data.tags)) // testing
 
-      if (response.data.profiled)
+      if (response.data.profiled) {
         setProfiles(prevState => [...prevState, ...response.data.profiles].filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i))
+        args.setAllTags(response.data.tags)
+      }
     } catch (error) {
       return setErrorLoadingProfiles(error.response?.data)
       // return setErrorLoadingProfiles(error.response.data.error.message)

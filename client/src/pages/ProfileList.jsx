@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 
 // hooks
 import useGetProfileList from '../hooks/useGetProfileList'
+import useSearchBox from '../hooks/useSearchBox'
 
 // components
 import Hero from '../components/Hero'
@@ -38,6 +39,9 @@ function ProfileList() {
     isLoadingProfiles,
     errorLoadingProfiles
   } = useGetProfileList()
+
+  const searchBoxProps = useSearchBox()
+  console.log(searchBoxProps) // testing
   
   /* If the user is logged in but not profiled, we redirect to Settings form */
   React.useEffect(() => {
@@ -47,7 +51,7 @@ function ProfileList() {
         if (isProfiled === 0) navigate('/edit', { replace: true })
         if (!isConfirmed) dispatch(logout())
         else if (accessToken) {
-          getProfileList({ accessToken, page })
+          getProfileList({ accessToken, page, setAllTags: searchBoxProps.setAllTags })
         } else {
           const matcha = localStorage.getItem('matcha')
           dispatch(loginAfterReload(matcha))
@@ -88,11 +92,13 @@ function ProfileList() {
 
   return (
     <div className='flex flex-col pt-6 space-y-3'>
-      <SearchBox />
+      <SearchBox searchBoxProps={searchBoxProps} />
       {content}
       <div className="px-2">
         <button
-          className='justify-center bg-transparent border-white border-2 rounded-lg hover:bg-white hover:bg-opacity-20 text-white px-4 py-2 mb-2 w-full'
+          className='justify-center bg-transparent border-white border-2 
+          rounded-lg hover:bg-white hover:bg-opacity-20 text-white 
+          px-4 py-2 mb-2 w-full'
           onClick={(e) => {
             e.stopPropagation()
             setPage(prevState => prevState + 1)
