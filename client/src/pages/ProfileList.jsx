@@ -7,6 +7,7 @@ import useGetProfileList from '../hooks/useGetProfileList'
 // components
 import Hero from '../components/Hero'
 import UserMiniCard from '../components/UserMiniCard'
+import SearchBox from '../components/SearchBox'
 
 // icons
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
@@ -71,7 +72,7 @@ function ProfileList() {
 
   else if (profiles && profiles.length > 0 && !errorLoadingProfiles)
     content = (
-    <ul className='space-y-3 mb-3'>
+    <ul className='mb-3 space-y-3'>
       {/* console.log(JSON.stringify(profiles)) */}
       {profiles.map(profile => (
         <li key={profile.id}>
@@ -86,7 +87,8 @@ function ProfileList() {
     content = <p>{errorLoadingProfiles}</p>
 
   return (
-    <div className='flex flex-col pt-6'>
+    <div className='flex flex-col pt-6 space-y-3'>
+      <SearchBox />
       {content}
       <div className="px-2">
         <button
