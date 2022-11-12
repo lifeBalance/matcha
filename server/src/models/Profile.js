@@ -79,4 +79,15 @@ module.exports = class Profile {
     // console.log('fields: '+ JSON.stringify(fields)) // testing
     return (fields.affectedRows === 1) ? true : false
   }
+
+  static async isOnline({ id }) {
+    const sql =`
+    SELECT
+    online
+    FROM users WHERE id = ?`
+
+    const [arr, fields] = await pool.execute(sql, [id])
+    // console.log(JSON.stringify(`${id} is online: ${arr[0].online}`));
+    return arr[0].online === 1 ? true : false
+  }
 }

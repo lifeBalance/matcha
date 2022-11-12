@@ -13,12 +13,12 @@ exports.getChats = async (req, res, next) => {
         message:  'no uid in token'
       })
     }
-    console.log(`chats controller - uid: ${req.uid}`) // testing
+    // console.log(`chats controller - uid: ${req.uid}`) // testing
 
     const chatList = await ChatModel.readChatList({
       uid: req.uid
     })
-    console.log(`chats controller - readChatList: ${JSON.stringify(chatList)}`) // testing
+    // console.log(`chats controller - readChatList: ${JSON.stringify(chatList)}`) // testing
 
     return res.status(200).json({
       type:     'SUCCESS',
@@ -33,6 +33,7 @@ exports.getChats = async (req, res, next) => {
 
 exports.getMessageList = async (req, res, next) => {
   try {
+    // console.log(`chats contr. - req.query: ${JSON.stringify(req.query)}`);
     if (!req.uid) {
       return res.status(200).json({
         type:     'ERROR',
@@ -40,16 +41,19 @@ exports.getMessageList = async (req, res, next) => {
       })
     }
 
-    console.log(`chats controller - chat id: ${req.params.id}`) // testing
+    // console.log(`chats controller - chat id: ${req.params.id}`) // testing
     const msgList = await ChatModel.readMessageList({
       chat_id: req.params.id
     })
-    console.log(`chats controller - msgList: ${JSON.stringify(msgList)}`) // testing
+    // console.log(`chats controller - msgList: ${JSON.stringify(msgList)}`) // testing
 
+    const isOnline = await ProfileModel.isOnline({ id: parseInt(req.query.interlocutor) })
+  
     return res.status(200).json({
       type:         'SUCCESS',
       message:      'your messages',
-      messageList:  msgList
+      messageList:  msgList,
+      online:       isOnline
     })
   } catch(error) {
     console.log(error)
@@ -128,7 +132,7 @@ exports.writeMessage = async (req, res, next) => {
 
 exports.deleteChat = async (req, res, next) => {
   try {
-    console.log('NOTIF ID: '+req.body.chat_id) // testing
+    // console.log('NOTIF ID: '+req.body.chat_id) // testing
     if (!req.body.chat_id) {
       return res.status(200).json({
         type:     'ERROR',

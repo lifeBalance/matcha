@@ -56,6 +56,7 @@ function useChat() {
   const [messageList, setMessageList] = React.useState([])
   const [isLoadingMsgList, setIsLoadingMsgList] = React.useState(false)
   const [errorLoadingMsgList, setErrorLoadingMsgList] = React.useState(false)
+  const [isOnline, setIsOnline] = React.useState(false)
   const dispatch = useDispatch()
 
   async function getMessageList(args) {
@@ -72,11 +73,14 @@ function useChat() {
         headers: {
           'Authorization': `Bearer ${args.accessToken}`
         },
+        params: { interlocutor: args.interlocutor },
         refreshTokens: () => dispatch(refresh({ accessToken: args.accessToken })),
       })
       console.log(response.data);
-      if (response.data.messageList)
+      if (response.data) {
+        setIsOnline(response.data.online)
         setMessageList(response.data.messageList)
+      }
     } catch (error) {
       return setErrorLoadingMsgList(error.response?.data)
     } finally {
@@ -104,7 +108,7 @@ function useChat() {
         },
         refreshTokens: () => dispatch(refresh({ accessToken: args.accessToken })),
       })
-      console.log(response.data);
+      // console.log(response.data) // testing
       if (response.data.type === 'SUCCESS') {
         setMessageList(prev => [...prev, response.data.msg])
         args.cb()
@@ -126,7 +130,8 @@ function useChat() {
     errorLoadingMsgList,
     sendMessage,
     isSendingMsg,
-    errorSendingMsg
+    errorSendingMsg,
+    isOnline
   }
 }
 

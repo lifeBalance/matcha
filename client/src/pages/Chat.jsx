@@ -49,7 +49,8 @@ function Chat() {
   const {
     messageList,
     getMessageList,
-    sendMessage
+    sendMessage,
+    isOnline
   } = useChat()
 
   const [messageInput, setMessageInput] = React.useState('')
@@ -61,7 +62,7 @@ function Chat() {
     if (updatedConvos.includes(chatId)) {
       getMessageList({
         accessToken,
-        interlocutor: id,
+        interlocutor: uid,
         url:          location.pathname
       })
     }
@@ -70,7 +71,7 @@ function Chat() {
   React.useEffect(() => {
     getMessageList({
       accessToken,
-      interlocutor: id,
+      interlocutor: uid,
       url:          location.pathname
     })
   }, [])
@@ -124,7 +125,7 @@ function Chat() {
           >{username}</h1>
 
           <div className='flex'>
-            <span className='bg-green-500 rounded-full w-4 h-4 block mt-1 mr-1'></span>
+            <span className={`rounded-full w-3 h-3 block mt-[6px] mr-1 ${isOnline ? 'bg-green-500' : 'bg-slate-500'}`}></span>
             <p className='text-white'> Online</p>
           </div>
         </div>
