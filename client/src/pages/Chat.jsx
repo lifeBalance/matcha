@@ -115,7 +115,7 @@ function Chat() {
         </Modal>)
       }
       <div className='flex mt-4 p-2 border border-white rounded-lg'>
-        <img src={url} className='w-14 rounded-full mr-4' />
+        <img src={url} className='w-14 rounded-full mr-4' crossOrigin='anonymous' />
 
         <div className='flex flex-col'>
           <h1

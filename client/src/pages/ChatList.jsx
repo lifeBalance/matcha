@@ -50,7 +50,7 @@ function ChatList() {
     <div className="px-4 py-10">
       <h1 className='text-white text-3xl text-center font-bold my-6 pb-4'>Conversations</h1>
       {isLoadingChatList ? 'loading...' :
-      (<ul className='space-y-2'>
+      (<ul className='flex flex-col space-y-2'>
         {chatList?.length > 0 && chatList.map(ch => (
           <Chat
             chat={ch}

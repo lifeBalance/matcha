@@ -26,6 +26,7 @@ function Chat(props) {
           className='rounded-full w-20 h-20'
           src={url}
           alt={`${username} profile pic`}
+          crossOrigin='anonymous'
         />
 
         <p className='pl-4 text-slate-700 text-lg'>

@@ -117,6 +117,7 @@ function Profile() {
                     key={Math.random()}
                     src={pic}
                     className='object-cover h-96 w-96'
+                    crossOrigin='anonymous'
                   />
                 ))}
             </Carousel>
