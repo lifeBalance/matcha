@@ -28,7 +28,8 @@ Below I grouped in sections the **personal notes** I took while working on this 
 
 ## TODO
 - [ ] Implement **advance search/filters**.
-- [ ] Infinite scroll would be nice; at least fix the scroll up, when new users are added to state.
+- [ ] Infinite scroll would be nice.
+- [x] Fix the scroll up, in profile list, when new users are added to state.
 - [ ] Give it a go to https, so we can use `Secure` and `SameSite=None`; also for setting properly the **refresh token** in the hard cookie.
 - [ ] Eliminate duplication in the **models** (Account, Settings, Profiles basically deal with the same thing).
 - [ ] Update these notes!

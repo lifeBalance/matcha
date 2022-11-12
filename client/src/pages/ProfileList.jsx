@@ -68,13 +68,7 @@ function ProfileList() {
 
   let content // a variable to take logic out from the JSX
 
-  // Spinner
-  if (isLoadingProfiles) content = 
-  (<div className='flex justify-center items-center py-20'>
-    <ArrowPathIcon className='inline w-30 text-white animate-spin' />
-  </div>)
-
-  else if (profiles && profiles.length > 0 && !errorLoadingProfiles)
+  if (profiles && profiles.length > 0 && !errorLoadingProfiles)
     content = (
     <ul className='mb-3 space-y-3'>
       {/* console.log(JSON.stringify(profiles)) */}
@@ -86,6 +80,12 @@ function ProfileList() {
           />
         </li>
       ))}
+
+      {/* Spinner */}
+      {isLoadingProfiles &&
+      (<div className='flex justify-center items-center py-20'>
+        <ArrowPathIcon className='inline w-10 text-white animate-spin' />
+      </div>)}
     </ul>)
   else if (!profiles && errorLoadingProfiles)
     content = <p>{errorLoadingProfiles}</p>
@@ -99,11 +99,10 @@ function ProfileList() {
           className='justify-center bg-transparent border-white border-2 
           rounded-lg hover:bg-white hover:bg-opacity-20 text-white 
           px-4 py-2 mb-2 w-full'
-          onClick={(e) => {
-            e.stopPropagation()
+          onClick={() => {
             setPage(prevState => prevState + 1)
           }}
-          >
+        >
           Load More...
         </button>
       </div>
