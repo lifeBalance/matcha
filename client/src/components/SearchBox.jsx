@@ -100,10 +100,19 @@ function SearchBox({ searchBoxProps }) {
             setTags={setTags}
           />
 
+          <div className='pt-4 pb-4'>
+            <p
+              className='text-white text-xl border rounded-lg hover:bg-white
+              hover:bg-opacity-20 hover:cursor-pointer text-center py-1 w-[60%] mx-auto'
+            >Run Search</p>
+          </div>
+
+          <hr className='pb-2 pt-2'/>
+
           <MiniSelect 
             value={orderBy}
             onChangeHandler={e => setOrderBy(e.target.value)}
-            label='order by'
+            label='sort by'
             id='order'
             options={[
               { value: 0, label: 'age' },
@@ -114,33 +123,28 @@ function SearchBox({ searchBoxProps }) {
           />
 
           <div
-            className="flex items-center justify-between text-white px-6"
+            className="flex items-center justify-between text-white px-4"
           >
-            <div className='space-x-2'>
+            <div className='space-x-1'>
               <input
                 type="radio"
                 id='ascending'
                 checked={ascendingOrder}
                 onChange={() => setAscendingOrder(prevState => !prevState)}
               />
-              <label htmlFor="ascending">Ascending</label>
+              <label htmlFor="ascending">Ascending order</label>
             </div>
 
-            <div className='space-x-2'>
+            <div className='space-x-1'>
               <input
                 type="radio"
                 id='descending'
                 checked={!ascendingOrder}
                 onChange={() => setAscendingOrder(prevState => !prevState)}
               />
-              <label htmlFor="descending">Descending</label>
+              <label htmlFor="descending">Descending order</label>
             </div>
           </div>
-
-          <p
-            className='text-white text-xl hover:underline
-            hover:underline-offset-4 hover:cursor-pointer text-center py-3'
-          >Run Search</p>
         </div>
       </Collapse>
     </div>

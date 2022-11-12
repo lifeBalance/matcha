@@ -1,5 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+// lodash is available thanks to the 'vite-plugin-imp' (a Vite's plugin)
+import { intersection } from 'lodash'
 
 // hooks
 import useGetProfileList from '../hooks/useGetProfileList'
@@ -41,7 +43,40 @@ function ProfileList() {
   } = useGetProfileList()
 
   const searchBoxProps = useSearchBox()
-  console.log(searchBoxProps) // testing
+  // console.log(searchBoxProps) // testing
+
+  React.useEffect(() => {
+    const filters = ['age', 'rated', 'location', 'tags']
+    const orderBy = filters[searchBoxProps.orderBy]
+    // console.log('criteria '+orderBy) // testing
+  
+    if (profiles?.length === 0) return
+
+    // We need special logic to sort profiles by tags in common!!
+    if (orderBy === 'tags') {
+      // const searchTags = searchBoxProps.tags.map(i => i.label)
+      if (searchBoxProps.ascendingOrder == 0) {
+        setProfiles(prev => prev.sort((a, b) => {
+          return intersection(a[orderBy], searchTags).length - intersection(b[orderBy], searchTags).length
+        }))
+      } else {
+        setProfiles(prev => prev.sort((a, b) => {
+          return intersection(b[orderBy], searchTags).length - intersection(a[orderBy], searchTags).length
+        }))
+      }
+    } else {
+      if (searchBoxProps.ascendingOrder == 0) {
+        setProfiles(prev => prev.sort((a, b) => {
+          return Number(a[orderBy]) - Number(b[orderBy])
+        }))
+      } else if (searchBoxProps.ascendingOrder == 1) {
+        setProfiles(prev => prev.sort((a, b) => {
+          return Number(b[orderBy]) - Number(a[orderBy])
+        }))
+      }
+    }
+    // console.log(profiles)
+  }, [searchBoxProps.orderBy, searchBoxProps.ascendingOrder, profiles])
   
   /* If the user is logged in but not profiled, we redirect to Settings form */
   React.useEffect(() => {
@@ -51,7 +86,11 @@ function ProfileList() {
         if (isProfiled === 0) navigate('/edit', { replace: true })
         if (!isConfirmed) dispatch(logout())
         else if (accessToken) {
-          getProfileList({ accessToken, page, setAllTags: searchBoxProps.setAllTags })
+          getProfileList({
+            accessToken,
+            page,
+            setAllTags: searchBoxProps.setAllTags
+          })
         } else {
           const matcha = localStorage.getItem('matcha')
           dispatch(loginAfterReload(matcha))
