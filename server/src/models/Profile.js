@@ -59,10 +59,14 @@ module.exports = class Profile {
         WHERE pic_urls.user_id = users.id) AS pics
       FROM users
       WHERE users.id != ?
+      AND users.id NOT IN
+        (SELECT blocker
+        FROM blocked_users
+        WHERE blocked = ?)
       LIMIT ${limit} OFFSET ${offset}
     `
 
-    const [arr, fields] = await pool.execute(sql, [id])
+    const [arr, fields] = await pool.execute(sql, [id, id])
     // console.log('Profile Model: '+JSON.stringify(arr))
     return arr // it could be an empty array
   }
