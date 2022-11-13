@@ -4,7 +4,7 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import MiniSelect from '../components/UI/MiniSelect'
 import MiniTagSelector from './MiniTagSelector'
 
-function SearchBox({ searchBoxProps }) {
+function SearchBox({ searchBoxProps, profiles, setSortedProfiles }) {
   const [isOpen, setIsOpen] = React.useState(false)
   const {
     ageRange,
@@ -20,10 +20,36 @@ function SearchBox({ searchBoxProps }) {
     ascendingOrder,
     setAscendingOrder,
     orderBy,
-    setOrderBy,
-    isSelectDisabled,
-    setIsSelectDisabled
+    setOrderBy
   } = searchBoxProps
+
+  function search() {
+    setSortedProfiles(profiles)
+
+    const loAge = Math.min(parseInt(ageRange.lo), parseInt(ageRange.hi))
+    const hiAge = Math.max(parseInt(ageRange.lo), parseInt(ageRange.hi))
+    const loRate = Math.min(parseFloat(rateRange.lo), parseFloat(rateRange.hi))
+    const hiRate = Math.max(parseFloat(rateRange.lo), parseFloat(rateRange.hi))
+    const loLoc = Math.min(parseFloat(locationRange.lo), parseFloat(locationRange.hi))
+    const hiLoc = Math.max(parseFloat(locationRange.lo), parseFloat(locationRange.hi))
+
+    setSortedProfiles(prev => prev.filter(p => {
+      return  p.age >= loAge &&
+              p.age <= hiAge &&
+              p.rated >= loRate &&
+              p.rated <= hiRate &&
+              p.location >= loLoc &&
+              p.location <= hiLoc
+    }))
+    console.log(ageRange.lo, ageRange.hi);
+  }
+
+  function reset() {
+    setAgeRange({ lo: 18, hi: 99 })
+    setRateRange({ lo: 0, hi: 100 })
+    setLocationRange({ lo: 0, hi: 20004 })
+    setSortedProfiles(profiles)
+  }
 
   return (
     <div className="w-[360px] flex flex-col border border-white rounded-lg px-4 py-2 mx-auto">
@@ -37,18 +63,18 @@ function SearchBox({ searchBoxProps }) {
           <div className="flex items-center justify-between">
             <input
               type='number'
-              min='1'
-              max='20'
-              className='w-20 h-8'
+              min='0'
+              max='99'
+              className='w-20 h-8 rounded-sm border-slate-300'
               value={ageRange.lo}
               onChange={e => setAgeRange({ ...ageRange, lo: e.target.value })}
             />
             <p className='text-white px-2'>age range</p>
             <input
               type='number'
-              min='1'
-              max='20'
-              className='w-20 h-8'
+              min='0'
+              max='99'
+              className='w-20 h-8 rounded-sm border-slate-300'
               value={ageRange.hi}
               onChange={e => setAgeRange({ ...ageRange, hi: e.target.value })}
             />
@@ -57,18 +83,18 @@ function SearchBox({ searchBoxProps }) {
           <div className="flex items-center justify-between">
             <input
               type='number'
-              min='1'
-              max='20'
-              className='w-20 h-8'
+              min='0'
+              max='100'
+              className='w-20 h-8 rounded-sm border-slate-300'
               value={rateRange.lo}
               onChange={e => setRateRange({ ...rateRange, lo: e.target.value })}
             />
             <p className='text-white px-2'>rate range</p>
             <input
               type='number'
-              min='1'
-              max='20'
-              className='w-20 h-8'
+              min='0'
+              max='100'
+              className='w-20 h-8 rounded-sm border-slate-300'
               value={rateRange.hi}
               onChange={e => setRateRange({ ...rateRange, hi: e.target.value })}
             />
@@ -77,18 +103,18 @@ function SearchBox({ searchBoxProps }) {
           <div className="flex items-center justify-between">
             <input
               type='number'
-              min='1'
-              max='20'
-              className='w-20 h-8'
+              min='0'
+              max='20004'
+              className='w-[90px] h-8 rounded-sm border-slate-300'
               value={locationRange.lo}
               onChange={e => setLocationRange({ ...locationRange, lo: e.target.value })}
               />
             <p className='text-white px-2'>location range</p>
             <input
               type='number'
-              min='1'
-              max='20'
-              className='w-20 h-8'
+              min='0'
+              max='20004'
+              className='w-[90px] h-8 rounded-sm border-slate-300'
               value={locationRange.hi}
               onChange={e => setLocationRange({ ...locationRange, hi: e.target.value })}
               />
@@ -100,11 +126,18 @@ function SearchBox({ searchBoxProps }) {
             setTags={setTags}
           />
 
-          <div className='pt-4 pb-4'>
+          <div className='flex pt-4 pb-4'>
             <p
               className='text-white text-xl border rounded-lg hover:bg-white
-              hover:bg-opacity-20 hover:cursor-pointer text-center py-1 w-[60%] mx-auto'
+              hover:bg-opacity-20 hover:cursor-pointer text-center py-1 w-[40%] mx-auto'
+              onClick={search}
             >Run Search</p>
+
+            <p
+              className='text-white text-xl border rounded-lg hover:bg-white
+              hover:bg-opacity-20 hover:cursor-pointer text-center py-1 w-[40%] mx-auto'
+              onClick={reset}
+            >Clear</p>
           </div>
 
           <hr className='pb-2 pt-2'/>

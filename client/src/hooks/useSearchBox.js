@@ -1,15 +1,18 @@
 import React from 'react'
 
 function useSearchBox() {
-  const [ageRange, setAgeRange] = React.useState({ lo: 0, hi: 0 })
-  const [rateRange, setRateRange] = React.useState({ lo: 0, hi: 0 })
-  const [locationRange, setLocationRange] = React.useState({ lo: 0, hi: 0 })
+  const [sortedProfiles, setSortedProfiles] = React.useState([])
+  const [ageRange, setAgeRange] = React.useState({ lo: 18, hi: 99 })
+  const [rateRange, setRateRange] = React.useState({ lo: 0, hi: 100 })
+  const [locationRange, setLocationRange] = React.useState({ lo: 0, hi: 20004 })
   const [allTags, setAllTags] = React.useState([])
   const [tags, setTags] = React.useState([])
   const [ascendingOrder, setAscendingOrder] = React.useState(true)
   const [orderBy, setOrderBy] = React.useState(0)
-
+console.log(sortedProfiles);
   return {
+    sortedProfiles,
+    setSortedProfiles,
     ageRange,
     setAgeRange,
     rateRange,

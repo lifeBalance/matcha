@@ -50,33 +50,33 @@ function ProfileList() {
     const orderBy = filters[searchBoxProps.orderBy]
     // console.log('criteria '+orderBy) // testing
   
-    if (profiles?.length === 0) return
+    if (searchBoxProps.sortedProfiles?.length === 0) return
 
     // We need special logic to sort profiles by tags in common!!
     if (orderBy === 'tags') {
       // const searchTags = searchBoxProps.tags.map(i => i.label)
       if (searchBoxProps.ascendingOrder == 0) {
-        setProfiles(prev => prev.sort((a, b) => {
+        searchBoxProps.setSortedProfiles(prev => prev.sort((a, b) => {
           return intersection(a[orderBy], searchTags).length - intersection(b[orderBy], searchTags).length
         }))
       } else {
-        setProfiles(prev => prev.sort((a, b) => {
+        searchBoxProps.setSortedProfiles(prev => prev.sort((a, b) => {
           return intersection(b[orderBy], searchTags).length - intersection(a[orderBy], searchTags).length
         }))
       }
     } else {
       if (searchBoxProps.ascendingOrder == 0) {
-        setProfiles(prev => prev.sort((a, b) => {
+        searchBoxProps.setSortedProfiles(prev => prev.sort((a, b) => {
           return Number(a[orderBy]) - Number(b[orderBy])
         }))
       } else if (searchBoxProps.ascendingOrder == 1) {
-        setProfiles(prev => prev.sort((a, b) => {
+        searchBoxProps.setSortedProfiles(prev => prev.sort((a, b) => {
           return Number(b[orderBy]) - Number(a[orderBy])
         }))
       }
     }
     // console.log(profiles)
-  }, [searchBoxProps.orderBy, searchBoxProps.ascendingOrder, profiles])
+  }, [searchBoxProps.sortedProfiles, searchBoxProps.orderBy, searchBoxProps.ascendingOrder])
   
   /* If the user is logged in but not profiled, we redirect to Settings form */
   React.useEffect(() => {
@@ -99,6 +99,12 @@ function ProfileList() {
     }
   }, [isLoggingIn, isLoggedIn, isProfiled, isConfirmed, accessToken, page])
 
+  React.useEffect(() => {
+    console.log(profiles);
+    if (profiles?.length === 0) return 
+    searchBoxProps.setSortedProfiles(profiles)
+  }, [profiles])
+
   // console.log(profiles)  // testing
   // console.log(props)  // testing
 
@@ -107,11 +113,11 @@ function ProfileList() {
 
   let content // a variable to take logic out from the JSX
 
-  if (profiles && profiles.length > 0 && !errorLoadingProfiles)
+  if (searchBoxProps.sortedProfiles && searchBoxProps.sortedProfiles.length > 0 && !errorLoadingProfiles)
     content = (
     <ul className='mb-3 space-y-3'>
       {/* console.log(JSON.stringify(profiles)) */}
-      {profiles.map(profile => (
+      {searchBoxProps.sortedProfiles.map(profile => (
         <li key={profile.id}>
           <UserMiniCard
             profile={profile}
@@ -131,7 +137,11 @@ function ProfileList() {
 
   return (
     <div className='flex flex-col pt-6 space-y-3'>
-      <SearchBox searchBoxProps={searchBoxProps} />
+      <SearchBox
+        searchBoxProps={searchBoxProps}
+        profiles={profiles}
+        setSortedProfiles={searchBoxProps.setSortedProfiles}
+      />
       {content}
       <div className="px-2">
         <button
