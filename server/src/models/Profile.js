@@ -35,8 +35,8 @@ module.exports = class Profile {
   }
 
   static async readAll(data) {
-    const { id, page } = data
-    console.log(`id: ${id} - page: ${page}`);
+    let { id, page, prefers } = data
+    // console.log(`id: ${id} - page: ${page} - prefers: ${JSON.stringify(prefers)}`)  // testing
     const limit = 10
     const offset = (page - 1) * limit
     const sql = 
@@ -59,6 +59,7 @@ module.exports = class Profile {
         WHERE pic_urls.user_id = users.id) AS pics
       FROM users
       WHERE users.id != ?
+      AND users.gender IN (?)
       AND users.id NOT IN
         (SELECT blocker
         FROM blocked_users
@@ -66,7 +67,7 @@ module.exports = class Profile {
       LIMIT ${limit} OFFSET ${offset}
     `
 
-    const [arr, fields] = await pool.execute(sql, [id, id])
+    const [arr, fields] = await pool.execute(sql, [id, prefers, id])
     // console.log('Profile Model: '+JSON.stringify(arr))
     return arr // it could be an empty array
   }

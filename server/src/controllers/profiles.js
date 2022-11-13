@@ -127,7 +127,8 @@ exports.readAllProfiles = async (req, res, next) => {
     // Read all profiles, except the one of the user making the request!!!
     const profileList = await ProfileModel.readAll({
       id: req.uid,
-      page: page
+      page: page,
+      prefers: settings.prefers === 2 ? [0, 1] : [settings.prefers]
     })
 
     const allTags = await TagModel.readAll()

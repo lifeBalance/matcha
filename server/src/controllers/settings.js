@@ -1,6 +1,8 @@
 // To create/update Profile Settings (one model could deal with several tables).
 const SettingsModel = require('../models/Settings')
 const AccountModel = require('../models/Account')
+const LikeModel = require('../models/Like')
+const MatchModel = require('../models/Match')
 
 // Let's pull also the Pic model for the profile pictures
 const PicModel = require('../models/Pic')
@@ -55,6 +57,13 @@ exports.getSettings = async (req, res, next) => {
   const userTags = await TagModel.readTagsArray(settings.tags)
   // console.log(`USER TAGS: ${userTags}`) // testing
 
+  // Pull array of all the users liked by current user
+  const allLikedUsers = await LikeModel.readAllLikedBy({ uid: req.uid })
+
+  // Compute the user's rating as ratio of matches/liked users
+  const matches = await MatchModel.readAllMatches({ uid: req.uid })
+  const rated = matches.length === 0 ? 0 : allLikedUsers.length * 100 / matches.length
+
   // Send Account information to prepopulate fields in the Profile form.
   res.status(200).json({
     uid:            req.uid, // send it just in case...
@@ -65,6 +74,7 @@ exports.getSettings = async (req, res, next) => {
     age:            settings.age,
     gender:         settings.gender,
     prefers:        settings.prefers,
+    rated:          rated,
     bio:            settings.bio || fakeBio,
     profile_pic:    profile_pic_url,
     extraPics:      extraPics,

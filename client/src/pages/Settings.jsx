@@ -36,7 +36,7 @@ function Settings() {
       lastName:     data.lastname,
       email:        data.email,
       age:          data.age,
-      rated:        69, // hardcode for now
+      rated:        data.rated, // hardcode for now
       gender:       data.gender,
       preferences:  data.prefers,
       bio:          unescape(data.bio),
@@ -126,7 +126,7 @@ function Settings() {
         </p>
 
         <p>
-          <span className='font-semibold'>Rated: </span>{user.rated} ⭐
+          <span className='font-semibold'>Rated: </span>{user.rated}%
         </p>
 
         <p className='pb-8'>
