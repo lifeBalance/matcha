@@ -125,12 +125,16 @@ exports.readAllProfiles = async (req, res, next) => {
 
     // console.log('PAGE: '+page+' UID: '+req.uid)          // testing
 
+    // Search defaults
+    const dist = { lo: 0, hi: 20000 } // 20km radius
+
     // Read all profiles, except the one of the user making the request!!!
     const profileList = await ProfileModel.readAll({
       id:       req.uid,
       page:     page,
       prefers:  settings.prefers === 2 ? [0, 1] : [settings.prefers],
-      userA:    settings.location
+      userA:    settings.location,
+      dist:     dist
     })
 
     const allTags = await TagModel.readAll()
