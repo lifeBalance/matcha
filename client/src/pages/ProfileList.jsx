@@ -100,7 +100,7 @@ function ProfileList() {
   }, [isLoggingIn, isLoggedIn, isProfiled, isConfirmed, accessToken, page])
 
   React.useEffect(() => {
-    console.log(profiles);
+    // console.log(profiles) // testing
     if (profiles?.length === 0) return 
     searchBoxProps.setSortedProfiles(profiles)
   }, [profiles])

@@ -9,7 +9,7 @@ function useSearchBox() {
   const [tags, setTags] = React.useState([])
   const [ascendingOrder, setAscendingOrder] = React.useState(true)
   const [orderBy, setOrderBy] = React.useState(0)
-console.log(sortedProfiles);
+// console.log(sortedProfiles) // testing
   return {
     sortedProfiles,
     setSortedProfiles,

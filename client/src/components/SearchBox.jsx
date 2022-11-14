@@ -41,7 +41,7 @@ function SearchBox({ searchBoxProps, profiles, setSortedProfiles }) {
               p.location >= loLoc &&
               p.location <= hiLoc
     }))
-    console.log(ageRange.lo, ageRange.hi);
+    console.log(ageRange.lo, ageRange.hi) // testing
   }
 
   function reset() {

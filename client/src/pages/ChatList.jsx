@@ -39,7 +39,7 @@ function ChatList() {
     getChatList({ accessToken, refresh })
   }, [matchesChanged])
 
-  console.log('upadted convos: '+updatedConvos);
+  // console.log('updated convos: '+updatedConvos) // testing
 
   if (!isLoadingChatList && chatList.length === 0)
     return (
