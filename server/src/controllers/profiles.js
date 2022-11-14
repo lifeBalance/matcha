@@ -108,6 +108,7 @@ exports.readAllProfiles = async (req, res, next) => {
     // Don't forget to check if the user requesting profiles is profiled!
     const settings = await SettingsModel.readSettings({ id: req.uid })
     // console.log('PROFILES controller: ' + JSON.stringify(settings)) // testing
+    console.log('PROFILES controller: ' + JSON.stringify(settings.location)) // testing
 
     /* If the user requesting profiles is not profiled, we don't send her
       the Profile list. */
@@ -122,17 +123,18 @@ exports.readAllProfiles = async (req, res, next) => {
     /* Here we have to add things such as pagination, filters, etc. */
     const page = parseInt(req.query.page)
 
-    console.log('PAGE: '+page+' UID: '+req.uid)          // testing
+    // console.log('PAGE: '+page+' UID: '+req.uid)          // testing
 
     // Read all profiles, except the one of the user making the request!!!
     const profileList = await ProfileModel.readAll({
-      id: req.uid,
-      page: page,
-      prefers: settings.prefers === 2 ? [0, 1] : [settings.prefers]
+      id:       req.uid,
+      page:     page,
+      prefers:  settings.prefers === 2 ? [0, 1] : [settings.prefers],
+      userA:    settings.location
     })
 
     const allTags = await TagModel.readAll()
-    console.log('ALL TAGS: '+JSON.stringify(allTags)) // testing
+    // console.log('ALL TAGS: '+JSON.stringify(allTags)) // testing
 
     // console.log('PROFILE LIST 1: '+JSON.stringify(profileList)) // testing
     const profiles = []

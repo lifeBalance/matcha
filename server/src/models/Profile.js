@@ -1,4 +1,15 @@
 const pool = require('../db/dbPool')
+const geolib = require('geolib')
+
+function distanceWithin(args) {
+  // Be aware: below we get the distance in meters
+  const distance = geolib.getPathLength([
+    {latitude: args.userA.lat, longitude: args.userA.lng},
+    {latitude: args.userB.lat, longitude: args.userB.lng},
+  ])
+  console.log(`Profile model (distance between users): ${distance}`)
+  return distance >= args.min && distance <= args.max
+}
 
 /**
  *  As of now, the Settings model only deals with the 'users' table, but if we
@@ -35,7 +46,7 @@ module.exports = class Profile {
   }
 
   static async readAll(data) {
-    let { id, page, prefers } = data
+    let { id, page, prefers, userA } = data
     // console.log(`id: ${id} - page: ${page} - prefers: ${JSON.stringify(prefers)}`)  // testing
     const limit = 10
     const offset = (page - 1) * limit
@@ -61,11 +72,14 @@ module.exports = class Profile {
       WHERE users.id != ?
       AND users.gender IN (?)
       AND users.id NOT IN
-        (SELECT blocker
+      (SELECT blocker
         FROM blocked_users
         WHERE blocked = ?)
       LIMIT ${limit} OFFSET ${offset}
-    `
+      `
+        //AND ${distanceWithin({
+        //  userA, userB: users.location, min: 0, max: 100
+        //})} = true
 
     const [arr, fields] = await pool.execute(sql, [id, prefers, id])
     // console.log('Profile Model: '+JSON.stringify(arr))
