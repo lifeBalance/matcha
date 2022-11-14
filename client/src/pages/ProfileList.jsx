@@ -42,41 +42,41 @@ function ProfileList() {
     errorLoadingProfiles
   } = useGetProfileList()
 
-  const searchBoxProps = useSearchBox()
-  // console.log(searchBoxProps) // testing
+  const searchBoxHook = useSearchBox()
+  // console.log(searchBoxHook) // testing
 
   React.useEffect(() => {
     const filters = ['age', 'rated', 'location', 'tags']
-    const orderBy = filters[searchBoxProps.orderBy]
+    const orderBy = filters[searchBoxHook.orderBy]
     // console.log('criteria '+orderBy) // testing
   
-    if (searchBoxProps.sortedProfiles?.length === 0) return
+    if (searchBoxHook.sortedProfiles?.length === 0) return
 
     // We need special logic to sort profiles by tags in common!!
     if (orderBy === 'tags') {
       // const searchTags = searchBoxProps.tags.map(i => i.label)
-      if (searchBoxProps.ascendingOrder == 0) {
-        searchBoxProps.setSortedProfiles(prev => prev.sort((a, b) => {
+      if (searchBoxHook.ascendingOrder == 0) {
+        searchBoxHook.setSortedProfiles(prev => prev.sort((a, b) => {
           return intersection(a[orderBy], searchTags).length - intersection(b[orderBy], searchTags).length
         }))
       } else {
-        searchBoxProps.setSortedProfiles(prev => prev.sort((a, b) => {
+        searchBoxHook.setSortedProfiles(prev => prev.sort((a, b) => {
           return intersection(b[orderBy], searchTags).length - intersection(a[orderBy], searchTags).length
         }))
       }
     } else {
-      if (searchBoxProps.ascendingOrder == 0) {
-        searchBoxProps.setSortedProfiles(prev => prev.sort((a, b) => {
+      if (searchBoxHook.ascendingOrder == 0) {
+        searchBoxHook.setSortedProfiles(prev => prev.sort((a, b) => {
           return Number(a[orderBy]) - Number(b[orderBy])
         }))
-      } else if (searchBoxProps.ascendingOrder == 1) {
-        searchBoxProps.setSortedProfiles(prev => prev.sort((a, b) => {
+      } else if (searchBoxHook.ascendingOrder == 1) {
+        searchBoxHook.setSortedProfiles(prev => prev.sort((a, b) => {
           return Number(b[orderBy]) - Number(a[orderBy])
         }))
       }
     }
     // console.log(profiles)
-  }, [searchBoxProps.sortedProfiles, searchBoxProps.orderBy, searchBoxProps.ascendingOrder])
+  }, [searchBoxHook.sortedProfiles, searchBoxHook.orderBy, searchBoxHook.ascendingOrder])
   
   /* If the user is logged in but not profiled, we redirect to Settings form */
   React.useEffect(() => {
@@ -89,7 +89,7 @@ function ProfileList() {
           getProfileList({
             accessToken,
             page,
-            setAllTags: searchBoxProps.setAllTags
+            setAllTags: searchBoxHook.setAllTags
           })
         } else {
           const matcha = localStorage.getItem('matcha')
@@ -102,7 +102,7 @@ function ProfileList() {
   React.useEffect(() => {
     // console.log(profiles) // testing
     if (profiles?.length === 0) return 
-    searchBoxProps.setSortedProfiles(profiles)
+    searchBoxHook.setSortedProfiles(profiles)
   }, [profiles])
 
   // console.log(profiles)  // testing
@@ -113,11 +113,11 @@ function ProfileList() {
 
   let content // a variable to take logic out from the JSX
 
-  if (searchBoxProps.sortedProfiles && searchBoxProps.sortedProfiles.length > 0 && !errorLoadingProfiles)
+  if (searchBoxHook.sortedProfiles && searchBoxHook.sortedProfiles.length > 0 && !errorLoadingProfiles)
     content = (
     <ul className='mb-3 space-y-3'>
       {/* console.log(JSON.stringify(profiles)) */}
-      {searchBoxProps.sortedProfiles.map(profile => (
+      {searchBoxHook.sortedProfiles.map(profile => (
         <li key={profile.id}>
           <UserMiniCard
             profile={profile}
@@ -138,9 +138,9 @@ function ProfileList() {
   return (
     <div className='flex flex-col pt-6 space-y-3'>
       <SearchBox
-        searchBoxProps={searchBoxProps}
+        searchBoxProps={searchBoxHook}
         profiles={profiles}
-        setSortedProfiles={searchBoxProps.setSortedProfiles}
+        setSortedProfiles={searchBoxHook.setSortedProfiles}
       />
       {content}
       <div className="px-2">

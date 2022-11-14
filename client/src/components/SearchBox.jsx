@@ -20,36 +20,38 @@ function SearchBox({ searchBoxProps, profiles, setSortedProfiles }) {
     ascendingOrder,
     setAscendingOrder,
     orderBy,
-    setOrderBy
+    setOrderBy,
+    search,
+    reset
   } = searchBoxProps
 
-  function search() {
-    setSortedProfiles(profiles)
+  // function search() {
+  //   setSortedProfiles(profiles)
 
-    const loAge = Math.min(parseInt(ageRange.lo), parseInt(ageRange.hi))
-    const hiAge = Math.max(parseInt(ageRange.lo), parseInt(ageRange.hi))
-    const loRate = Math.min(parseFloat(rateRange.lo), parseFloat(rateRange.hi))
-    const hiRate = Math.max(parseFloat(rateRange.lo), parseFloat(rateRange.hi))
-    const loLoc = Math.min(parseFloat(locationRange.lo), parseFloat(locationRange.hi))
-    const hiLoc = Math.max(parseFloat(locationRange.lo), parseFloat(locationRange.hi))
+  //   const loAge = Math.min(parseInt(ageRange.lo), parseInt(ageRange.hi))
+  //   const hiAge = Math.max(parseInt(ageRange.lo), parseInt(ageRange.hi))
+  //   const loRate = Math.min(parseFloat(rateRange.lo), parseFloat(rateRange.hi))
+  //   const hiRate = Math.max(parseFloat(rateRange.lo), parseFloat(rateRange.hi))
+  //   const loLoc = Math.min(parseFloat(locationRange.lo), parseFloat(locationRange.hi))
+  //   const hiLoc = Math.max(parseFloat(locationRange.lo), parseFloat(locationRange.hi))
 
-    setSortedProfiles(prev => prev.filter(p => {
-      return  p.age >= loAge &&
-              p.age <= hiAge &&
-              p.rated >= loRate &&
-              p.rated <= hiRate &&
-              p.location >= loLoc &&
-              p.location <= hiLoc
-    }))
-    console.log(ageRange.lo, ageRange.hi) // testing
-  }
+  //   setSortedProfiles(prev => prev.filter(p => {
+  //     return  p.age >= loAge &&
+  //             p.age <= hiAge &&
+  //             p.rated >= loRate &&
+  //             p.rated <= hiRate &&
+  //             p.location >= loLoc &&
+  //             p.location <= hiLoc
+  //   }))
+  //   console.log(ageRange.lo, ageRange.hi) // testing
+  // }
 
-  function reset() {
-    setAgeRange({ lo: 18, hi: 99 })
-    setRateRange({ lo: 0, hi: 100 })
-    setLocationRange({ lo: 0, hi: 20004 })
-    setSortedProfiles(profiles)
-  }
+  // function reset() {
+  //   setAgeRange({ lo: 18, hi: 99 })
+  //   setRateRange({ lo: 0, hi: 100 })
+  //   setLocationRange({ lo: 0, hi: 20004 })
+  //   setSortedProfiles(profiles)
+  // }
 
   return (
     <div className="w-[360px] flex flex-col border border-white rounded-lg px-4 py-2 mx-auto">
@@ -130,13 +132,13 @@ function SearchBox({ searchBoxProps, profiles, setSortedProfiles }) {
             <p
               className='text-white text-xl border rounded-lg hover:bg-white
               hover:bg-opacity-20 hover:cursor-pointer text-center py-1 w-[40%] mx-auto'
-              onClick={search}
+              onClick={() => search(profiles)}
             >Run Search</p>
 
             <p
               className='text-white text-xl border rounded-lg hover:bg-white
               hover:bg-opacity-20 hover:cursor-pointer text-center py-1 w-[40%] mx-auto'
-              onClick={reset}
+              onClick={() => reset(profiles)}
             >Clear</p>
           </div>
 
