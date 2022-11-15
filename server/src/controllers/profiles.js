@@ -125,16 +125,29 @@ exports.readAllProfiles = async (req, res, next) => {
 
     // console.log('PAGE: '+page+' UID: '+req.uid)          // testing
 
+    console.log(`profiles controller: ${JSON.parse(req.query.dist).lo} - ${JSON.parse(req.query.dist).hi}`) // testing
     // Search defaults
-    const dist = { lo: 0, hi: 20000 } // 20km radius
+    // const dist = { lo: 0, hi: 200 } // 20km radius
+
+    // req.query.dist = null // testing
+
+    const dist = req.query.dist != null ?
+      JSON.parse(req.query.dist) : { lo: 0, hi: 160 } // 20km radius
+    // const dist = { lo: 0, hi: 800 }
 
     // Read all profiles, except the one of the user making the request!!!
     const profileList = await ProfileModel.readAll({
       id:       req.uid,
       page:     page,
       prefers:  settings.prefers === 2 ? [0, 1] : [settings.prefers],
-      userA:    settings.location,
-      dist:     dist
+      userA:    {
+        lat: parseFloat(settings.location.lat),
+        lng: parseFloat(settings.location.lng), 
+      },
+      dist:     {
+        lo: +dist.lo * 1000.0,
+        hi: +dist.hi * 1000.0
+      }
     })
 
     const allTags = await TagModel.readAll()
@@ -148,16 +161,16 @@ exports.readAllProfiles = async (req, res, next) => {
         const allLikedUsers = await LikeModel.readAllLikedBy({ uid: req.uid })
 
         // Compute distance from current user using geolib package!
-        const distance = geolib.getDistance(
-          {
-            latitude: prof.location.lat,
-            longitude: prof.location.lng
-          },
-          {
-            latitude: settings.location.lat,
-            longitude: settings.location.lng
-          }
-        )
+        // const distance = geolib.getDistance(
+        //   {
+        //     latitude: prof.location.lat,
+        //     longitude: prof.location.lng
+        //   },
+        //   {
+        //     latitude: settings.location.lat,
+        //     longitude: settings.location.lng
+        //   }
+        // )
 
         // Compute the user's rating as ratio of matches/liked users
         const matches = await MatchModel.readAllMatches({ uid: req.uid })
@@ -174,7 +187,7 @@ exports.readAllProfiles = async (req, res, next) => {
           tags:           tagLabels,
           last_seen:      ago,
           you_like_user:  allLikedUsers.map(u => u.liked).includes(prof.id),
-          location:       (distance / 1000).toFixed(2),
+          // location:       (distance / 1000).toFixed(2),
           rated:          rated.toFixed(1)
         })
       }

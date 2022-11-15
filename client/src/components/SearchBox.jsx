@@ -4,15 +4,17 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import MiniSelect from '../components/UI/MiniSelect'
 import MiniTagSelector from './MiniTagSelector'
 
-function SearchBox({ searchBoxProps, profiles, setSortedProfiles }) {
+function SearchBox({ searchBoxProps, profiles, requestProfiles }) {
   const [isOpen, setIsOpen] = React.useState(false)
   const {
     ageRange,
     setAgeRange,
+    // normalizeAgeRange,
     rateRange,
     setRateRange,
     locationRange,
     setLocationRange,
+    // normalizeLocationRange,
     tags,
     allTags,
     setAllTags,
@@ -24,34 +26,15 @@ function SearchBox({ searchBoxProps, profiles, setSortedProfiles }) {
     search,
     reset
   } = searchBoxProps
+  // console.log(searchBoxProps);
 
-  // function search() {
-  //   setSortedProfiles(profiles)
+  // React.useEffect(() => {
+  //   normalizeAgeRange()
+  // }, [ageRange])
 
-  //   const loAge = Math.min(parseInt(ageRange.lo), parseInt(ageRange.hi))
-  //   const hiAge = Math.max(parseInt(ageRange.lo), parseInt(ageRange.hi))
-  //   const loRate = Math.min(parseFloat(rateRange.lo), parseFloat(rateRange.hi))
-  //   const hiRate = Math.max(parseFloat(rateRange.lo), parseFloat(rateRange.hi))
-  //   const loLoc = Math.min(parseFloat(locationRange.lo), parseFloat(locationRange.hi))
-  //   const hiLoc = Math.max(parseFloat(locationRange.lo), parseFloat(locationRange.hi))
-
-  //   setSortedProfiles(prev => prev.filter(p => {
-  //     return  p.age >= loAge &&
-  //             p.age <= hiAge &&
-  //             p.rated >= loRate &&
-  //             p.rated <= hiRate &&
-  //             p.location >= loLoc &&
-  //             p.location <= hiLoc
-  //   }))
-  //   console.log(ageRange.lo, ageRange.hi) // testing
-  // }
-
-  // function reset() {
-  //   setAgeRange({ lo: 18, hi: 99 })
-  //   setRateRange({ lo: 0, hi: 100 })
-  //   setLocationRange({ lo: 0, hi: 20004 })
-  //   setSortedProfiles(profiles)
-  // }
+  // React.useEffect(() => {
+  //   normalizeLocationRange()
+  // }, [locationRange])
 
   return (
     <div className="w-[360px] flex flex-col border border-white rounded-lg px-4 py-2 mx-auto">
@@ -69,7 +52,9 @@ function SearchBox({ searchBoxProps, profiles, setSortedProfiles }) {
               max='99'
               className='w-20 h-8 rounded-sm border-slate-300'
               value={ageRange.lo}
-              onChange={e => setAgeRange({ ...ageRange, lo: e.target.value })}
+              onChange={e => setAgeRange({
+                ...ageRange, lo: e.target.value
+              })}
             />
             <p className='text-white px-2'>age range</p>
             <input
@@ -78,7 +63,9 @@ function SearchBox({ searchBoxProps, profiles, setSortedProfiles }) {
               max='99'
               className='w-20 h-8 rounded-sm border-slate-300'
               value={ageRange.hi}
-              onChange={e => setAgeRange({ ...ageRange, hi: e.target.value })}
+              onChange={e => setAgeRange({
+                ...ageRange, hi: e.target.value
+              })}
             />
           </div>
 
@@ -89,7 +76,9 @@ function SearchBox({ searchBoxProps, profiles, setSortedProfiles }) {
               max='100'
               className='w-20 h-8 rounded-sm border-slate-300'
               value={rateRange.lo}
-              onChange={e => setRateRange({ ...rateRange, lo: e.target.value })}
+              onChange={e => setRateRange({
+                ...rateRange, lo: e.target.value
+              })}
             />
             <p className='text-white px-2'>rate range</p>
             <input
@@ -98,7 +87,10 @@ function SearchBox({ searchBoxProps, profiles, setSortedProfiles }) {
               max='100'
               className='w-20 h-8 rounded-sm border-slate-300'
               value={rateRange.hi}
-              onChange={e => setRateRange({ ...rateRange, hi: e.target.value })}
+              onChange={e => setRateRange({
+                ...rateRange,
+                hi: e.target.value
+              })}
             />
           </div>
 
@@ -109,7 +101,9 @@ function SearchBox({ searchBoxProps, profiles, setSortedProfiles }) {
               max='20004'
               className='w-[90px] h-8 rounded-sm border-slate-300'
               value={locationRange.lo}
-              onChange={e => setLocationRange({ ...locationRange, lo: e.target.value })}
+              onChange={e => setLocationRange({
+                ...locationRange, lo: e.target.value
+              })}
               />
             <p className='text-white px-2'>location range</p>
             <input
@@ -118,7 +112,9 @@ function SearchBox({ searchBoxProps, profiles, setSortedProfiles }) {
               max='20004'
               className='w-[90px] h-8 rounded-sm border-slate-300'
               value={locationRange.hi}
-              onChange={e => setLocationRange({ ...locationRange, hi: e.target.value })}
+              onChange={e => setLocationRange({
+                ...locationRange, hi: e.target.value
+              })}
               />
           </div>
 
@@ -132,7 +128,7 @@ function SearchBox({ searchBoxProps, profiles, setSortedProfiles }) {
             <p
               className='text-white text-xl border rounded-lg hover:bg-white
               hover:bg-opacity-20 hover:cursor-pointer text-center py-1 w-[40%] mx-auto'
-              onClick={() => search(profiles)}
+              onClick={requestProfiles}
             >Run Search</p>
 
             <p

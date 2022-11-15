@@ -37,6 +37,8 @@ module.exports = class Profile {
   static async readAll(data) {
     let { id, page, prefers, userA, dist } = data
     // console.log(`id: ${id} - page: ${page} - prefers: ${JSON.stringify(prefers)}`)  // testing
+    console.log(`locat.: ${JSON.stringify(dist)} (typeof hi: ${typeof dist.hi})`)
+
     const limit = 10
     const offset = (page - 1) * limit
     const sql = 
@@ -52,27 +54,87 @@ module.exports = class Profile {
       users.gender,
       users.prefers,
       users.bio,
-      users.tags,
       users.location,
-      (SELECT JSON_ARRAYAGG(JSON_OBJECT('url', pic_urls.url, 'profile', pic_urls.profile_pic))
-      FROM pic_urls WHERE pic_urls.user_id = users.id) AS pics
-      FROM users WHERE users.id != ?
-      AND users.gender IN (?)
-      AND users.id NOT IN
-        (SELECT blocker
-          FROM blocked_users
-          WHERE blocked = ?)
-      AND ST_Distance_Sphere(
-        point(${userA.lng}, ${userA.lat}),
+      (SELECT ST_Distance_Sphere(
+        point(CAST(? AS DOUBLE), CAST(? AS DOUBLE)),
         point(
-          JSON_EXTRACT(users.location, '$.lng'),
-          JSON_EXTRACT(users.location, '$.lat')
+          CAST(JSON_EXTRACT(users.location, '$.lng') AS DOUBLE),
+          CAST(JSON_EXTRACT(users.location, '$.lat') AS DOUBLE)
         )
-      ) BETWEEN ${dist.lo} AND ${dist.hi}
-      LIMIT ${limit} OFFSET ${offset}
-    `
+      )) AS location
+      FROM users
+      WHERE ST_Distance_Sphere(
+          point(CAST(? AS DOUBLE), CAST(? AS DOUBLE)),
+          point(
+            CAST(JSON_EXTRACT(users.location, '$.lng') AS DOUBLE),
+            CAST(JSON_EXTRACT(users.location, '$.lat') AS DOUBLE)
+          )
+        ) BETWEEN ${dist.lo} AND ${dist.hi}
+      ORDER BY location DESC
+      `
+    console.log(sql);
+    const [arr, fields] = await pool.execute(sql, [
+      userA.lng,
+      userA.lat,
+      userA.lng,
+      userA.lat,
+      // dist.lo,
+      // dist.hi
+    ])
+    // `
+    // SELECT
+    //   users.id,
+    //   users.username,
+    //   users.firstname,
+    //   users.lastname,
+    //   users.online,
+    //   users.last_seen,
+    //   users.age,
+    //   users.gender,
+    //   users.prefers,
+    //   users.bio,
+    //   users.tags,
+    //   users.location,
+    //   (SELECT JSON_ARRAYAGG(JSON_OBJECT('url', pic_urls.url, 'profile', pic_urls.profile_pic))
+    //   FROM pic_urls WHERE pic_urls.user_id = users.id) AS pics,
+    //   (SELECT ST_Distance_Sphere(
+    //     point(CAST(? AS DOUBLE), CAST(? AS DOUBLE)),
+    //     point(
+    //       CAST(JSON_EXTRACT(users.location, '$.lng') AS DOUBLE),
+    //       CAST(JSON_EXTRACT(users.location, '$.lat') AS DOUBLE)
+    //     )
+    //   )) AS location
+    //   FROM users
+    //   WHERE users.id != ?
+    //     AND users.gender IN (?)
+    //     AND users.id NOT IN
+    //       (SELECT blocker
+    //         FROM blocked_users
+    //         WHERE blocked = ?)
+    //     AND ST_Distance_Sphere(
+    //       point(CAST(? AS DOUBLE), CAST(? AS DOUBLE)),
+    //       point(
+    //         CAST(JSON_EXTRACT(users.location, '$.lng') AS DOUBLE),
+    //         CAST(JSON_EXTRACT(users.location, '$.lat') AS DOUBLE)
+    //       )
+    //     ) BETWEEN 0 AND ?
+    //   ORDER BY location DESC
+    //   `
+      // LIMIT ${limit} OFFSET ${offset}
+      // console.log(userA.lng, userA.lat)
+      // console.log(limit, offset)
 
-    const [arr, fields] = await pool.execute(sql, [id, prefers, id])
+    // const [arr, fields] = await pool.execute(sql, [
+    //   userA.lng,
+    //   userA.lat,
+    //   id,
+    //   prefers,
+    //   id,
+    //   userA.lng,
+    //   userA.lat,
+    //   // dist.lo,
+    //   dist.hi
+    // ])
     // console.log('Profile Model: '+JSON.stringify(arr))
     return arr // it could be an empty array
   }

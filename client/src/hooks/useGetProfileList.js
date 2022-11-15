@@ -45,11 +45,14 @@ function useGetProfileList(params) {
       /*  Next line is crucial to protect the App from 
         errors caused by the user Reloading the Browser. */
       if (!args.accessToken) return
-
+console.log(args);
       const response = await fetchProfiles({
         url: '/profiles',
         method: 'get',
-        params: { page: args.page },
+        params: {
+          page: args.page,
+          dist: args?.dist || null
+        },
         headers: {
           'Authorization': `Bearer ${args.accessToken}`
         },

@@ -124,7 +124,7 @@ function UserMiniCard(props) {
           </p>
 
           <p>
-            <span className='text-slate-700 font-semibold'>Location:</span> {location} km away from you
+            <span className='text-slate-700 font-semibold'>Location:</span> {(location / 1000).toFixed(1)} km away from you
           </p>
 
           <p className='flex flex-wrap'>

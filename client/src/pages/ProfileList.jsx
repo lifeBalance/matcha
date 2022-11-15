@@ -50,34 +50,44 @@ function ProfileList() {
     const orderBy = filters[searchBoxHook.orderBy]
     // console.log('criteria '+orderBy) // testing
   
-    if (searchBoxHook.sortedProfiles?.length === 0) return
+    // if (searchBoxHook.sortedProfiles?.length === 0) return
 
     // We need special logic to sort profiles by tags in common!!
     if (orderBy === 'tags') {
       // const searchTags = searchBoxProps.tags.map(i => i.label)
       if (searchBoxHook.ascendingOrder == 0) {
-        searchBoxHook.setSortedProfiles(prev => prev.sort((a, b) => {
+        setProfiles(prev => prev.sort((a, b) => {
           return intersection(a[orderBy], searchTags).length - intersection(b[orderBy], searchTags).length
         }))
       } else {
-        searchBoxHook.setSortedProfiles(prev => prev.sort((a, b) => {
+        setProfiles(prev => prev.sort((a, b) => {
           return intersection(b[orderBy], searchTags).length - intersection(a[orderBy], searchTags).length
         }))
       }
     } else {
       if (searchBoxHook.ascendingOrder == 0) {
-        searchBoxHook.setSortedProfiles(prev => prev.sort((a, b) => {
+        setProfiles(prev => prev.sort((a, b) => {
           return Number(a[orderBy]) - Number(b[orderBy])
         }))
       } else if (searchBoxHook.ascendingOrder == 1) {
-        searchBoxHook.setSortedProfiles(prev => prev.sort((a, b) => {
+        setProfiles(prev => prev.sort((a, b) => {
           return Number(b[orderBy]) - Number(a[orderBy])
         }))
       }
     }
     // console.log(profiles)
-  }, [searchBoxHook.sortedProfiles, searchBoxHook.orderBy, searchBoxHook.ascendingOrder])
+  }, [searchBoxHook.orderBy, searchBoxHook.ascendingOrder])
   
+  function requestProfiles() {
+    console.log(searchBoxHook.locationRange);
+    getProfileList({
+      accessToken,
+      page,
+      dist: searchBoxHook.locationRange,
+      setAllTags: searchBoxHook.setAllTags
+    })
+  }
+
   /* If the user is logged in but not profiled, we redirect to Settings form */
   React.useEffect(() => {
     if (isLoggingIn) return
@@ -89,6 +99,7 @@ function ProfileList() {
           getProfileList({
             accessToken,
             page,
+            dist: searchBoxHook.locationRange,
             setAllTags: searchBoxHook.setAllTags
           })
         } else {
@@ -102,7 +113,7 @@ function ProfileList() {
   React.useEffect(() => {
     // console.log(profiles) // testing
     if (profiles?.length === 0) return 
-    searchBoxHook.setSortedProfiles(profiles)
+    // searchBoxHook.setSortedProfiles(profiles)
   }, [profiles])
 
   // console.log(profiles)  // testing
@@ -113,11 +124,11 @@ function ProfileList() {
 
   let content // a variable to take logic out from the JSX
 
-  if (searchBoxHook.sortedProfiles && searchBoxHook.sortedProfiles.length > 0 && !errorLoadingProfiles)
+  if (profiles && profiles.length > 0 && !errorLoadingProfiles)
     content = (
     <ul className='mb-3 space-y-3'>
       {/* console.log(JSON.stringify(profiles)) */}
-      {searchBoxHook.sortedProfiles.map(profile => (
+      {profiles.map(profile => (
         <li key={profile.id}>
           <UserMiniCard
             profile={profile}
@@ -140,7 +151,8 @@ function ProfileList() {
       <SearchBox
         searchBoxProps={searchBoxHook}
         profiles={profiles}
-        setSortedProfiles={searchBoxHook.setSortedProfiles}
+        setProfiles={setProfiles}
+        requestProfiles={requestProfiles}
       />
       {content}
       <div className="px-2">
