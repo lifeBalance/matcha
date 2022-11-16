@@ -48,7 +48,7 @@ function ProfileList() {
   // console.log(searchBoxHook) // testing
 
   React.useEffect(() => {
-    const filters = ['age', 'rated', 'location', 'tags']
+    const filters = ['age', 'fame', 'location', 'tags']
     const orderBy = filters[searchBoxHook.orderBy]
     // console.log('criteria '+orderBy) // testing
 
@@ -128,13 +128,13 @@ function ProfileList() {
     <ul className='mb-3 space-y-3'>
       {/* console.log(JSON.stringify(profiles)) */}
       {profiles.map(profile => (
-        <div>{profile.id} (age: {profile.age}) - {(profile.location / 1000).toFixed(1)}</div>
-        // <li key={profile.id}>
-        //   <UserMiniCard
-        //     profile={profile}
-        //     setProfiles={setProfiles}
-        //   />
-        // </li>
+        // <div>{profile.id} (age: {profile.age}) - {(profile.location / 1000).toFixed(1)}</div>
+        <li key={profile.id}>
+          <UserMiniCard
+            profile={profile}
+            setProfiles={setProfiles}
+          />
+        </li>
       ))}
 
       {/* Spinner */}

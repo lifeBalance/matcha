@@ -187,25 +187,10 @@ exports.readAllProfiles = async (req, res, next) => {
     const profiles = []
     if (profileList) {
       for (const prof of profileList) {
+        console.log(`${prof.id} - ${(prof.location / 1000).toFixed(2)}`)
+
         // Pull array of all the users liked by current user
         const allLikedUsers = await LikeModel.readAllLikedBy({ uid: req.uid })
-
-        // Compute distance from current user using geolib package!
-        // const distance = geolib.getDistance(
-        //   {
-        //     latitude: prof.location.lat,
-        //     longitude: prof.location.lng
-        //   },
-        //   {
-        //     latitude: settings.location.lat,
-        //     longitude: settings.location.lng
-        //   }
-        // )
-        console.log(`${prof.id} - ${(prof.location / 1000).toFixed(2)}`);
-
-        // Compute the user's rating as ratio of matches/liked users
-        const matches = await MatchModel.readAllMatches({ uid: req.uid })
-        const rated = matches.length === 0 ? 0 : allLikedUsers.length * 100 / matches.length
 
         let tagLabels = []
         if (prof.tags)
@@ -217,9 +202,7 @@ exports.readAllProfiles = async (req, res, next) => {
           ...prof,
           tags:           tagLabels,
           last_seen:      ago,
-          you_like_user:  allLikedUsers.map(u => u.liked).includes(prof.id),
-          // location:       (distance / 1000).toFixed(2),
-          rated:          rated.toFixed(1)
+          you_like_user:  allLikedUsers.map(u => u.liked).includes(prof.id)
         })
       }
     }

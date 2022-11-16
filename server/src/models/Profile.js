@@ -66,7 +66,11 @@ module.exports = class Profile {
           JSON_EXTRACT(users.location, '$.lat'),
           JSON_EXTRACT(users.location, '$.lng')
         )
-      )) AS location
+      )) AS location,
+      (SELECT IF(
+        (SELECT COUNT(*) FROM matches WHERE users.id = liker OR users.id = liked) = 0,
+        0,
+        ((SELECT COUNT(*) FROM matches WHERE users.id = liker OR users.id = liked) * 100) / (SELECT COUNT(*) FROM likes WHERE likes.liker = users.id))) AS fame
     FROM users
     WHERE users.id != ?
       AND users.id NOT IN
@@ -82,11 +86,10 @@ module.exports = class Profile {
           JSON_EXTRACT(users.location, '$.lng')
         )
       ) BETWEEN ? AND ?
-    ORDER BY location ASC
+    ORDER BY location ASC, fame DESC
     LIMIT ${limit} OFFSET ${offset}
     `
 
-    // console.log(sql)
     console.log(`limit: ${limit} - offset: ${offset}`);
     const [arr, fields] = await pool.execute(sql, [
       userA.lat,

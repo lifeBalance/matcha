@@ -29,6 +29,7 @@ function UserMiniCard(props) {
     online,
     last_seen,
     rated,
+    fame,
     age,
     gender,
     prefers,
@@ -116,7 +117,7 @@ function UserMiniCard(props) {
           <p>
             <span className='text-slate-700 font-semibold'>Age:</span> {age}
             <span className='text-slate-700 font-semibold ml-6'>Gender:</span> {genderElem}
-            <span className='text-slate-700 font-semibold ml-6'>Rate:</span> {rated}%
+            <span className='text-slate-700 font-semibold ml-6'>Rated:</span> {parseFloat(fame).toFixed(1)}%
           </p>
 
           <p>
