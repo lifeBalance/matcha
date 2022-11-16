@@ -122,18 +122,47 @@ exports.readAllProfiles = async (req, res, next) => {
     }
     /* Here we have to add things such as pagination, filters, etc. */
     const page = parseInt(req.query.page)
-
     // console.log('PAGE: '+page+' UID: '+req.uid)          // testing
 
-    console.log(`profiles controller: ${JSON.parse(req.query.dist).lo} - ${JSON.parse(req.query.dist).hi}`) // testing
+
+    console.log(`profiles controller(dist): ${req.query.distRange}`) // testing
+    console.log(`profiles controller(age): ${req.query.ageRange}`) // testing
+    // console.log(`profiles controller: ${JSON.parse(req.query.distRange).lo} - ${JSON.parse(req.query.distRange).hi}`) // testing
     // Search defaults
     // const dist = { lo: 0, hi: 200 } // 20km radius
 
     // req.query.dist = null // testing
 
-    const dist = req.query.dist != null ?
-      JSON.parse(req.query.dist) : { lo: 0, hi: 160 } // 20km radius
-    // const dist = { lo: 0, hi: 800 }
+    let ageRange = null
+    // Normalize distance range (if user submitted one)
+    if (req.query.ageRange) {
+      const loAge = Math.min(
+        parseInt(JSON.parse(req.query.ageRange).lo),
+        parseInt(JSON.parse(req.query.ageRange).hi)
+      )
+      const hiAge = Math.max(
+        parseInt(JSON.parse(req.query.ageRange).lo),
+        parseInt(JSON.parse(req.query.ageRange).hi)
+      )
+      ageRange = { lo: loAge, hi: hiAge }
+    }
+    ageRange ??= { lo: 18, hi: 99 } // Default 0-99 years old
+    console.log(`ageRange: ${JSON.stringify(ageRange)}`);
+
+    let distRange = null
+    // Normalize distance range (if user submitted one)
+    if (req.query.distRange) {
+      const lo = Math.min(
+        parseInt(JSON.parse(req.query.distRange).lo),
+        parseInt(JSON.parse(req.query.distRange).hi)
+      )
+      const hi = Math.max(
+        parseInt(JSON.parse(req.query.distRange).lo),
+        parseInt(JSON.parse(req.query.distRange).hi)
+      )
+      distRange = { lo: lo, hi: hi }
+    }
+    distRange ??= { lo: 0, hi: 50 } // Default 50km radius
 
     // Read all profiles, except the one of the user making the request!!!
     const profileList = await ProfileModel.readAll({
@@ -145,9 +174,10 @@ exports.readAllProfiles = async (req, res, next) => {
         lng: parseFloat(settings.location.lng), 
       },
       dist:     {
-        lo: +dist.lo * 1000.0,
-        hi: +dist.hi * 1000.0
-      }
+        lo: +distRange.lo * 1000.0,
+        hi: +distRange.hi * 1000.0
+      },
+      age: ageRange
     })
 
     const allTags = await TagModel.readAll()
@@ -171,6 +201,7 @@ exports.readAllProfiles = async (req, res, next) => {
         //     longitude: settings.location.lng
         //   }
         // )
+        console.log(`${prof.id} - ${(prof.location / 1000).toFixed(2)}`);
 
         // Compute the user's rating as ratio of matches/liked users
         const matches = await MatchModel.readAllMatches({ uid: req.uid })

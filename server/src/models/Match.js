@@ -38,7 +38,7 @@ module.exports = class Match {
         1: A fields OBJECT (metadata about the query result). */
     const [arr, fields] = await pool.execute(sql, [])
 
-    console.log('ARR: '+ JSON.stringify(arr)) // testing
+    // console.log('ARR: '+ JSON.stringify(arr)) // testing
     return arr
   }
 

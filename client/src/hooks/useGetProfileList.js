@@ -36,6 +36,8 @@ function useGetProfileList(params) {
   const [profiles, setProfiles] = React.useState([])
   const [isLoadingProfiles, setIsLoadingProfiles] = React.useState(false)
   const [errorLoadingProfiles, setErrorLoadingProfiles] = React.useState(false)
+  const [newSearch, setNewSearch] = React.useState(true)
+
   const dispatch = useDispatch()
 
   async function getProfileList(args) {
@@ -45,13 +47,14 @@ function useGetProfileList(params) {
       /*  Next line is crucial to protect the App from 
         errors caused by the user Reloading the Browser. */
       if (!args.accessToken) return
-console.log(args);
+// console.log(args);
       const response = await fetchProfiles({
         url: '/profiles',
         method: 'get',
         params: {
           page: args.page,
-          dist: args?.dist || null
+          distRange: args?.distRange || null,
+          ageRange: args?.ageRange || null,
         },
         headers: {
           'Authorization': `Bearer ${args.accessToken}`
@@ -63,9 +66,15 @@ console.log(args);
       // console.log('profiled? ' + JSON.stringify(response.data.profiled)) // testing
       // console.log('typeof ' + typeof(response.data.profiled)) // testing
       // console.log('tags ' + JSON.stringify(response.data.tags)) // testing
+      console.log(response.data) // testing
 
       if (response.data.profiled) {
-        setProfiles(prevState => [...prevState, ...response.data.profiles].filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i))
+        if (newSearch) {
+          setProfiles(response.data.profiles)
+          setNewSearch(false)
+        } else {
+          setProfiles(prevState => [...prevState, ...response.data.profiles].filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i))
+        }
         args.setAllTags(response.data.tags)
       }
     } catch (error) {
@@ -84,6 +93,8 @@ console.log(args);
     getProfileList,
     isLoadingProfiles,
     errorLoadingProfiles,
+    newSearch,
+    setNewSearch
   }
 }
 

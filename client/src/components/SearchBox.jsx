@@ -9,12 +9,12 @@ function SearchBox({ searchBoxProps, profiles, requestProfiles }) {
   const {
     ageRange,
     setAgeRange,
-    // normalizeAgeRange,
+    normalizeAgeRange,
     rateRange,
     setRateRange,
     locationRange,
     setLocationRange,
-    // normalizeLocationRange,
+    normalizeLocationRange,
     tags,
     allTags,
     setAllTags,
@@ -24,17 +24,11 @@ function SearchBox({ searchBoxProps, profiles, requestProfiles }) {
     orderBy,
     setOrderBy,
     search,
-    reset
+    reset,
+    searchBoxChanged,
+    setSearchBoxChanged
   } = searchBoxProps
-  // console.log(searchBoxProps);
-
-  // React.useEffect(() => {
-  //   normalizeAgeRange()
-  // }, [ageRange])
-
-  // React.useEffect(() => {
-  //   normalizeLocationRange()
-  // }, [locationRange])
+  console.log(locationRange);
 
   return (
     <div className="w-[360px] flex flex-col border border-white rounded-lg px-4 py-2 mx-auto">

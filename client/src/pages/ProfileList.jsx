@@ -39,7 +39,9 @@ function ProfileList() {
     setProfiles,
     getProfileList,
     isLoadingProfiles,
-    errorLoadingProfiles
+    errorLoadingProfiles,
+    newSearch,
+    setNewSearch
   } = useGetProfileList()
 
   const searchBoxHook = useSearchBox()
@@ -49,8 +51,6 @@ function ProfileList() {
     const filters = ['age', 'rated', 'location', 'tags']
     const orderBy = filters[searchBoxHook.orderBy]
     // console.log('criteria '+orderBy) // testing
-  
-    // if (searchBoxHook.sortedProfiles?.length === 0) return
 
     // We need special logic to sort profiles by tags in common!!
     if (orderBy === 'tags') {
@@ -83,7 +83,8 @@ function ProfileList() {
     getProfileList({
       accessToken,
       page,
-      dist: searchBoxHook.locationRange,
+      distRange:  searchBoxHook.locationRange,
+      ageRange:   searchBoxHook.ageRange,
       setAllTags: searchBoxHook.setAllTags
     })
   }
@@ -99,7 +100,8 @@ function ProfileList() {
           getProfileList({
             accessToken,
             page,
-            dist: searchBoxHook.locationRange,
+            distRange:  searchBoxHook.locationRange,
+            ageRange:   searchBoxHook.ageRange,
             setAllTags: searchBoxHook.setAllTags
           })
         } else {
@@ -111,13 +113,10 @@ function ProfileList() {
   }, [isLoggingIn, isLoggedIn, isProfiled, isConfirmed, accessToken, page])
 
   React.useEffect(() => {
-    // console.log(profiles) // testing
-    if (profiles?.length === 0) return 
-    // searchBoxHook.setSortedProfiles(profiles)
-  }, [profiles])
-
-  // console.log(profiles)  // testing
-  // console.log(props)  // testing
+    console.log(`new search? ${newSearch}`);
+    setNewSearch(true)
+    setPage(1)
+  }, [searchBoxHook.locationRange, searchBoxHook.ageRange])
 
   // If the user is not logged in, we just return the Hero content
   if (!isLoggedIn) return (<Hero />)
@@ -129,12 +128,13 @@ function ProfileList() {
     <ul className='mb-3 space-y-3'>
       {/* console.log(JSON.stringify(profiles)) */}
       {profiles.map(profile => (
-        <li key={profile.id}>
-          <UserMiniCard
-            profile={profile}
-            setProfiles={setProfiles}
-          />
-        </li>
+        <div>{profile.id} (age: {profile.age}) - {(profile.location / 1000).toFixed(1)}</div>
+        // <li key={profile.id}>
+        //   <UserMiniCard
+        //     profile={profile}
+        //     setProfiles={setProfiles}
+        //   />
+        // </li>
       ))}
 
       {/* Spinner */}

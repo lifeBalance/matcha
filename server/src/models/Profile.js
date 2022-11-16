@@ -35,9 +35,11 @@ module.exports = class Profile {
   }
 
   static async readAll(data) {
-    let { id, page, prefers, userA, dist } = data
+    let { id, page, prefers, userA, dist, age } = data
     // console.log(`id: ${id} - page: ${page} - prefers: ${JSON.stringify(prefers)}`)  // testing
     console.log(`locat.: ${JSON.stringify(dist)} (typeof hi: ${typeof dist.hi})`)
+    console.log(`userA.: ${JSON.stringify(userA)}`)
+    console.log(`age: ${JSON.stringify(age)}`)
 
     const limit = 10
     const offset = (page - 1) * limit
@@ -55,32 +57,51 @@ module.exports = class Profile {
       users.prefers,
       users.bio,
       users.location,
+      (SELECT JSON_ARRAYAGG(
+        JSON_OBJECT('url', pic_urls.url, 'profile', pic_urls.profile_pic)
+        ) FROM pic_urls WHERE pic_urls.user_id = users.id) AS pics,
       (SELECT ST_Distance_Sphere(
-        point(CAST(? AS DOUBLE), CAST(? AS DOUBLE)),
+        point(?, ?),
         point(
-          CAST(JSON_EXTRACT(users.location, '$.lng') AS DOUBLE),
-          CAST(JSON_EXTRACT(users.location, '$.lat') AS DOUBLE)
+          JSON_EXTRACT(users.location, '$.lat'),
+          JSON_EXTRACT(users.location, '$.lng')
         )
       )) AS location
-      FROM users
-      WHERE ST_Distance_Sphere(
-          point(CAST(? AS DOUBLE), CAST(? AS DOUBLE)),
-          point(
-            CAST(JSON_EXTRACT(users.location, '$.lng') AS DOUBLE),
-            CAST(JSON_EXTRACT(users.location, '$.lat') AS DOUBLE)
-          )
-        ) BETWEEN ${dist.lo} AND ${dist.hi}
-      ORDER BY location DESC
-      `
-    console.log(sql);
+    FROM users
+    WHERE users.id != ?
+      AND users.id NOT IN
+        (SELECT blocker
+          FROM blocked_users
+          WHERE blocked = ?)
+      AND users.gender IN (?)
+      AND users.age BETWEEN ? AND ?
+      AND ST_Distance_Sphere(
+        point(?, ?),
+        point(
+          JSON_EXTRACT(users.location, '$.lat'),
+          JSON_EXTRACT(users.location, '$.lng')
+        )
+      ) BETWEEN ? AND ?
+    ORDER BY location ASC
+    LIMIT ${limit} OFFSET ${offset}
+    `
+
+    // console.log(sql)
+    console.log(`limit: ${limit} - offset: ${offset}`);
     const [arr, fields] = await pool.execute(sql, [
-      userA.lng,
       userA.lat,
       userA.lng,
+      id,
+      id,
+      prefers,
+      age.lo,
+      age.hi,
       userA.lat,
-      // dist.lo,
-      // dist.hi
+      userA.lng,
+      dist.lo,
+      dist.hi
     ])
+
     // `
     // SELECT
     //   users.id,
