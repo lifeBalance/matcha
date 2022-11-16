@@ -55,6 +55,7 @@ function useGetProfileList(params) {
           page: args.page,
           distRange: args?.distRange || null,
           ageRange: args?.ageRange || null,
+          tags:    args?.tags     || null
         },
         headers: {
           'Authorization': `Bearer ${args.accessToken}`

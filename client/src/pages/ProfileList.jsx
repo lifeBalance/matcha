@@ -85,7 +85,8 @@ function ProfileList() {
       page,
       distRange:  searchBoxHook.locationRange,
       ageRange:   searchBoxHook.ageRange,
-      setAllTags: searchBoxHook.setAllTags
+      setAllTags: searchBoxHook.setAllTags,
+      tags:       searchBoxHook.tags
     })
   }
 
@@ -102,7 +103,8 @@ function ProfileList() {
             page,
             distRange:  searchBoxHook.locationRange,
             ageRange:   searchBoxHook.ageRange,
-            setAllTags: searchBoxHook.setAllTags
+            setAllTags: searchBoxHook.setAllTags,
+            tags:       searchBoxHook.tags
           })
         } else {
           const matcha = localStorage.getItem('matcha')
@@ -116,7 +118,7 @@ function ProfileList() {
     console.log(`new search? ${newSearch}`);
     setNewSearch(true)
     setPage(1)
-  }, [searchBoxHook.locationRange, searchBoxHook.ageRange])
+  }, [searchBoxHook.locationRange, searchBoxHook.ageRange, searchBoxHook.tags, searchBoxHook.rateRange])
 
   // If the user is not logged in, we just return the Hero content
   if (!isLoggedIn) return (<Hero />)

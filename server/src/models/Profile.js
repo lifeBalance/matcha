@@ -35,11 +35,12 @@ module.exports = class Profile {
   }
 
   static async readAll(data) {
-    let { id, page, prefers, userA, dist, age } = data
+    let { id, page, prefers, userA, dist, age, tags } = data
     // console.log(`id: ${id} - page: ${page} - prefers: ${JSON.stringify(prefers)}`)  // testing
-    console.log(`locat.: ${JSON.stringify(dist)} (typeof hi: ${typeof dist.hi})`)
-    console.log(`userA.: ${JSON.stringify(userA)}`)
-    console.log(`age: ${JSON.stringify(age)}`)
+    // console.log(`locat.: ${JSON.stringify(dist)} (typeof hi: ${typeof dist.hi})`)
+    // console.log(`userA.: ${JSON.stringify(userA)}`)
+    // console.log(`age: ${JSON.stringify(age)}`)
+    console.log(`tags: ${tags} (type ${typeof tags})`)
 
     const limit = 10
     const offset = (page - 1) * limit
@@ -56,6 +57,7 @@ module.exports = class Profile {
       users.gender,
       users.prefers,
       users.bio,
+      users.tags,
       users.location,
       (SELECT JSON_ARRAYAGG(
         JSON_OBJECT('url', pic_urls.url, 'profile', pic_urls.profile_pic)
@@ -84,12 +86,15 @@ module.exports = class Profile {
         point(
           JSON_EXTRACT(users.location, '$.lat'),
           JSON_EXTRACT(users.location, '$.lng')
-        )
+          )
       ) BETWEEN ? AND ?
-    ORDER BY location ASC, fame DESC
-    LIMIT ${limit} OFFSET ${offset}
-    `
-
+      AND IF(JSON_LENGTH(?) > 0, 
+        JSON_OVERLAPS(? , users.tags),
+        1)
+      ORDER BY location ASC, fame DESC
+      LIMIT ${limit} OFFSET ${offset}
+      `
+    // AND JSON_OVERLAPS('[63, 22, 31]', '[22, 31]') = 1
     console.log(`limit: ${limit} - offset: ${offset}`);
     const [arr, fields] = await pool.execute(sql, [
       userA.lat,
@@ -102,7 +107,11 @@ module.exports = class Profile {
       userA.lat,
       userA.lng,
       dist.lo,
-      dist.hi
+      dist.hi,
+      tags,     // tags selected by the user in the advanced search
+      tags
+      // limit,
+      // offset
     ])
 
     // `

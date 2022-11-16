@@ -108,7 +108,7 @@ exports.readAllProfiles = async (req, res, next) => {
     // Don't forget to check if the user requesting profiles is profiled!
     const settings = await SettingsModel.readSettings({ id: req.uid })
     // console.log('PROFILES controller: ' + JSON.stringify(settings)) // testing
-    console.log('PROFILES controller: ' + JSON.stringify(settings.location)) // testing
+    // console.log('PROFILES controller: ' + JSON.stringify(settings.location)) // testing
 
     /* If the user requesting profiles is not profiled, we don't send her
       the Profile list. */
@@ -125,8 +125,8 @@ exports.readAllProfiles = async (req, res, next) => {
     // console.log('PAGE: '+page+' UID: '+req.uid)          // testing
 
 
-    console.log(`profiles controller(dist): ${req.query.distRange}`) // testing
-    console.log(`profiles controller(age): ${req.query.ageRange}`) // testing
+    // console.log(`profiles controller(dist): ${req.query.distRange}`) // testing
+    // console.log(`profiles controller(age): ${req.query.ageRange}`) // testing
     // console.log(`profiles controller: ${JSON.parse(req.query.distRange).lo} - ${JSON.parse(req.query.distRange).hi}`) // testing
     // Search defaults
     // const dist = { lo: 0, hi: 200 } // 20km radius
@@ -147,7 +147,7 @@ exports.readAllProfiles = async (req, res, next) => {
       ageRange = { lo: loAge, hi: hiAge }
     }
     ageRange ??= { lo: 18, hi: 99 } // Default 0-99 years old
-    console.log(`ageRange: ${JSON.stringify(ageRange)}`);
+    // console.log(`ageRange: ${JSON.stringify(ageRange)}`);
 
     let distRange = null
     // Normalize distance range (if user submitted one)
@@ -164,6 +164,20 @@ exports.readAllProfiles = async (req, res, next) => {
     }
     distRange ??= { lo: 0, hi: 50 } // Default 50km radius
 
+    // TODO: NORMALIZE ALSO THE FAME RATES!!!
+
+    // TAGS
+    console.log('PROFILES controller (tags): ' + req.query.tags) // testing
+    console.log('PROFILES controller (type of tags): ' + Array.isArray(req.query.tags)) // testing
+
+    // if (req.query.tags)
+    //   req?.query?.tags.forEach(element => {
+    //     console.log(element)
+    //   })
+    const tagIds = Array.isArray(req?.query?.tags) ? 
+      req.query.tags.map(t => JSON.parse(t).value) : []
+    console.log(`profiles controller - tagIds: ${JSON.stringify(tagIds)}`)
+
     // Read all profiles, except the one of the user making the request!!!
     const profileList = await ProfileModel.readAll({
       id:       req.uid,
@@ -177,7 +191,8 @@ exports.readAllProfiles = async (req, res, next) => {
         lo: +distRange.lo * 1000.0,
         hi: +distRange.hi * 1000.0
       },
-      age: ageRange
+      age:  ageRange,
+      tags: JSON.stringify(tagIds) // we need a JSON array: [1, 3]
     })
 
     const allTags = await TagModel.readAll()

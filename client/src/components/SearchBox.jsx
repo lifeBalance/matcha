@@ -28,7 +28,7 @@ function SearchBox({ searchBoxProps, profiles, requestProfiles }) {
     searchBoxChanged,
     setSearchBoxChanged
   } = searchBoxProps
-  console.log(locationRange);
+  console.log(tags);
 
   return (
     <div className="w-[360px] flex flex-col border border-white rounded-lg px-4 py-2 mx-auto">
