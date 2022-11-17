@@ -41,6 +41,7 @@ function Settings() {
       preferences:  data.prefers,
       bio:          unescape(data.bio),
       pics:         data.allPics,
+      tags:         data.userTags
     })
   }
 
@@ -127,6 +128,13 @@ function Settings() {
 
         <p>
           <span className='font-semibold'>Rated: </span>{user.rated}%
+        </p>
+
+        <p className='flex flex-wrap'>
+          <span className='text-slate-700 font-semibold'>Tags:</span>
+          {user.tags.map(t => (
+            <span key={Math.random()} className='mx-1 px-2 bg-slate-300 rounded-lg shadow-md break-keep'>{t.label}</span>
+          ))}
         </p>
 
         <p className='pb-8'>
