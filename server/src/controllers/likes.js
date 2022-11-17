@@ -33,7 +33,7 @@ exports.like = async (req, res, next) => {
       id: req.uid
     })
     // Find the profile pic
-    const likerProfilePic = liker.pics.find(pic => pic.profile === 1)
+    const likerProfilePic = liker.pics ? liker.pics.find(pic => pic.profile === 1) : ''
 
     // Write the like
     const ret = await LikeModel.writeLike({

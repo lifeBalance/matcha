@@ -122,9 +122,7 @@ function Profile() {
                 ))}
             </Carousel>
           ) : (
-            <div className='flex items-center justify-center h-96 bg-slate-700 md:rounded-t-lg'>
-              <UserCircleIcon className='w-[80%] text-white' />
-            </div>
+            <UserCircleIcon className='w-[100%] text-slate-200' />
           )}
         </div>
 

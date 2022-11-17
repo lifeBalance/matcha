@@ -2,7 +2,10 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 
 //icons
-import { XCircleIcon } from '@heroicons/react/24/outline'
+import { XCircleIcon, } from '@heroicons/react/24/outline'
+import {
+  UserCircleIcon,
+} from '@heroicons/react/24/solid'
 
 function Notification(props) {
   const {
@@ -40,12 +43,19 @@ function Notification(props) {
           onClick={props.deleteNotif}
         />
 
-        <img
+        {!content.profilePic &&
+        <div
+          className='rounded-full'
+        >
+          <UserCircleIcon className='inline w-20 h-20 text-slate-700'/>
+        </div>}
+
+        {content.profilePic && <img
           className='rounded-full w-20 h-20'
           src={content.profilePic}
           alt={`${content.username} profile pic`}
           crossOrigin='anonymous'
-        />
+        />}
 
         <p className='pl-4 text-slate-700 text-lg'>
           <Link to={`/profiles/${content.from}`}>

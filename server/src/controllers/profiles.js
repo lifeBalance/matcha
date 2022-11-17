@@ -74,6 +74,8 @@ exports.readOneProfile = async (req, res, next) => {
     // Last seen in a user-friendly way
     const ago = dayjs().to(dayjs(profile.last_seen))
 
+    const pics = profile?.pics ? profile?.pics.map(p => p.url) : []
+
     return res.status(200).json({
       type: 'SUCCESS',
       message: 'there you go champ',
@@ -92,7 +94,7 @@ exports.readOneProfile = async (req, res, next) => {
         profile_pic_url:  profilePicUrl,
         you_like_user:    youLikeUser,
         tags:             tagLabels,
-        pics:             profile.pics.map(p => p.url),
+        pics:             pics,
         location:         (distance / 1000).toFixed(1)
       }
     })

@@ -24,7 +24,7 @@ exports.postView = async (req, res, next) => {
     // console.log('views controller: '+JSON.stringify(viewer));
 
     // Find the profile pic
-    const profilePic = viewer.pics.find(pic => pic.profile === 1)
+    const profilePic = viewer.pics ? viewer.pics.find(pic => pic.profile === 1) : ''
     // console.log(`profile pic: ${JSON.stringify(profilePic)}`) // testing
 
     // If the view was written to the DB
