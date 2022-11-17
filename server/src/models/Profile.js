@@ -40,7 +40,8 @@ module.exports = class Profile {
     // console.log(`locat.: ${JSON.stringify(dist)} (typeof hi: ${typeof dist.hi})`)
     // console.log(`userA.: ${JSON.stringify(userA)}`)
     // console.log(`age: ${JSON.stringify(age)}`)
-    console.log(`tags: ${tags} (type ${typeof tags})`)
+    // console.log(`tags: ${tags} (type ${typeof tags})`)
+    // console.log(`prefers: ${JSON.stringify(prefers)} is array? ${Array.isArray(prefers)}`)
 
     const limit = 10
     const offset = (page - 1) * limit
@@ -79,7 +80,7 @@ module.exports = class Profile {
         (SELECT blocker
           FROM blocked_users
           WHERE blocked = ?)
-      AND users.gender IN (?)
+      AND FIND_IN_SET(users.gender, ?)
       AND users.age BETWEEN ? AND ?
       AND ST_Distance_Sphere(
         point(?, ?),
@@ -99,13 +100,13 @@ module.exports = class Profile {
       LIMIT ${limit} OFFSET ${offset}
       `
     // AND JSON_OVERLAPS('[63, 22, 31]', '[22, 31]') = 1
-    console.log(`limit: ${limit} - offset: ${offset}`);
+    // console.log(`limit: ${limit} - offset: ${offset}`);
     const [arr, fields] = await pool.execute(sql, [
       userA.lat,
       userA.lng,
       id,
       id,
-      prefers,
+      prefers.join(','),
       age.lo,
       age.hi,
       userA.lat,

@@ -201,7 +201,7 @@ exports.readAllProfiles = async (req, res, next) => {
     const profileList = await ProfileModel.readAll({
       id:       req.uid,
       page:     page,
-      prefers:  settings.prefers === 2 ? [0, 1] : [settings.prefers],
+      prefers:  settings.prefers === 2 ? [0, 1, 2] : [settings.prefers],
       userA:    {
         lat: parseFloat(settings.location.lat),
         lng: parseFloat(settings.location.lng), 
@@ -222,7 +222,7 @@ exports.readAllProfiles = async (req, res, next) => {
     const profiles = []
     if (profileList) {
       for (const prof of profileList) {
-        // console.log(`${prof.id} - ${(prof.location / 1000).toFixed(2)}`)
+        console.log(`${prof.id} - ${(prof.location / 1000).toFixed(2)}`)
         // console.log(`profiles controller: ${prof.fame}`)
 
         // Pull array of all the users liked by current user
