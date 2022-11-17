@@ -25,17 +25,18 @@ exports.savePic = async (pic, uid, is_profile_pic) => {
   try {
     await fs.access(userFolder)
     folderExists = true
-    console.log(`folderExists? ${folderExists}`) // testing
+    // console.log(`folderExists? ${folderExists}`) // testing
   } catch (error) {
     folderExists = false
-    console.log(`It seems ${userFolder} doesn't exist! (${error})`) // testing
+    // console.log(`This script is at ${__dirname}`) // testing
+    // console.log(`It seems ${userFolder} doesn't exist! (${error})`) // testing
   }
 
   if (!folderExists) {
     try {
-      await fs.mkdir(userFolder)
+      await fs.mkdir(userFolder, { recursive: true })
     } catch (error) {
-      console.log(`Error creating ${userFolder} (${error})`) // testing
+      // console.log(`Error creating ${userFolder} (${error})`) // testing
     }
   }
 
@@ -70,7 +71,7 @@ exports.deletePic = async (picUrl, uid) => {
   try {
     await fs.unlink(pathToPic)
   } catch (error) {
-    console.log(`We couldn't delete ${pathToPic}`)
+    // console.log(`We couldn't delete ${pathToPic}`)
   }
 
   // Delete the URL to the DB.
