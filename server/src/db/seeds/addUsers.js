@@ -67,7 +67,7 @@ const tagsArr = [
   [1, 2, 5],
   [1, 4, 3]
 ]
-for (let index = 2; index <= 500; index++) {
+for (let index = 1; index <= 500; index++) {
   users.push({
     id: index,
     username:     `${faker.word.adjective(5)}-${faker.word.noun(5)}`,
