@@ -34,7 +34,7 @@ function NotifList() {
     if (!isLoggedIn) return navigate('/', { replace: true })
 
     getNotifList()
-  }, [newNotifs])
+  }, [newNotifs, isLoggedIn])
 
   if (!isLoadingNotifList && notifs.length === 0)
     return (
