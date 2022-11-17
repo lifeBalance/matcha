@@ -66,7 +66,7 @@ function Chat() {
         url:          location.pathname
       })
     }
-  }, [updatedConvos])
+  }, [updatedConvos, isLoggedIn])
 
   React.useEffect(() => {
     getMessageList({

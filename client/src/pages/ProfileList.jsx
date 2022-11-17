@@ -115,7 +115,7 @@ function ProfileList() {
   }, [isLoggingIn, isLoggedIn, isProfiled, isConfirmed, accessToken, page])
 
   React.useEffect(() => {
-    console.log(`new search? ${newSearch}`);
+    // console.log(`new search? ${newSearch}`)
     setNewSearch(true)
     setPage(1)
   }, [searchBoxHook.locationRange, searchBoxHook.ageRange, searchBoxHook.tags, searchBoxHook.rateRange])
