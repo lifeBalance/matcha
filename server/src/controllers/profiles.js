@@ -149,7 +149,7 @@ exports.readAllProfiles = async (req, res, next) => {
     ageRange ??= { lo: 18, hi: 99 } // Default 0-99 years old
 
     // Normalize fame range (if user submitted one)
-    console.log(`fameRange: ${req.query.fameRange}`);
+    // console.log(`fameRange: ${req.query.fameRange}`);
 
     let fameRange = null
     if (req.query.fameRange) {
@@ -164,7 +164,7 @@ exports.readAllProfiles = async (req, res, next) => {
       fameRange = { lo: lo, hi: hi }
     }
     fameRange ??= { lo: 0, hi: 100 } // Default 0-100%
-    console.log(`fameRange: ${JSON.stringify(fameRange)}`);
+    // console.log(`fameRange: ${JSON.stringify(fameRange)}`);
 
     // Normalize distance range (if user submitted one)
     let distRange = null
@@ -221,7 +221,7 @@ exports.readAllProfiles = async (req, res, next) => {
     if (profileList) {
       for (const prof of profileList) {
         // console.log(`${prof.id} - ${(prof.location / 1000).toFixed(2)}`)
-        console.log(`profiles controller: ${prof.fame}`)
+        // console.log(`profiles controller: ${prof.fame}`)
 
         // Pull array of all the users liked by current user
         const allLikedUsers = await LikeModel.readAllLikedBy({ uid: req.uid })

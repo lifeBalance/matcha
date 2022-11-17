@@ -45,7 +45,7 @@ function Profile() {
   } = useViews()
   
   React.useEffect(() => {
-    console.log(`visiting profile ${params.id} (${typeof params.id})`);
+    // console.log(`visiting profile ${params.id} (${typeof params.id})`);
     submitView({
       accessToken,
       // backend expects the 'to' property to be a number...

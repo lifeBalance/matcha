@@ -41,13 +41,18 @@ function UserProfileControls(props) {
 
 
   // redux
-  const { accessToken } = useSelector((slices) => slices.auth)
+  const { accessToken, profilePic } = useSelector((slices) => slices.auth)
 
   React.useEffect(() => {
     setLike(props.youLikeUser)
   }, [])
 
   function handleLikes(likeVal) {
+    if (!profilePic) {
+      setModalIsOpen(true)
+      setModalContent('Please, add a profile picture to like other users.')
+      return
+    }
     submitLike({
       accessToken,
       method: likeVal ? 'post' : 'delete',
@@ -66,12 +71,15 @@ function UserProfileControls(props) {
       setModalIsOpen(true)
       setModalContent(`User has been ${blockVal}`)
     }
-    console.log(`user has been ${blockVal}`)
+    // console.log(`user has been ${blockVal}`)
   }
 
   function closeModalHandler() {
     setModalIsOpen(false)
-    navigate('/', { replace: true })
+    if (profilePic)
+      navigate('/', { replace: true })
+    else
+      navigate('/edit', { replace: true })
   }
 
   return (
