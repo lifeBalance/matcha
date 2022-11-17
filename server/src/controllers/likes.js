@@ -55,7 +55,7 @@ exports.like = async (req, res, next) => {
       })
 
       // Find the profile pic
-      const likedProfilePic = liked.pics.find(pic => pic.profile === 1)
+      const likedProfilePic = liked.pics ? liked.pics.find(pic => pic.profile === 1) : ''
 
       await MatchModel.writeMatch({
         // order doesn't matter here; a match is a match ;-)
