@@ -76,7 +76,7 @@ function useChat() {
         params: { interlocutor: args.interlocutor },
         refreshTokens: () => dispatch(refresh({ accessToken: args.accessToken })),
       })
-      console.log(response.data);
+      // console.log(response.data);
       if (response.data) {
         setIsOnline(response.data.online)
         setMessageList(response.data.messageList)

@@ -9,12 +9,10 @@ function SearchBox({ searchBoxProps, profiles, requestProfiles }) {
   const {
     ageRange,
     setAgeRange,
-    normalizeAgeRange,
-    rateRange,
-    setRateRange,
+    fameRange,
+    setFameRange,
     locationRange,
     setLocationRange,
-    normalizeLocationRange,
     tags,
     allTags,
     setAllTags,
@@ -23,12 +21,8 @@ function SearchBox({ searchBoxProps, profiles, requestProfiles }) {
     setAscendingOrder,
     orderBy,
     setOrderBy,
-    search,
-    reset,
-    searchBoxChanged,
-    setSearchBoxChanged
+    reset
   } = searchBoxProps
-  console.log(tags);
 
   return (
     <div className="w-[360px] flex flex-col border border-white rounded-lg px-4 py-2 mx-auto">
@@ -69,20 +63,20 @@ function SearchBox({ searchBoxProps, profiles, requestProfiles }) {
               min='0'
               max='100'
               className='w-20 h-8 rounded-sm border-slate-300'
-              value={rateRange.lo}
-              onChange={e => setRateRange({
-                ...rateRange, lo: e.target.value
+              value={fameRange.lo}
+              onChange={e => setFameRange({
+                ...fameRange, lo: e.target.value
               })}
             />
-            <p className='text-white px-2'>rate range</p>
+            <p className='text-white px-2'>fame range</p>
             <input
               type='number'
               min='0'
               max='100'
               className='w-20 h-8 rounded-sm border-slate-300'
-              value={rateRange.hi}
-              onChange={e => setRateRange({
-                ...rateRange,
+              value={fameRange.hi}
+              onChange={e => setFameRange({
+                ...fameRange,
                 hi: e.target.value
               })}
             />

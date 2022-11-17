@@ -52,10 +52,11 @@ function useGetProfileList(params) {
         url: '/profiles',
         method: 'get',
         params: {
-          page: args.page,
-          distRange: args?.distRange || null,
-          ageRange: args?.ageRange || null,
-          tags:    args?.tags     || null
+          page:       args.page,
+          ageRange:   args?.ageRange  || null,
+          fameRange:  args?.fameRange || null,
+          distRange:  args?.distRange || null,
+          tags:       args?.tags      || null
         },
         headers: {
           'Authorization': `Bearer ${args.accessToken}`
@@ -67,7 +68,7 @@ function useGetProfileList(params) {
       // console.log('profiled? ' + JSON.stringify(response.data.profiled)) // testing
       // console.log('typeof ' + typeof(response.data.profiled)) // testing
       // console.log('tags ' + JSON.stringify(response.data.tags)) // testing
-      console.log(response.data) // testing
+      // console.log(response.data) // testing
 
       if (response.data.profiled) {
         if (newSearch) {

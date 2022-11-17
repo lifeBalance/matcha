@@ -39,7 +39,7 @@ const notifSlice = createSlice({
       state.updatedConvos.push(action.payload)
     },
     setConvoAsSeen: (state, action) => {
-      console.log('notifSlice: setConvoAsSeen '+action.payload + ' type: '+ typeof action.payload)
+      // console.log('notifSlice: setConvoAsSeen '+action.payload + ' type: '+ typeof action.payload)
       // console.log(current(state.updatedConvos)) // testing
       state.updatedConvos = state.updatedConvos.filter(i => i !== action.payload)
     },

@@ -133,8 +133,8 @@ exports.readAllProfiles = async (req, res, next) => {
 
     // req.query.dist = null // testing
 
-    let ageRange = null
     // Normalize distance range (if user submitted one)
+    let ageRange = null
     if (req.query.ageRange) {
       const loAge = Math.min(
         parseInt(JSON.parse(req.query.ageRange).lo),
@@ -147,10 +147,27 @@ exports.readAllProfiles = async (req, res, next) => {
       ageRange = { lo: loAge, hi: hiAge }
     }
     ageRange ??= { lo: 18, hi: 99 } // Default 0-99 years old
-    // console.log(`ageRange: ${JSON.stringify(ageRange)}`);
 
-    let distRange = null
+    // Normalize fame range (if user submitted one)
+    console.log(`fameRange: ${req.query.fameRange}`);
+
+    let fameRange = null
+    if (req.query.fameRange) {
+      const lo = Math.min(
+        parseInt(JSON.parse(req.query.fameRange).lo),
+        parseInt(JSON.parse(req.query.fameRange).hi)
+      )
+      const hi = Math.max(
+        parseInt(JSON.parse(req.query.fameRange).lo),
+        parseInt(JSON.parse(req.query.fameRange).hi)
+      )
+      fameRange = { lo: lo, hi: hi }
+    }
+    fameRange ??= { lo: 0, hi: 100 } // Default 0-100%
+    console.log(`fameRange: ${JSON.stringify(fameRange)}`);
+
     // Normalize distance range (if user submitted one)
+    let distRange = null
     if (req.query.distRange) {
       const lo = Math.min(
         parseInt(JSON.parse(req.query.distRange).lo),
@@ -167,8 +184,8 @@ exports.readAllProfiles = async (req, res, next) => {
     // TODO: NORMALIZE ALSO THE FAME RATES!!!
 
     // TAGS
-    console.log('PROFILES controller (tags): ' + req.query.tags) // testing
-    console.log('PROFILES controller (type of tags): ' + Array.isArray(req.query.tags)) // testing
+    // console.log('PROFILES controller (tags): ' + req.query.tags) // testing
+    // console.log('PROFILES controller (type of tags): ' + Array.isArray(req.query.tags)) // testing
 
     // if (req.query.tags)
     //   req?.query?.tags.forEach(element => {
@@ -176,7 +193,7 @@ exports.readAllProfiles = async (req, res, next) => {
     //   })
     const tagIds = Array.isArray(req?.query?.tags) ? 
       req.query.tags.map(t => JSON.parse(t).value) : []
-    console.log(`profiles controller - tagIds: ${JSON.stringify(tagIds)}`)
+    // console.log(`profiles controller - tagIds: ${JSON.stringify(tagIds)}`)
 
     // Read all profiles, except the one of the user making the request!!!
     const profileList = await ProfileModel.readAll({
@@ -192,7 +209,8 @@ exports.readAllProfiles = async (req, res, next) => {
         hi: +distRange.hi * 1000.0
       },
       age:  ageRange,
-      tags: JSON.stringify(tagIds) // we need a JSON array: [1, 3]
+      tags: JSON.stringify(tagIds), // we need a JSON array: [1, 3]
+      fame: fameRange
     })
 
     const allTags = await TagModel.readAll()
@@ -202,7 +220,8 @@ exports.readAllProfiles = async (req, res, next) => {
     const profiles = []
     if (profileList) {
       for (const prof of profileList) {
-        console.log(`${prof.id} - ${(prof.location / 1000).toFixed(2)}`)
+        // console.log(`${prof.id} - ${(prof.location / 1000).toFixed(2)}`)
+        console.log(`profiles controller: ${prof.fame}`)
 
         // Pull array of all the users liked by current user
         const allLikedUsers = await LikeModel.readAllLikedBy({ uid: req.uid })

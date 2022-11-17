@@ -35,7 +35,7 @@ module.exports = class Profile {
   }
 
   static async readAll(data) {
-    let { id, page, prefers, userA, dist, age, tags } = data
+    let { id, page, prefers, userA, dist, age, tags, fame } = data
     // console.log(`id: ${id} - page: ${page} - prefers: ${JSON.stringify(prefers)}`)  // testing
     // console.log(`locat.: ${JSON.stringify(dist)} (typeof hi: ${typeof dist.hi})`)
     // console.log(`userA.: ${JSON.stringify(userA)}`)
@@ -91,6 +91,10 @@ module.exports = class Profile {
       AND IF(JSON_LENGTH(?) > 0, 
         JSON_OVERLAPS(? , users.tags),
         1)
+      AND (SELECT IF(
+        (SELECT COUNT(*) FROM matches WHERE users.id = liker OR users.id = liked) = 0,
+        0,
+        ((SELECT COUNT(*) FROM matches WHERE users.id = liker OR users.id = liked) * 100) / (SELECT COUNT(*) FROM likes WHERE likes.liker = users.id))) BETWEEN ? AND ?
       ORDER BY location ASC, fame DESC
       LIMIT ${limit} OFFSET ${offset}
       `
@@ -109,7 +113,9 @@ module.exports = class Profile {
       dist.lo,
       dist.hi,
       tags,     // tags selected by the user in the advanced search
-      tags
+      tags,
+      fame.lo,
+      fame.hi
       // limit,
       // offset
     ])

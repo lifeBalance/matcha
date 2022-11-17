@@ -79,12 +79,13 @@ function ProfileList() {
   }, [searchBoxHook.orderBy, searchBoxHook.ascendingOrder])
   
   function requestProfiles() {
-    console.log(searchBoxHook.locationRange);
+    // console.log(searchBoxHook.locationRange);
     getProfileList({
       accessToken,
       page,
-      distRange:  searchBoxHook.locationRange,
       ageRange:   searchBoxHook.ageRange,
+      fameRange:   searchBoxHook.fameRange,
+      distRange:  searchBoxHook.locationRange,
       setAllTags: searchBoxHook.setAllTags,
       tags:       searchBoxHook.tags
     })
@@ -101,8 +102,8 @@ function ProfileList() {
           getProfileList({
             accessToken,
             page,
+            rateRange:   searchBoxHook.rateRange,
             distRange:  searchBoxHook.locationRange,
-            ageRange:   searchBoxHook.ageRange,
             setAllTags: searchBoxHook.setAllTags,
             tags:       searchBoxHook.tags
           })
@@ -118,7 +119,7 @@ function ProfileList() {
     // console.log(`new search? ${newSearch}`)
     setNewSearch(true)
     setPage(1)
-  }, [searchBoxHook.locationRange, searchBoxHook.ageRange, searchBoxHook.tags, searchBoxHook.rateRange])
+  }, [searchBoxHook.locationRange, searchBoxHook.ageRange, searchBoxHook.tags, searchBoxHook.fameRange])
 
   // If the user is not logged in, we just return the Hero content
   if (!isLoggedIn) return (<Hero />)
