@@ -37,7 +37,7 @@ function ChatList() {
     if (!isLoggedIn) return navigate('/', { replace: true })
 
     getChatList({ accessToken, refresh })
-  }, [matchesChanged])
+  }, [matchesChanged, isLoggedIn])
 
   // console.log('updated convos: '+updatedConvos) // testing
 
