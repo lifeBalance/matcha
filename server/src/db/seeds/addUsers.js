@@ -64,8 +64,8 @@ const users = []
 const pics = []
 const tagsArr = [
   [1, 2, 3],
-  [1, 2, 5],
-  [1, 4, 3]
+  [2, 3, 4],
+  [3, 4, 5]
 ]
 for (let index = 1; index <= 500; index++) {
   users.push({

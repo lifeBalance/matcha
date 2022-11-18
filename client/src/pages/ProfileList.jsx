@@ -58,14 +58,14 @@ function ProfileList() {
 
     // We need special logic to sort profiles by tags in common!!
     if (orderBy === 'tags') {
-      console.log(`tags: ${JSON.stringify(searchBoxHook.tags)}`) // testing
+      // console.log(`tags: ${JSON.stringify(searchBoxHook.tags)}`) // testing
       if (searchBoxHook.tags.length === 0) return
       
       // Map the array of {label: 'blondes', value: 1} objects to just labels
       const searchTags = searchBoxHook.tags.map(i => i.label)
-      console.log(`tags: ${JSON.stringify(searchTags)}`) // testing
+      // console.log(`tags: ${JSON.stringify(searchTags)}`) // testing
       
-      if (searchBoxHook.ascendingOrder == false) {
+      if (searchBoxHook.ascendingOrder == true) {
         setProfiles(profiles.slice().sort((a, b) => {
           return intersection(a[orderBy], searchTags).length - intersection(b[orderBy], searchTags).length
         }))
@@ -95,8 +95,8 @@ function ProfileList() {
       ageRange:   searchBoxHook.ageRange,
       fameRange:  searchBoxHook.fameRange,
       distRange:  searchBoxHook.locationRange,
-      setAllTags: searchBoxHook.setAllTags,
-      tags:       searchBoxHook.tags
+      tags:       searchBoxHook.tags,
+      setAllTags: searchBoxHook.setAllTags
     })
   }
 
@@ -133,13 +133,13 @@ function ProfileList() {
     <ul className='mb-3 space-y-3'>
       {/* console.log(JSON.stringify(profiles)) */}
       {profiles.map(profile => (
-        <div key={profile.id}>{profile.id} (age: {profile.age}) - {(profile.location / 1000).toFixed(1)} {profile.labels}</div>
-        // <li key={profile.id}>
-        //   <UserMiniCard
-        //     profile={profile}
-        //     setProfiles={setProfiles}
-        //   />
-        // </li>
+        // <div key={profile.id}>{profile.id} (age: {profile.age}) - {(profile.location / 1000).toFixed(1)} {profile.tags}</div>
+        <li key={profile.id}>
+          <UserMiniCard
+            profile={profile}
+            setProfiles={setProfiles}
+          />
+        </li>
       ))}
 
       {/* Spinner */}
