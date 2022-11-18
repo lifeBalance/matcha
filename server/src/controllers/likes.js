@@ -3,6 +3,7 @@ const MatchModel = require('../models/Match')
 const ChatModel = require('../models/Chat')
 const NotifModel = require('../models/Notif')
 const ProfileModel = require('../models/Profile')
+const BlockModel = require('../models/Block')
 const io = require('../../index')
 
 // Log in the user, send tokens if credentials match, else...
@@ -14,7 +15,19 @@ exports.like = async (req, res, next) => {
         message:    'bad request'
       })
     }
-    
+
+    const blocked = await BlockModel.isBlockedOrBlocker({
+      currentUser:      parseInt(req.uid),
+      requestedUser:    parseInt(req.body.profileId)
+    })
+    // console.log('blocked? '+blocked);
+    if (blocked) {
+      return res.status(200).json({
+        type: 'ERROR',
+        message: 'Sorry, user not found :-('
+      })
+    }
+
     // Check if the like already exists (we want NO duplicates)
     const likeExists = await LikeModel.readLike({
       liker: req.uid,

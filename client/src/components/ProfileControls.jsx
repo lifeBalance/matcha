@@ -20,6 +20,7 @@ import {
 } from '@heroicons/react/24/solid'
 
 function UserProfileControls(props) {
+  const [noUser, setNoUser] = React.useState(false)
   const {
     like,
     setLike,
@@ -60,6 +61,15 @@ function UserProfileControls(props) {
     })
   }
 
+  React.useEffect(() => {
+    if (isSubmitting) return
+    if (!isSubmitting && submitError) {
+      setNoUser(true)
+      setModalIsOpen(true)
+      setModalContent(`User doesn't exist anymore`)
+    }
+  }, [isSubmitting, submitError])
+
   function handleBlocks(blockVal) {
     blockUser({ profileId:  props.profileId })
 
@@ -75,11 +85,17 @@ function UserProfileControls(props) {
   }
 
   function closeModalHandler() {
-    setModalIsOpen(false)
-    if (profilePic)
-      navigate('/', { replace: true })
-    else
+    if (!profilePic) {
+      setModalIsOpen(false)
+      // navigate('/', { replace: true }) // what was this for??
       navigate('/edit', { replace: true })
+    } else if (noUser) {
+      props.setProfiles(prev => {
+        return prev.filter(u => u.id !== props.profileId)
+      })
+      setNoUser(false) // needed?
+      setModalIsOpen(false)
+    }
   }
 
   return (
