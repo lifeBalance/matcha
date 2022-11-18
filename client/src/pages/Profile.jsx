@@ -100,7 +100,7 @@ function Profile() {
   } else if (user) {
     return (
       <div
-        className='bg-white sm:rounded-lg sm:my-8 max-w-screen-sm'
+        className='bg-white sm:rounded-lg sm:my-8 max-w-screen-sm min-w-[360px]'
         id={user.userName}
       >
         <div className='h-96 w-auto bg-gray-800 sm:rounded-t-lg flex'>

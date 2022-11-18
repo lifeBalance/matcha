@@ -85,16 +85,21 @@ function UserProfileControls(props) {
   }
 
   function closeModalHandler() {
+    // console.log(location)
     if (!profilePic) {
       setModalIsOpen(false)
-      // navigate('/', { replace: true }) // what was this for??
       navigate('/edit', { replace: true })
-    } else if (noUser) {
+    } else if (noUser && location.pathname === '/') {
+      // When the user that is on the profile list page (/)
       props.setProfiles(prev => {
         return prev.filter(u => u.id !== props.profileId)
       })
-      setNoUser(false) // needed?
+      setNoUser(false)
       setModalIsOpen(false)
+    } else if (location.pathname != '/') {
+      // When the user that is on a given profile page (profiles/3)
+      setModalIsOpen(false)
+      navigate('/', { replace: true }) // what was this for??
     }
   }
 
