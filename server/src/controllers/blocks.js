@@ -37,6 +37,12 @@ exports.blockUser = async (req, res, next) => {
       blocker: req.uid,
       blocked: req.body.profileId
     })
+    
+    // Delete all notifications for both users!!
+    // await NotifModel.deleteAllNotifsBothUsers({
+    //   blocker: parseInt(req.uid),
+    //   blocked: parseInt(body.profileId)
+    // })
 
     return res.status(200).json({
       type:       'SUCCESS',

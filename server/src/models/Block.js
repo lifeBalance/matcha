@@ -18,14 +18,14 @@ module.exports = class Block {
 
   static async isBlockedOrBlocker(data) {
     const { currentUser, requestedUser } = data
-console.log(`Block model: ${currentUser} - ${requestedUser}`);
+// console.log(`Block model: ${currentUser} - ${requestedUser}`)
     const sql = `SELECT * FROM blocked_users
     WHERE blocker = ? AND blocked = ?
     OR blocked = ?  AND blocker = ?`
 
     const [arr, fields] = await pool.execute(sql, [currentUser, requestedUser, currentUser, requestedUser])
-//, otherUser, currentUser
-    console.log('Block model: '+ JSON.stringify(arr)) // testing
+
+    // console.log('Block model: '+ JSON.stringify(arr)) // testing
     return arr.length > 0 ? true : false
   }
 

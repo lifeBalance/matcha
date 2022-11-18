@@ -1,15 +1,27 @@
 const NotifModel = require('../models/Notif')
 const ProfileModel = require('../models/Profile')
+const BlockModel = require('../models/Block')
 const io = require('../../index')
 
 // Log in the user, send tokens if credentials match, else...
 exports.postView = async (req, res, next) => {
   try {
-    console.log(`req.body.to: ${req.body.to} req.uid: ${req.uid}`);
+    // console.log(`req.body.to: ${req.body.to} req.uid: ${req.uid}`);
     if (!req.body.to || !req.uid) {
       return res.status(200).json({
         type:     'ERROR',
         message:  'bad request'
+      })
+    }
+    const blocked = await BlockModel.isBlockedOrBlocker({
+      currentUser:      parseInt(req.uid),
+      requestedUser:    parseInt(req.body.to)
+    })
+    // console.log('blocked? '+blocked);
+    if (blocked) {
+      return res.status(200).json({
+        type: 'ERROR',
+        message: 'Sorry, user not found :-('
       })
     }
 

@@ -5,6 +5,7 @@ const TagModel = require('../models/Tag')
 const LikeModel = require('../models/Like')
 const MatchModel = require('../models/Match')
 const BlockModel = require('../models/Block')
+const NotifModel = require('../models/Notif')
 const geolib = require('geolib')
 
 // To format "time ago" in a user-friendly way :-)
@@ -25,8 +26,8 @@ exports.readOneProfile = async (req, res, next) => {
       message: 'Sorry, user not found :-('
     })
   }
-  console.log('ID of user requesting profile: ' + req.uid) // testing
-  console.log('ID of requested profile: ' + req.params.id) // testing
+  // console.log('ID of user requesting profile: ' + req.uid) // testing
+  // console.log('ID of requested profile: ' + req.params.id) // testing
 
   try {
     /* Avoid users checking profiles of users that:
@@ -38,7 +39,6 @@ exports.readOneProfile = async (req, res, next) => {
     })
     // console.log('blocked? '+blocked);
     if (blocked) {
-      // delete all notifications for both users!!
       return res.status(200).json({
         type: 'ERROR',
         message: 'Sorry, user not found :-('
@@ -62,7 +62,7 @@ exports.readOneProfile = async (req, res, next) => {
       id: req.params.id
     })
     // console.log('PROFILE PIC: '+profilePicUrl) // testing
-    console.log('all liked users: '+JSON.stringify(allLikedUsers)) // testing
+    // console.log('all liked users: '+JSON.stringify(allLikedUsers)) // testing
 
     const youLikeUser = allLikedUsers.map(u => u.liked).includes(profile.id)
 

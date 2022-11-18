@@ -11,13 +11,15 @@ import { TrashIcon } from '@heroicons/react/24/outline'
 import useNotifs from '../hooks/useNotifs'
 
 // redux
-import { useSelector } from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux'
+import { resetNewNotifs } from '../store/notifSlice'
 
 /**
  * REACT COMPONENT
  */
 function NotifList() {
   // Redux
+  const dispatch = useDispatch()
   const { isLoggedIn } = useSelector(slices => slices.auth)
   const { newNotifs } = useSelector(slices => slices.notif)
 

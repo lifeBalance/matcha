@@ -72,4 +72,19 @@ module.exports = class Notif {
     // console.log('_: ' + JSON.stringify(_))   // testing
     return fields.affectedRows
   }
+
+  // static async deleteAllNotifsBothUsers(data) {
+  //   const { uid } = data
+
+  //   /* DELETE returns an ARRAY with two elements:
+  //       0: A fields OBJECT (metadata about the query result).
+  //       1: A null/undefined OBJECT. */
+  //   const sql = `DELETE FROM notifications
+  //     WHERE recipient_uid = ?`
+
+  //   const [fields, _] = await pool.execute(sql, [uid])
+  //   // console.log('FIELDS: ' + JSON.stringify(fields))   // testing
+  //   // console.log('_: ' + JSON.stringify(_))   // testing
+  //   return fields.affectedRows
+  // }
 }
