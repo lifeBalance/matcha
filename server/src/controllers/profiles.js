@@ -4,6 +4,7 @@ const PicModel = require('../models/Pic')
 const TagModel = require('../models/Tag')
 const LikeModel = require('../models/Like')
 const MatchModel = require('../models/Match')
+const BlockModel = require('../models/Block')
 const geolib = require('geolib')
 
 // To format "time ago" in a user-friendly way :-)
@@ -24,10 +25,26 @@ exports.readOneProfile = async (req, res, next) => {
       message: 'Sorry, user not found :-('
     })
   }
-  // console.log('ID of user requesting profile: ' + req.uid) // testing
-  // console.log('ID of requested profile: ' + req.params.id) // testing
+  console.log('ID of user requesting profile: ' + req.uid) // testing
+  console.log('ID of requested profile: ' + req.params.id) // testing
 
   try {
+    /* Avoid users checking profiles of users that:
+        1. Has been already blocked by the current user.
+        2. Has been blocked by the other user. */
+    const blocked = await BlockModel.isBlockedOrBlocker({
+      currentUser:      parseInt(req.uid),
+      requestedUser:    parseInt(req.params.id)
+    })
+    // console.log('blocked? '+blocked);
+    if (blocked) {
+      // delete all notifications for both users!!
+      return res.status(200).json({
+        type: 'ERROR',
+        message: 'Sorry, user not found :-('
+      })
+    }
+
     // Pull the profile of the current user
     const currentUser = await ProfileModel.readOne({ id: req.uid })
     // Pull the profile of the desired user

@@ -28,7 +28,8 @@ module.exports = class Profile {
         FROM pic_urls
         WHERE pic_urls.user_id = users.id
     ) AS pics
-    FROM users WHERE id = ?`
+    FROM users WHERE id = ?
+    `
 
     const [arr, fields] = await pool.execute(sql, [id])
     return (arr.length > 0) ? arr[0] : null // mb FALSE is better here?

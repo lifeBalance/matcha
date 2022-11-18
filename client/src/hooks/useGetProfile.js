@@ -37,6 +37,7 @@ function useGetProfile() {
 
   const getProfile = async function (args) {
     setIsLoading(true)
+    // console.log(args) // testing
 
     try {
       const resp = await sendRequest({
@@ -49,8 +50,13 @@ function useGetProfile() {
       // console.log(resp.data) // testing
       if (resp.data.type === 'ERROR') {
         setError(resp.data.message)
-      } else
+      } else {
         args.setUserState(resp.data)
+        args.submitView({
+          accessToken:  args.accessToken,
+          data:         { to: parseInt(args.to.id)}
+        })
+      }
       // return resp.data // no need to return anything.
     } catch (error) {
       console.log(error)

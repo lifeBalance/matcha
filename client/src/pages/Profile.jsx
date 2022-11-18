@@ -28,7 +28,9 @@ function Profile() {
     isLoggingIn,
     accessToken
   } = useSelector((slices) => slices.auth)
+
   const navigate = useNavigate()
+
   const {
     error,
     isLoading,
@@ -43,15 +45,6 @@ function Profile() {
     submitError,
     submitView
   } = useViews()
-  
-  React.useEffect(() => {
-    // console.log(`visiting profile ${params.id} (${typeof params.id})`);
-    submitView({
-      accessToken,
-      // backend expects the 'to' property to be a number...
-      data: { to: parseInt(params.id) }
-    })
-  }, [])
 
   function setProfile(data) {
     setUser({
@@ -69,7 +62,8 @@ function Profile() {
       youLikeUser:  data.profile.you_like_user,
       tags:         data.profile.tags,
       pics:         data.profile.pics,
-      location:     data.profile.location
+      location:     data.profile.location,
+      type:         data.type
     })
   }
 
@@ -80,7 +74,9 @@ function Profile() {
     if (!isLoggingIn && isLoggedIn && accessToken) getProfile({
       url: location.pathname,
       accessToken,
-      setUserState: setProfile
+      to:   params,
+      setUserState: setProfile,
+      submitView:   submitView     
     })
   }, [isLoggingIn, isLoggedIn, accessToken])
 
