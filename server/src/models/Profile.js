@@ -35,14 +35,16 @@ module.exports = class Profile {
   }
 
   static async readAll(data) {
-    let { id, page, prefers, userA, dist, age, tags, fame } = data
+    let { id, page, prefers, gender, userA, dist, age, tags, fame } = data
     // console.log(`id: ${id} - page: ${page} - prefers: ${JSON.stringify(prefers)}`)  // testing
     // console.log(`locat.: ${JSON.stringify(dist)} (typeof hi: ${typeof dist.hi})`)
     // console.log(`userA.: ${JSON.stringify(userA)}`)
     // console.log(`age: ${JSON.stringify(age)}`)
     // console.log(`tags: ${tags} (type ${typeof tags})`)
     // console.log(`prefers: ${JSON.stringify(prefers)} is array? ${Array.isArray(prefers)}`)
-
+    // console.log(`gender: ${JSON.stringify(gender)} is array? ${Array.isArray(gender)}`)
+    // console.log(`gender: ${gender} - prefs: ${prefers}`)
+// return
     const limit = 10
     const offset = (page - 1) * limit
     const sql = 
@@ -80,7 +82,8 @@ module.exports = class Profile {
         (SELECT blocker
           FROM blocked_users
           WHERE blocked = ?)
-      AND FIND_IN_SET(users.gender, ?)
+      AND FIND_IN_SET(users.gender, ?) > 0
+      AND (users.prefers = 2 OR users.prefers = ?)
       AND users.age BETWEEN ? AND ?
       AND ST_Distance_Sphere(
         point(?, ?),
@@ -106,7 +109,8 @@ module.exports = class Profile {
       userA.lng,
       id,
       id,
-      prefers.join(','),
+      prefers,
+      gender,
       age.lo,
       age.hi,
       userA.lat,
