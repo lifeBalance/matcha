@@ -82,6 +82,10 @@ module.exports = class Profile {
         (SELECT blocker
           FROM blocked_users
           WHERE blocked = ?)
+      AND users.id NOT IN
+        (SELECT blocked
+          FROM blocked_users
+          WHERE blocker = ?)
       AND FIND_IN_SET(users.gender, ?) > 0
       AND (users.prefers = 2 OR users.prefers = ?)
       AND users.age BETWEEN ? AND ?
@@ -107,6 +111,7 @@ module.exports = class Profile {
     const [arr, fields] = await pool.execute(sql, [
       userA.lat,
       userA.lng,
+      id,
       id,
       id,
       prefers,
