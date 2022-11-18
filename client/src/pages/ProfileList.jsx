@@ -47,10 +47,45 @@ function ProfileList() {
   const searchBoxHook = useSearchBox()
   // console.log(searchBoxHook) // testing
 
+  // React.useEffect(() => {
+  //   const filters = ['age', 'fame', 'location', 'tags']
+  //   const orderBy = filters[searchBoxHook.orderBy]
+  //   // console.log('criteria '+orderBy) // testing
+
+  //   // We need special logic to sort profiles by tags in common!!
+  //   if (orderBy === 'tags') {
+  //     // const searchTags = searchBoxProps.tags.map(i => i.label)
+  //     if (searchBoxHook.ascendingOrder == 0) {
+  //       setProfiles(prev => prev.sort((a, b) => {
+  //         return intersection(a[orderBy], searchTags).length - intersection(b[orderBy], searchTags).length
+  //       }))
+  //     } else {
+  //       setProfiles(prev => prev.sort((a, b) => {
+  //         return intersection(b[orderBy], searchTags).length - intersection(a[orderBy], searchTags).length
+  //       }))
+  //     }
+  //   } else {
+  //     if (searchBoxHook.ascendingOrder == 0) {
+  //       setProfiles(prev => prev.sort((a, b) => {
+  //         return Number(a[orderBy]) - Number(b[orderBy])
+  //       }))
+  //     } else if (searchBoxHook.ascendingOrder == 1) {
+  //       setProfiles(prev => prev.sort((a, b) => {
+  //         return Number(b[orderBy]) - Number(a[orderBy])
+  //       }))
+  //     }
+  //   }
+  //   // console.log(profiles)
+  // }, [searchBoxHook.orderBy, searchBoxHook.ascendingOrder])
+
   React.useEffect(() => {
+    setNewSearch(true)
+  }, [searchBoxHook.ageRange, searchBoxHook.fameRange, searchBoxHook.locationRange])
+
+  function sortProfiles() {
     const filters = ['age', 'fame', 'location', 'tags']
     const orderBy = filters[searchBoxHook.orderBy]
-    // console.log('criteria '+orderBy) // testing
+    // console.log(`criteria ${orderBy} - Asc. order ${searchBoxHook.ascendingOrder}`) // testing
 
     // We need special logic to sort profiles by tags in common!!
     if (orderBy === 'tags') {
@@ -75,11 +110,9 @@ function ProfileList() {
         }))
       }
     }
-    // console.log(profiles)
-  }, [searchBoxHook.orderBy, searchBoxHook.ascendingOrder])
+  }
   
   function requestProfiles() {
-    // console.log(searchBoxHook.locationRange);
     getProfileList({
       accessToken,
       page,
@@ -156,6 +189,7 @@ function ProfileList() {
         profiles={profiles}
         setProfiles={setProfiles}
         requestProfiles={requestProfiles}
+        sortProfiles={sortProfiles}
       />
       {content}
       <div className="px-2">

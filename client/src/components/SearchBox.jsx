@@ -4,7 +4,12 @@ import { ChevronDownIcon } from '@heroicons/react/24/outline'
 import MiniSelect from '../components/UI/MiniSelect'
 import MiniTagSelector from './MiniTagSelector'
 
-function SearchBox({ searchBoxProps, profiles, requestProfiles }) {
+function SearchBox({
+  searchBoxProps,
+  profiles,
+  requestProfiles,
+  sortProfiles
+}) {
   const [isOpen, setIsOpen] = React.useState(false)
   const {
     ageRange,
@@ -122,7 +127,7 @@ function SearchBox({ searchBoxProps, profiles, requestProfiles }) {
             <p
               className='text-white text-xl border rounded-lg hover:bg-white
               hover:bg-opacity-20 hover:cursor-pointer text-center py-1 w-[40%] mx-auto'
-              onClick={() => reset(profiles)}
+              onClick={reset}
             >Clear</p>
           </div>
 
@@ -164,6 +169,11 @@ function SearchBox({ searchBoxProps, profiles, requestProfiles }) {
               <label htmlFor="descending">Descending order</label>
             </div>
           </div>
+          <button
+            className='text-white text-xl border rounded-lg hover:bg-white
+            hover:bg-opacity-20 hover:cursor-pointer text-center py-1 w-[40%] mx-auto'
+            onClick={sortProfiles}
+          >Sort</button>
         </div>
       </Collapse>
     </div>
