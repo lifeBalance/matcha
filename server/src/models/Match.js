@@ -85,7 +85,7 @@ module.exports = class Match {
     OR liked = ${liker} AND liker = ${liked}`
 
     const [fields, _] = await pool.execute(sql, [])
-    console.log('FIELDS: ' + JSON.stringify(fields))   // testing
-    console.log('_: ' + JSON.stringify(_))   // testing
+    // console.log('FIELDS: ' + JSON.stringify(fields))   // testing
+    // console.log('_: ' + JSON.stringify(_))   // testing
   }
 }

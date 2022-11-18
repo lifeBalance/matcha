@@ -14,7 +14,7 @@ exports.getNotifs = async (req, res, next) => {
       recipient: req.uid
     })
 
-    console.log('notifs controller: '+JSON.stringify(notifs)) // testing
+    // console.log('notifs controller: '+JSON.stringify(notifs)) // testing
 
     if (notifs) {
       return res.status(200).json({
@@ -31,7 +31,7 @@ exports.getNotifs = async (req, res, next) => {
 
 exports.deleteNotif = async (req, res, next) => {
   try {
-    console.log('NOTIF ID: '+req.body.notif_id) // testing
+    // console.log('NOTIF ID: '+req.body.notif_id) // testing
     if (!req.body.notif_id) {
       return res.status(200).json({
         type:     'ERROR',

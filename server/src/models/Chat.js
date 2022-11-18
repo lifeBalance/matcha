@@ -20,7 +20,7 @@ module.exports = class Chat {
         1: A fields OBJECT (metadata about the query result). */
     const [arr, fields] = await pool.execute(sql, [])
 
-    console.log('ARR: '+ JSON.stringify(arr)) // testing
+    // console.log('ARR: '+ JSON.stringify(arr)) // testing
     return arr
   }
 
@@ -41,8 +41,8 @@ module.exports = class Chat {
   static async writeMessage(data) {
     const { chatId, msg } = data
     if (!chatId) return []
-console.log(`chatId: ${chatId}`);
-console.log(`msg: ${JSON.stringify(msg)}`);
+// console.log(`chatId: ${chatId}`);
+// console.log(`msg: ${JSON.stringify(msg)}`);
     const sql = `
     INSERT INTO chat_lines
     (chat_id, line) 
@@ -57,7 +57,7 @@ console.log(`msg: ${JSON.stringify(msg)}`);
     ])
     /* We map over the resulting array of objects in order to return an array 
       of just pic URLs, which could be empty, if there are no pics. */
-    console.log(`Chat model - fields: ${JSON.stringify(fields)}`);
+    // console.log(`Chat model - fields: ${JSON.stringify(fields)}`);
     return fields.insertId
   }
 
@@ -92,7 +92,7 @@ console.log(`msg: ${JSON.stringify(msg)}`);
     const sql = `DELETE FROM chat_lines WHERE chat_id = ?`
 
     const [fields, _] = await pool.execute(sql, [chatId])
-    console.log('FIELDS: ' + JSON.stringify(fields))   // testing
-    console.log('_: ' + JSON.stringify(_))   // testing
+    // console.log('FIELDS: ' + JSON.stringify(fields))   // testing
+    // console.log('_: ' + JSON.stringify(_))   // testing
   }
 }

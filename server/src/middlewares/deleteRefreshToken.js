@@ -23,7 +23,7 @@ exports.deleteRefreshToken = async (req, res, next) => {
 
   // Early return if no Refresh token was sent!
   if (!oldRefreshToken) {
-    console.log('Cookie did not include the Refresh token!') // testing
+    // console.log('Cookie did not include the Refresh token!') // testing
     return next()
   }
 

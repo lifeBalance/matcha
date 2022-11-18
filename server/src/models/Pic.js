@@ -7,17 +7,6 @@ const pool = require('../db/dbPool')
 module.exports = class Pic {
   constructor(data) {}
 
-  // MARKED FOR REMOVAL
-  // static readProfilePic({ id }) {
-  //   console.log('readProfilePic: ' + id)
-  //   const sql = `
-  //   SELECT url
-  //   FROM pic_urls
-  //   WHERE user_id = ? AND profile_pic = 1`
-
-  //   return pool.execute(sql, [id]) // returns Empty Array or [ {...} ]
-  // }
-
   /* This method returns either the Profile pic URL, or null. */
   static async readProfilePicUrl({ id }) {
     const sql = `

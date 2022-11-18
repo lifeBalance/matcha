@@ -52,10 +52,12 @@ function useGetProfile() {
         setError(resp.data.message)
       } else {
         args.setUserState(resp.data)
-        args.submitView({
-          accessToken:  args.accessToken,
-          data:         { to: parseInt(args.to.id)}
-        })
+        if (typeof args.submitView === 'function') {
+          args.submitView({
+            accessToken:  args.accessToken,
+            data:         { to: parseInt(args?.to?.id)}
+          })
+        }
       }
       // return resp.data // no need to return anything.
     } catch (error) {
