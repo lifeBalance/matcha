@@ -47,7 +47,7 @@ function useGetProfileList(params) {
       /*  Next line is crucial to protect the App from 
         errors caused by the user Reloading the Browser. */
       if (!args.accessToken) return
-// console.log(args);
+// console.log(args) // testing
       const response = await fetchProfiles({
         url: '/profiles',
         method: 'get',
@@ -72,9 +72,11 @@ function useGetProfileList(params) {
 
       if (response.data.profiled) {
         if (newSearch) {
+          // console.log('new search');
           setProfiles(response.data.profiles)
           setNewSearch(false)
         } else {
+          // console.log('not new search');
           setProfiles(prevState => [...prevState, ...response.data.profiles].filter((v,i,a)=>a.findIndex(v2=>(v2.id===v.id))===i))
         }
         args.setAllTags(response.data.tags)

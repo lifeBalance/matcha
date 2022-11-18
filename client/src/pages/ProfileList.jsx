@@ -47,65 +47,41 @@ function ProfileList() {
   const searchBoxHook = useSearchBox()
   // console.log(searchBoxHook) // testing
 
-  // React.useEffect(() => {
-  //   const filters = ['age', 'fame', 'location', 'tags']
-  //   const orderBy = filters[searchBoxHook.orderBy]
-  //   // console.log('criteria '+orderBy) // testing
-
-  //   // We need special logic to sort profiles by tags in common!!
-  //   if (orderBy === 'tags') {
-  //     // const searchTags = searchBoxProps.tags.map(i => i.label)
-  //     if (searchBoxHook.ascendingOrder == 0) {
-  //       setProfiles(prev => prev.sort((a, b) => {
-  //         return intersection(a[orderBy], searchTags).length - intersection(b[orderBy], searchTags).length
-  //       }))
-  //     } else {
-  //       setProfiles(prev => prev.sort((a, b) => {
-  //         return intersection(b[orderBy], searchTags).length - intersection(a[orderBy], searchTags).length
-  //       }))
-  //     }
-  //   } else {
-  //     if (searchBoxHook.ascendingOrder == 0) {
-  //       setProfiles(prev => prev.sort((a, b) => {
-  //         return Number(a[orderBy]) - Number(b[orderBy])
-  //       }))
-  //     } else if (searchBoxHook.ascendingOrder == 1) {
-  //       setProfiles(prev => prev.sort((a, b) => {
-  //         return Number(b[orderBy]) - Number(a[orderBy])
-  //       }))
-  //     }
-  //   }
-  //   // console.log(profiles)
-  // }, [searchBoxHook.orderBy, searchBoxHook.ascendingOrder])
-
   React.useEffect(() => {
     setNewSearch(true)
   }, [searchBoxHook.ageRange, searchBoxHook.fameRange, searchBoxHook.locationRange])
 
   function sortProfiles() {
     const filters = ['age', 'fame', 'location', 'tags']
-    const orderBy = filters[searchBoxHook.orderBy]
+    const orderBy = filters[searchBoxHook.orderBy] // ascending: true or false
     // console.log(`criteria ${orderBy} - Asc. order ${searchBoxHook.ascendingOrder}`) // testing
 
     // We need special logic to sort profiles by tags in common!!
     if (orderBy === 'tags') {
-      // const searchTags = searchBoxProps.tags.map(i => i.label)
-      if (searchBoxHook.ascendingOrder == 0) {
-        setProfiles(prev => prev.sort((a, b) => {
+      console.log(`tags: ${JSON.stringify(searchBoxHook.tags)}`) // testing
+      if (searchBoxHook.tags.length === 0) return
+      
+      // Map the array of {label: 'blondes', value: 1} objects to just labels
+      const searchTags = searchBoxHook.tags.map(i => i.label)
+      console.log(`tags: ${JSON.stringify(searchTags)}`) // testing
+      
+      if (searchBoxHook.ascendingOrder == false) {
+        setProfiles(profiles.slice().sort((a, b) => {
           return intersection(a[orderBy], searchTags).length - intersection(b[orderBy], searchTags).length
         }))
       } else {
-        setProfiles(prev => prev.sort((a, b) => {
+        setProfiles(profiles.slice().sort((a, b) => {
           return intersection(b[orderBy], searchTags).length - intersection(a[orderBy], searchTags).length
         }))
       }
     } else {
-      if (searchBoxHook.ascendingOrder == 0) {
-        setProfiles(prev => prev.sort((a, b) => {
+      // console.log(`sorting by ${orderBy} in ascending order? ${searchBoxHook.ascendingOrder}`) // testing
+      if (searchBoxHook.ascendingOrder == true) {
+        setProfiles(profiles.slice().sort((a, b) => {
           return Number(a[orderBy]) - Number(b[orderBy])
         }))
-      } else if (searchBoxHook.ascendingOrder == 1) {
-        setProfiles(prev => prev.sort((a, b) => {
+      } else if (searchBoxHook.ascendingOrder == false) {
+        setProfiles(profiles.slice().sort((a, b) => {
           return Number(b[orderBy]) - Number(a[orderBy])
         }))
       }
@@ -117,7 +93,7 @@ function ProfileList() {
       accessToken,
       page,
       ageRange:   searchBoxHook.ageRange,
-      fameRange:   searchBoxHook.fameRange,
+      fameRange:  searchBoxHook.fameRange,
       distRange:  searchBoxHook.locationRange,
       setAllTags: searchBoxHook.setAllTags,
       tags:       searchBoxHook.tags
@@ -132,14 +108,7 @@ function ProfileList() {
         if (isProfiled === 0) navigate('/edit', { replace: true })
         if (!isConfirmed) dispatch(logout())
         else if (accessToken) {
-          getProfileList({
-            accessToken,
-            page,
-            rateRange:   searchBoxHook.rateRange,
-            distRange:  searchBoxHook.locationRange,
-            setAllTags: searchBoxHook.setAllTags,
-            tags:       searchBoxHook.tags
-          })
+          requestProfiles()
         } else {
           const matcha = localStorage.getItem('matcha')
           dispatch(loginAfterReload(matcha))
@@ -164,13 +133,13 @@ function ProfileList() {
     <ul className='mb-3 space-y-3'>
       {/* console.log(JSON.stringify(profiles)) */}
       {profiles.map(profile => (
-        // <div>{profile.id} (age: {profile.age}) - {(profile.location / 1000).toFixed(1)}</div>
-        <li key={profile.id}>
-          <UserMiniCard
-            profile={profile}
-            setProfiles={setProfiles}
-          />
-        </li>
+        <div key={profile.id}>{profile.id} (age: {profile.age}) - {(profile.location / 1000).toFixed(1)} {profile.labels}</div>
+        // <li key={profile.id}>
+        //   <UserMiniCard
+        //     profile={profile}
+        //     setProfiles={setProfiles}
+        //   />
+        // </li>
       ))}
 
       {/* Spinner */}

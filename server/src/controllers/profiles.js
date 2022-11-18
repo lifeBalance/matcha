@@ -154,6 +154,7 @@ exports.readAllProfiles = async (req, res, next) => {
 
     // Normalize distance range (if user submitted one)
     let ageRange = null
+        // console.log(`ageRange: ${req.query.ageRange}`)
     if (req.query.ageRange) {
       const loAge = Math.min(
         parseInt(JSON.parse(req.query.ageRange).lo),
@@ -166,6 +167,7 @@ exports.readAllProfiles = async (req, res, next) => {
       ageRange = { lo: loAge, hi: hiAge }
     }
     ageRange ??= { lo: 18, hi: 99 } // Default 0-99 years old
+    // console.log(`ageRange: ${JSON.stringify(ageRange)}`)
 
     // Normalize fame range (if user submitted one)
     // console.log(`fameRange: ${req.query.fameRange}`);
@@ -199,8 +201,6 @@ exports.readAllProfiles = async (req, res, next) => {
       distRange = { lo: lo, hi: hi }
     }
     distRange ??= { lo: 0, hi: 50 } // Default 50km radius
-
-    // TODO: NORMALIZE ALSO THE FAME RATES!!!
 
     // TAGS
     // console.log('PROFILES controller (tags): ' + req.query.tags) // testing
