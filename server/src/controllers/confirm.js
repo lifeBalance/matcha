@@ -31,11 +31,11 @@ exports.confirm = async (req, res, next) => {
         message: 'Your account was already confirmed. You can log in!'
       })
     }
-    console.log('ACCOUNT: '+JSON.stringify(account));
+    // console.log('ACCOUNT: '+JSON.stringify(account));
     
     // Check if the Email token exists in the DB
     const emailToken = await EmailTokenModel.read({ email: req.body.email})
-    console.log('EMAIL TOKEN: '+JSON.stringify(emailToken));
+    // console.log('EMAIL TOKEN: '+JSON.stringify(emailToken));
 
     /* If there's no token in the DB linked to that email, or if the token
       received in the request parameters doesn't match the one in the DB */

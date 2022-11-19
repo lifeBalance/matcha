@@ -128,12 +128,12 @@ exports.updateSettings = async (req, res, next) => {
     for (const tag of tagList) {
       if (tag.hasOwnProperty('__isNew__')) {
         const tagId = await TagModel.writeOne(tag.label)
-        console.log(`NEW TAG: ${tag.label}`) // Write the tag to DB (get id of row)
+        // console.log(`NEW TAG: ${tag.label}`) // Write the tag to DB (get id of row)
         tagIdList.push(tagId)
       } else {
         tagIdList.push(tag.value)
       }
-      console.log(`TAG ID list: ${tagIdList}`)
+      // console.log(`TAG ID list: ${tagIdList}`)
     }
 
     // The array of files to delete (it may be empty)
@@ -188,14 +188,14 @@ exports.updateSettings = async (req, res, next) => {
         id: currentUser.id
       })
 
-      console.log(`oldProfilePic: ${oldProfilePic}`)
+      // console.log(`oldProfilePic: ${oldProfilePic}`)
       // Delete the OLD profile pic, if any (from filesystem and DB).
       if (oldProfilePic) { await deletePic(oldProfilePic, currentUser.id) }
 
       /*  Write the NEW profile pic (to filesystem and DB), and 
         store its URL (that we'll send back in the response. */
       var profilePicUrl = await savePic(req.profilePic, currentUser.id, true)
-      console.log(`profilePicUrl (settings controller): ${profilePicUrl}`);
+      // console.log(`profilePicUrl (settings controller): ${profilePicUrl}`);
     }
 
     /* Let's count how many pics in total the user already has in DB. */
@@ -203,14 +203,14 @@ exports.updateSettings = async (req, res, next) => {
 
     // Check we don't surpass the 4 pics limit.
     const filesLeft = 4 - extraPicsAmount + deleteList.length
-    console.log(`picsAmount: ${extraPicsAmount}`) // testing
-    console.log(`deleteList: ${deleteList.length}`) // testing
-    console.log(`Files Left: ${filesLeft}`) // testing
+    // console.log(`picsAmount: ${extraPicsAmount}`) // testing
+    // console.log(`deleteList: ${deleteList.length}`) // testing
+    // console.log(`Files Left: ${filesLeft}`) // testing
 
     // If there are pics to DELETE in the submitted form, delete them too!
     if (deleteList && deleteList.length > 0) {
       for (const pic of deleteList) {
-        console.log(`About to delete: ${pic}`)  // testing
+        // console.log(`About to delete: ${pic}`)  // testing
         await deletePic(pic, currentUser.id)
       }
     }

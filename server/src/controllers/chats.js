@@ -63,7 +63,7 @@ exports.getMessageList = async (req, res, next) => {
 
 exports.writeMessage = async (req, res, next) => {
   try {
-    console.log(`req.uid: ${req.uid}, req.body.to: ${req.body.to}`)
+    // console.log(`req.uid: ${req.uid}, req.body.to: ${req.body.to}`)
     if (!req.uid || !req.body.to) {
       return res.status(200).json({
         type:     'ERROR',
@@ -74,7 +74,7 @@ exports.writeMessage = async (req, res, next) => {
       liker:  req.uid,
       liked:  req.body.to
     })
-    console.log(`matchId: ${matchId}`)
+    // console.log(`matchId: ${matchId}`)
 
     if (!matchId) {
       // sent response so that client redirects to main page
@@ -84,7 +84,7 @@ exports.writeMessage = async (req, res, next) => {
       })
     }
 
-    console.log(`chats controller - chat id: ${req.params.id}`) // testing
+    // console.log(`chats controller - chat id: ${req.params.id}`) // testing
 
     // Let's compose what we want to write to DB.
     const msg = {
@@ -92,13 +92,13 @@ exports.writeMessage = async (req, res, next) => {
       to:       req.body.to,
       content:  req.body.msg
     }
-    console.log(`chats controller - msg: ${JSON.stringify(msg)}`) // testing
+    // console.log(`chats controller - msg: ${JSON.stringify(msg)}`) // testing
     // The query returns the id of the row written
     const msgId = await ChatModel.writeMessage({
       chatId:   req.params.id,
       msg:      msg
     })
-    console.log(`chats controller - msgId: ${msgId}`) // testing
+    // console.log(`chats controller - msgId: ${msgId}`) // testing
     
     // Let's pull data from the sender to write notification intel to DB
     const sender = await ProfileModel.readOne({
