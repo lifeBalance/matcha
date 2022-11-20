@@ -16,6 +16,11 @@ Something I noticed during development was that the database content was erased 
 
 Probably the better solution was number **2**, but after forgetting a couple of times about it (and nuking my DB with plenty of fake data), I decided to mount it as a volume.
 
+## Nodemon
+Another issue I was experiencing was that [nodemon](https://nodemon.io/) had to be installed in my **host** in order to use `command: npm run dev` in my Docker compose. The way around that was to install it inside the container (using the `Dockerfile`) and mount the `node_modules` folder as an [anonymous volume](https://docs.docker.com/storage/volumes/), provide only the **destination** folder path as compared to the bind volume where we specify `source:destination` folder path.
+
+The reason for that is that when our NodeJS application starts, we end up overriding `node_modules` folder if we mount it as a normal bind volume.
+
 ---
 [:arrow_backward:][back] ║ [:house:][home] ║ [:arrow_forward:][next]
 

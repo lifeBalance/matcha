@@ -15,7 +15,8 @@ services:
       - ./ssl:/app/ssl
       - ./src:/app/src
       - ./.env:/app/.env
-      - ./node_modules:/app/node_modules
+      # - ./node_modules:/app/node_modules
+      - /app/node_modules
       - ./package.json:/app/package.json
       - ./package-lock.json:/app/package-lock.json
       - ./public:/app/public
