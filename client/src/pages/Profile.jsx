@@ -145,7 +145,7 @@ function Profile() {
           </p>
 
           <p>
-            <span className='font-semibold'>Rate: </span>{user.rated}%
+            <span className='font-semibold'>Rate: </span>{parseFloat(user.rated).toFixed(1)}%
           </p>
 
           <p>

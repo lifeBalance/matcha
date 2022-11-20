@@ -22,7 +22,23 @@ module.exports = class Settings {
   static async readSettings({ id }) {
     const sql =`
     SELECT
-    id, username, firstname, lastname, email, age, gender, prefers, bio, confirmed, profiled, location, tags
+    id,
+    username,
+    firstname,
+    lastname,
+    email,
+    age,
+    gender,
+    prefers,
+    bio,
+    confirmed,
+    profiled,
+    location,
+    tags,
+    (SELECT IF(
+      (SELECT COUNT(*) FROM likes WHERE likes.liker = users.id) = 0,
+        0,
+        ((SELECT COUNT(*) FROM matches WHERE users.id = liker OR users.id = liked) * 100) / (SELECT COUNT(*) FROM likes WHERE likes.liker = users.id))) AS fame
     FROM users WHERE id = ?`
 
     /* SELECT returns an ARRAY with two elements:

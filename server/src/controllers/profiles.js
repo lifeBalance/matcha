@@ -103,7 +103,7 @@ exports.readOneProfile = async (req, res, next) => {
         lastname:         profile.lastname,
         online:           profile.online,
         last_seen:        ago,
-        rated:            rated.toFixed(1),
+        rated:            profile.fame,
         age:              profile.age,
         gender:           profile.gender,
         prefers:          profile.prefers,

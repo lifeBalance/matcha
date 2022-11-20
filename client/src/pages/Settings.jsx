@@ -36,7 +36,7 @@ function Settings() {
       lastName:     data.lastname,
       email:        data.email,
       age:          data.age,
-      rated:        data.rated, // hardcode for now
+      fame:         data.fame,
       gender:       data.gender,
       preferences:  data.prefers,
       bio:          unescape(data.bio),
@@ -127,7 +127,7 @@ function Settings() {
         </p>
 
         <p>
-          <span className='font-semibold'>Rated: </span>{user.rated}%
+          <span className='font-semibold'>Fame: </span>{user.fame}%
         </p>
 
         <p className='flex flex-wrap'>

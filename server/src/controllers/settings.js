@@ -2,7 +2,6 @@
 const SettingsModel = require('../models/Settings')
 const AccountModel = require('../models/Account')
 const LikeModel = require('../models/Like')
-const MatchModel = require('../models/Match')
 
 // Let's pull also the Pic model for the profile pictures
 const PicModel = require('../models/Pic')
@@ -61,8 +60,8 @@ exports.getSettings = async (req, res, next) => {
   const allLikedUsers = await LikeModel.readAllLikedBy({ uid: req.uid })
 
   // Compute the user's rating as ratio of matches/liked users
-  const matches = await MatchModel.readAllMatches({ uid: req.uid })
-  const rated = matches.length === 0 ? 0 : allLikedUsers.length * 100 / matches.length
+  // const matches = await MatchModel.readAllMatches({ uid: req.uid })
+  // const rated = matches.length === 0 ? 0 : allLikedUsers.length * 100 / matches.length
 
   // Send Account information to prepopulate fields in the Profile form.
   res.status(200).json({
@@ -74,7 +73,7 @@ exports.getSettings = async (req, res, next) => {
     age:            settings.age,
     gender:         settings.gender,
     prefers:        settings.prefers,
-    rated:          rated,
+    fame:           parseFloat(settings.fame).toFixed(1),
     bio:            settings.bio || fakeBio,
     profile_pic:    profile_pic_url,
     extraPics:      extraPics,

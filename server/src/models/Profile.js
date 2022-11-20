@@ -27,7 +27,8 @@ module.exports = class Profile {
       'profile', pic_urls.profile_pic))
         FROM pic_urls
         WHERE pic_urls.user_id = users.id
-    ) AS pics
+    ) AS pics,
+    ((SELECT COUNT(*) FROM matches WHERE users.id = liker OR users.id = liked) * 100 / (SELECT COUNT(*) FROM likes WHERE likes.liker = users.id)) AS fame
     FROM users WHERE id = ?
     `
 
@@ -74,7 +75,7 @@ module.exports = class Profile {
         )
       )) AS location,
       (SELECT IF(
-        (SELECT COUNT(*) FROM matches WHERE users.id = liker OR users.id = liked) = 0,
+        (SELECT COUNT(*) FROM likes WHERE likes.liker = users.id) = 0,
         0,
         ((SELECT COUNT(*) FROM matches WHERE users.id = liker OR users.id = liked) * 100) / (SELECT COUNT(*) FROM likes WHERE likes.liker = users.id))) AS fame
     FROM users
