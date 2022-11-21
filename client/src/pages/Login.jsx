@@ -9,7 +9,7 @@ import Input from '../components/UI/Input'
 import Modal from '../components/UI/Modal'
 
 //icons
-import { HandRaisedIcon, QuestionMarkCircle } from '../components/Icons/icons'
+import { HandRaisedIcon } from '../components/Icons/icons'
 
 // redux
 import { useSelector, useDispatch } from 'react-redux'
@@ -65,7 +65,11 @@ function Login() {
     inputBlurHandler: passwordBlurHandler
   } = useInput(validatePassword)
 
-  let formIsValid = !usernameHasError && !passwordHasError
+  // formIsValid as derived state
+  let formIsValid = !usernameHasError   &&
+                    !passwordHasError   &&
+                    username.length > 0 &&
+                    password.length > 0
 
   // pass this function to the reducer to open the modal ;-)
   function openModal(data) {
