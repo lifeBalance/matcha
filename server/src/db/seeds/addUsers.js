@@ -84,7 +84,7 @@ for (let index = 1; index <= 500; index++) {
     last_seen:    ts[getRandomInt(0, 3)],
     location:     loc[getRandomInt(0, 5)],
     views:        getRandomInt(0, 1000),
-    tags:         JSON.stringify(tagsArr[getRandomInt(1, 3)])
+    tags:         JSON.stringify(tagsArr[getRandomInt(0, 3)])
   })
 
   pics.push({
