@@ -46,7 +46,7 @@ exports.like = async (req, res, next) => {
       id: req.uid
     })
     // Find the profile pic
-    const likerProfilePic = liker.pics ? liker.pics.find(pic => pic.profile === 1) : ''
+    // const likerProfilePic = liker.pics ? liker.pics.find(pic => pic.profile === 1) : ''
 
     // Write the like
     const ret = await LikeModel.writeLike({
@@ -82,8 +82,7 @@ exports.like = async (req, res, next) => {
         type:       'match',
         content: {
           from:       liker.id,
-          username:   liker.username,
-          profilePic: likerProfilePic.url
+          username:   liker.username
         }
       })
 
@@ -93,8 +92,7 @@ exports.like = async (req, res, next) => {
         type:       'match',
         content: {
           from:       liked.id,
-          username:   liked.username,
-          profilePic: likedProfilePic.url
+          username:   liked.username
         }
       })
 
@@ -102,16 +100,14 @@ exports.like = async (req, res, next) => {
         id:         notifId,
         type:       'match',
         from:       liker.id,
-        username:   liker.username,
-        profilePic: likerProfilePic.url
+        username:   liker.username
       })
 
       io.io.to(liker.id).emit('notify', {
         id:         notifId,
         type:       'match',
         from:       liked.id,
-        username:   liked.username,
-        profilePic: likedProfilePic.url
+        username:   liked.username
       })
 
       // The response contains the necessary intel to inform both users!
@@ -127,8 +123,7 @@ exports.like = async (req, res, next) => {
         type:       'like',
         content: {
           from:       liker.id,
-          username:   liker.username,
-          profilePic: likerProfilePic.url
+          username:   liker.username
         }
       })
 
@@ -137,8 +132,7 @@ exports.like = async (req, res, next) => {
         id:         notifId,
         type:       'match',
         from:       liker.id,
-        username:   liker.username,
-        profilePic: likerProfilePic.url
+        username:   liker.username
       })
 
       res.status(200).json({
@@ -186,7 +180,7 @@ exports.unlike = async (req, res, next) => {
       const liker = await ProfileModel.readOne({ id: req.uid })
 
       // Extract the "unliker" profile picture
-      const likerProfilePic = liker.pics.find(pic => pic.profile === 1)
+      const likerProfilePic = liker?.pics ? liker.pics.find(pic => pic.profile === 1) : null
 
       // Write the notification to the DB
       const notifId = await NotifModel.writeNotif({
@@ -194,8 +188,7 @@ exports.unlike = async (req, res, next) => {
         type:       'unmatch',
         content: {
           from:       liker.id,
-          username:   liker.username,
-          profilePic: likerProfilePic.url
+          username:   liker.username
         }
       })
 
@@ -204,8 +197,7 @@ exports.unlike = async (req, res, next) => {
         id:         notifId,
         type:       'match',
         from:       liker.id,
-        username:   liker.username,
-        profilePic: likerProfilePic.url
+        username:   liker.username
       })
     }
 
