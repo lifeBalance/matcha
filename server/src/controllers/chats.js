@@ -90,7 +90,7 @@ exports.writeMessage = async (req, res, next) => {
     const msg = {
       from:     req.uid,
       to:       req.body.to,
-      content:  req.body.msg
+      content:  req.body.msg.substring(0, 255)
     }
     // console.log(`chats controller - msg: ${JSON.stringify(msg)}`) // testing
     // The query returns the id of the row written

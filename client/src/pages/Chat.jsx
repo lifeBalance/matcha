@@ -103,13 +103,19 @@ function Chat() {
     })
   }
 
+  function handleInput(e) {
+    if (e.target.value.length >= 256) return
+
+    setMessageInput(e.target.value)
+  }
+
   function closeModalHandler() {
     setModalIsOpen(false)
     navigate('/', { replace: true })
   }
 
   return (
-    <div className='flex flex-col space-y-3 mx-2'>
+    <div className='flex flex-col space-y-3 mx-2 max-w-4xl'>
       {modalIsOpen &&
         (<Modal closeModal={closeModalHandler}>
           <RocketLaunchIcon className='inline w-6 text-green-500 -mt-2'/>That match is gone dawg!
@@ -134,9 +140,9 @@ function Chat() {
       <ul className='flex flex-col space-y-2 bg-gray-100 p-2 rounded-lg overflow-y-scroll overscroll-contain h-96 scroll-auto'>
         {messageList.map(m => {
           const classes = m.line.to ===  clientUid ?
-          'text-left place-self-start bg-orange-300'
+          'text-left place-self-start bg-orange-300 rounded-bl-none mr-8'
           :
-          'text-right place-self-end bg-pink-400'
+          'text-right place-self-end bg-pink-400 rounded-br-none ml-8'
 
           return (<li
             className={`text-white font-bold p-2 rounded-xl drop-shadow-md max-w-60 break-all ${classes}`}
@@ -147,18 +153,22 @@ function Chat() {
           <li ref={bottomRef}></li>
       </ul>
 
-      <div className="flex pb-4">
-        <textarea
-          type="text"
-          value={messageInput}
-          onChange={e => setMessageInput(e.target.value)}
-          className='outline-none border-none rounded-l-xl w-[70%] text-gray-700 bg-gray-100 text-lg'
-        />
+      <div className="flex flex-col pb-4">
+        <div className="flex ">
+          <textarea
+            type="text"
+            value={messageInput}
+            onChange={e => handleInput(e)}
+            className='outline-none border-none rounded-l-xl w-[70%] text-gray-700 bg-gray-100 text-lg'
+          />
 
-        <button
-          className='text-white rounded-r-xl border border-l-0 border-white p-4 w-[30%] hover:bg-white hover:bg-opacity-20'
-          onClick={handleSendMessage}
-        >Send <PaperAirplaneIcon className='w-6 inline -mt-1'/></button>
+          <button
+            className='text-white rounded-r-xl border border-l-0 border-white p-4 w-[30%] hover:bg-white hover:bg-opacity-20'
+            onClick={handleSendMessage}
+            >Send <PaperAirplaneIcon className='w-6 inline -mt-1'/>
+          </button>
+        </div>
+        <p className='text-white pl-4'>{255 - messageInput.length} characters left.</p>
       </div>
     </div>
   )
