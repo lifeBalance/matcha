@@ -1,4 +1,5 @@
 const NotifModel = require('../models/Notif')
+const PicModel = require('../models/Pic')
 
 // Log in the user, send tokens if credentials match, else...
 exports.getNotifs = async (req, res, next) => {
@@ -15,12 +16,25 @@ exports.getNotifs = async (req, res, next) => {
     })
 
     // console.log('notifs controller: '+JSON.stringify(notifs)) // testing
+    const notifList = []
+    if (notifs) {
+      for (const notif of notifs) {
+        const profPic = await PicModel.readProfilePicUrl({
+          id: notif.content.from
+        })
+
+        notifList.push({
+          ...notif,
+          profilePic: profPic
+        })
+      }
+    }
 
     if (notifs) {
       return res.status(200).json({
         type:     'SUCCESS',
         message:  'your notifs',
-        notifs:   notifs
+        notifs:   notifList
       })
     }
   } catch(error) {

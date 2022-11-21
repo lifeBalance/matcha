@@ -11,7 +11,8 @@ function Notification(props) {
   const {
     id,
     type,
-    content
+    content,
+    profilePic
   } = props.notif
 
   let msg
@@ -43,16 +44,16 @@ function Notification(props) {
           onClick={props.deleteNotif}
         />
 
-        {!content.profilePic &&
+        {!profilePic &&
         <div
           className='rounded-full'
         >
           <UserCircleIcon className='inline w-20 h-20 text-slate-700'/>
         </div>}
 
-        {content.profilePic && <img
+        {profilePic && <img
           className='rounded-full w-20 h-20'
-          src={content.profilePic}
+          src={profilePic}
           alt={`${content.username} profile pic`}
           crossOrigin='anonymous'
         />}
