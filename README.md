@@ -1,6 +1,17 @@
 # matcha
 This project introduces you to a more advanced tool for creating your web applications: the [micro-framework](https://en.wikipedia.org/wiki/Microframework). You will have to create, in the language of your choice, a [dating site](https://en.wikipedia.org/wiki/Online_dating_service) (🍆 💦 🍑).
 
+![image](./README/images/evaled.png)
+
+## Reflection
+Can't believe it, but it's done. Never thought this project was gonna require such amount of effort. On paper it was supposed to be done in one month, but no way someone without previous full-stack web development experience can achieve that. Things I take home:
+
+* Pretty decent knowledge of the SPA paradigm.
+* Realization that project based learning is what really works. The way of 42 is a bit painful, but what doesn't kill you makes you stronger.
+* Little bit of ptsd 😻 (but I've been told by other matcha survivors, it only lasts a couple of days).
+
+![image](./README/images/yoda.png)
+
 ## My Approach: Single-page application
 Since in my previous project I used the [MVC](https://en.wikipedia.org/wiki/Model%E2%80%93view%E2%80%93controller) software architectural pattern, this time I wanted to test another different but nowadays popular approach: [SPA](https://en.wikipedia.org/wiki/Single-page_application) (short for **Single-page application**). The intention behind this choice was to become familiar with the most common paradigms used today in Web development.
 
